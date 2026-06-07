@@ -295,21 +295,9 @@ const Qs=[
 let cur=0,A={};
 
 /* ══ HESAPLAMA ══ */
-function getStage(){const r=A.rev3m||0,c=A.cust||0;if(r===0&&c<=5)return"seed";if(r<=175000&&c<=30)return"early";if(r<=650000)return"growth";return"scaleup";}
-function calcVal(){
-  const st=getStage(),r3=A.rev3m||0,ar=r3*4,g=A.growth||0,m=A.model||"saas";
-  const mk=A.mkt||2,ts=(A.team||2)+(A.exp||2)+(A.exit||0)+(A.headcount||1);
-  const df=A.diff||2,mo=A.moat||2,mg=A.margin||2,sp=A.stage_prod||2;
-  const mults={saas:8,marketplace:6,fintech:7,deeptech:10,ecommerce:3,service:2};
-  const mu=mults[m]||5;
-  let b=0;
-  if(st==="seed")b=2000000+ts*120000+mk*200000+df*100000+mo*150000+sp*80000+mg*50000;
-  else if(st==="early")b=(ar>0?ar*mu:3000000)*(1+g/100)+ts*100000+mo*200000+mg*100000;
-  else if(st==="growth")b=ar*mu*(1+g/80)*(1+mg*0.05);
-  else b=ar*mu*0.8*(1+g/120)*(1+mg*0.04);
-  b=Math.max(b,1000000);
-  return{lo:Math.round(b*.72/100000)*100000,mid:Math.round(b/100000)*100000,hi:Math.round(b*1.42/100000)*100000,st,ar,mu};
-}
+function getStage(){const r=A.rev3m||0,c=A.cust||0,g=A.growth||0,sp=A.stage_prod||1,pf=A.prev_fund||0,hc=A.headcount||1;const sc={preseed:0,seed:0,early:0,growth:0,scaleup:0,late:0};if(c<=2){sc.preseed+=30;}else if(c<=15){sc.seed+=30;}else if(c<=60){sc.early+=30;}else if(c<=300){sc.growth+=30;}else if(c<=1000){sc.scaleup+=30;}else{sc.late+=30;}if(r===0){sc.preseed+=30;}else if(r<=50000){sc.seed+=30;}else if(r<=300000){sc.early+=30;}else if(r<=1500000){sc.growth+=30;}else if(r<=6000000){sc.scaleup+=30;}else{sc.late+=30;}if(sp<=2){sc.preseed+=30;}else if(sp===3){sc.seed+=20;sc.early+=10;}else if(sp===4){sc.early+=20;sc.growth+=10;}else if(sp===5){sc.growth+=10;sc.scaleup+=15;sc.late+=5;}if(g===0){sc.preseed+=8;}else if(g<=5){sc.seed+=8;}else if(g<=20){sc.early+=12;}else if(g<=35){sc.growth+=15;}else{sc.growth+=12;sc.scaleup+=3;}if(pf===0){sc.preseed+=10;}else if(pf===1){sc.seed+=10;}else if(pf===2){sc.early+=8;sc.growth+=5;}else if(pf===3){sc.growth+=8;sc.scaleup+=10;sc.late+=5;}if(hc===1){sc.preseed+=8;sc.seed+=4;}else if(hc===2){sc.seed+=8;sc.early+=4;}else if(hc===3){sc.early+=8;sc.growth+=4;}else if(hc===4){sc.growth+=8;sc.scaleup+=4;}else{sc.scaleup+=8;sc.late+=6;}let best="preseed",bestScore=0;Object.entries(sc).forEach(([k,v])=>{if(v>bestScore){bestScore=v;best=k;}});return best;}
+function calcVal(){const st=getStage(),r3=A.rev3m||0,ar=r3*4,g=A.growth||0,m=A.model||"saas",mk=A.mkt||2,mg=A.margin||2,sp=A.stage_prod||1,team=A.team||1,exp=A.exp||1,exit=A.exit||0,hc=A.headcount||1,diff=A.diff||1,mo=A.moat||1,cac=A.cac_aware||0,runway=A.runway||1,ts=team+exp+exit+hc;const bmu={saas:8,fintech:7,marketplace:6,deeptech:10,ecommerce:3,service:2}[m]||5;const gf=g>=30?1.45:g>=20?1.30:g>=10?1.15:g>=5?1.0:0.75;const mu=bmu*gf;let adj=1.0;if(mo===4)adj+=0.15;else if(mo===1)adj-=0.20;if(ts>=12)adj+=0.12;if(exit>=2)adj+=0.10;if(mk===4)adj+=0.10;if(cac===3)adj+=0.08;if(runway===1)adj-=0.15;if(team===1&&exp<=1)adj-=0.12;if(mk===1)adj-=0.10;adj=Math.max(0.5,Math.min(1.5,adj));let b=0;if(st==="preseed"){b=1000000+ts*150000+mk*250000+(diff-1)*100000+(mo-1)*100000+(sp-1)*100000+exit*300000;b=Math.max(b,800000);}else if(st==="seed"){b=2500000+ts*180000+mk*300000+(diff-1)*150000+(mo-1)*200000+(sp-1)*120000+(mg-1)*80000+exit*400000;b=Math.max(b,2000000);}else if(st==="early"){const ab=ar>0?ar*mu*0.6:5000000;const ql=ts*100000+mo*200000+mk*150000;b=(ab+ql)*adj;b=Math.max(b,4000000);}else if(st==="growth"){b=ar*mu*(1+(mg-1)*0.08)*adj;b=Math.max(b,15000000);}else if(st==="scaleup"){b=ar*mu*(1+(mg-1)*0.07)*(mk===4?1.2:1.0)*adj;b=Math.max(b,80000000);}else{b=ar*mu*0.85*(1+(mg-1)*0.06)*adj;b=Math.max(b,300000000);}const bands={preseed:[0.55,1.80],seed:[0.60,1.65],early:[0.65,1.50],growth:[0.72,1.40],scaleup:[0.78,1.32],late:[0.82,1.25]};const[lo_f,hi_f]=bands[st]||[0.72,1.40];const round=st==="preseed"||st==="seed"?100000:1000000;return{lo:Math.round(b*lo_f/round)*round,mid:Math.round(b/round)*round,hi:Math.round(b*hi_f/round)*round,st,ar,mu:bmu,adj};}
+
 function getScores(){
   return{
     tr:Math.min(100,Math.round(((A.rev3m||0)/2000000*35)+((A.cust||0)/300*25)+((A.growth||0)/40*25)+((A.arpu||0)/20000*15))),
@@ -322,7 +310,7 @@ function getScores(){
 function getWeights(st){return{seed:{"Scorecard":35,"Risk Factor":30,"Market Size":20,"VC Metodu":15},early:{"Scorecard":25,"Traction":30,"Comparables":25,"VC Metodu":20},growth:{"Comparables":30,"VC Metodu":30,"Traction":25,"DCF":15},scaleup:{"DCF":35,"Comparables":35,"VC Metodu":20,"First Chicago":10}}[st];}
 function f(n){if(n>=1000000)return"₺"+(n/1000000).toFixed(1)+"M";if(n>=1000)return"₺"+Math.round(n/1000)+"K";return"₺"+n;}
 function fN(n){return n.toLocaleString("tr");}
-function stInfo(s){return{seed:{l:"Seed",bg:"#EEEDFE",c:"#3C3489"},early:{l:"Early Growth",bg:"#E1F5EE",c:"#085041"},growth:{l:"Growth",bg:"#FAEEDA",c:"#633806"},scaleup:{l:"Scale-up",bg:"#E6F1FB",c:"#0C447C"}}[s]||{l:s,bg:"#eee",c:"#333"};}
+function stInfo(s){return{preseed:{l:"Pre-Seed",bg:"#1C2535",c:"#5DCAA5"},seed:{l:"Seed",bg:"#EEEDFE",c:"#3C3489"},early:{l:"Early Growth",bg:"#E1F5EE",c:"#085041"},growth:{l:"Growth",bg:"#FAEEDA",c:"#633806"},scaleup:{l:"Scale-up",bg:"#E6F1FB",c:"#0C447C"},late:{l:"Late Stage",bg:"#F5F4EF",c:"#444441"}}[s]||{l:s,bg:"#eee",c:"#333"};}
 function sLbl(v){return v>=70?"Güçlü":v>=40?"Geliştirilmeli":"Zayıf";}
 
 /* ══ GRAFİKLER ══ */
