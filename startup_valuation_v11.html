@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valunorth — Startup Değerleme</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F8F7F4;color:#1a1a1a;min-height:100vh;display:flex;justify-content:center;padding:2rem 1rem;}
+.container{width:100%;max-width:700px;}
+.logo-bar{font-size:11px;font-weight:600;color:#0F6E56;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.page-title{font-size:24px;font-weight:700;margin-bottom:4px;}
+.page-sub{font-size:14px;color:#888;margin-bottom:2rem;}
+.card{background:#fff;border:.5px solid #e0dfd8;border-radius:16px;padding:1.5rem;margin-bottom:1rem;}
+
+/* QUIZ */
+.prog-wrap{background:#EEEDFE;border-radius:99px;height:4px;margin-bottom:1.5rem;}
+.prog-fill{height:4px;border-radius:99px;background:#534AB7;transition:width .3s;}
+.step-meta{display:flex;justify-content:space-between;margin-bottom:8px;}
+.step-cat{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#534AB7;}
+.step-num{font-size:11px;color:#aaa;}
+.q-text{font-size:17px;font-weight:600;margin-bottom:6px;line-height:1.4;}
+.q-hint{font-size:13px;color:#999;margin-bottom:1.25rem;}
+.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;}
+.opt-btn{background:#fff;border:.5px solid #ddd;border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;font-size:14px;font-family:inherit;transition:all .15s;display:block;width:100%;}
+.opt-btn:hover{background:#F8F7F4;border-color:#aaa;}
+.opt-btn.sel{border:2px solid #534AB7;background:#EEEDFE;color:#3C3489;font-weight:600;}
+.nav-row{display:flex;justify-content:space-between;}
+.btn-back{background:transparent;border:.5px solid #ddd;border-radius:10px;padding:10px 20px;font-size:13px;color:#888;cursor:pointer;font-family:inherit;}
+.btn-next{background:#534AB7;border:none;border-radius:10px;padding:10px 28px;font-size:13px;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;}
+.btn-next:disabled{opacity:.3;cursor:not-allowed;}
+
+/* RESULT */
+.sec-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa;margin-bottom:10px;}
+.stage-pill{display:inline-block;padding:4px 14px;border-radius:99px;font-size:12px;font-weight:600;margin-bottom:10px;}
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;}
+.val-box{background:#F8F7F4;border-radius:10px;padding:14px;text-align:center;}
+.val-lbl{font-size:11px;color:#888;margin-bottom:4px;}
+.val-num{font-size:20px;font-weight:600;}
+.val-num.hi{color:#534AB7;font-size:26px;font-weight:700;}
+.mtags{display:flex;flex-wrap:wrap;gap:5px;padding-top:12px;border-top:.5px solid #eee;margin-top:12px;}
+.mtag{font-size:11px;padding:3px 9px;border-radius:20px;background:#EEEDFE;color:#3C3489;font-weight:500;}
+.warn{background:#FEF9F0;border:.5px solid #FAC775;border-radius:10px;padding:12px 14px;font-size:12px;color:#633806;line-height:1.6;margin-bottom:1rem;}
+
+/* BENCHMARK */
+.bm-wrap{background:#F8F7F4;border-radius:10px;padding:1rem;margin-top:1rem;}
+.bm-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bm-lbl{font-size:12px;color:#555;width:155px;flex-shrink:0;}
+.bm-track{flex:1;background:#e0dfd8;border-radius:99px;height:10px;position:relative;overflow:hidden;}
+.bm-fill{height:10px;border-radius:99px;position:absolute;}
+.bm-val{font-size:11px;font-weight:600;width:55px;text-align:right;}
+.bm-insight{background:#EEEDFE;border-radius:8px;padding:8px 12px;font-size:12px;color:#3C3489;margin-top:8px;}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;}
+.chart-box{background:#F8F7F4;border-radius:12px;padding:1rem;text-align:center;}
+.chart-ttl{font-size:11px;font-weight:600;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;}
+.bar-chart{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:8px;}
+.bar-lbl{font-size:11px;color:#555;width:80px;text-align:right;}
+.bar-track{flex:1;background:#e8e7f0;border-radius:99px;height:14px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;}
+.bar-val{font-size:11px;font-weight:600;width:40px;}
+.sc-compare{display:flex;flex-direction:column;gap:7px;}
+.sc-row{display:flex;align-items:center;gap:8px;}
+.sc-lbl{font-size:11px;color:#555;width:110px;flex-shrink:0;}
+.sc-track{flex:1;background:#e8e7f0;border-radius:4px;height:20px;overflow:hidden;}
+.sc-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;font-size:10px;font-weight:600;color:#fff;}
+.sc-delta{font-size:10px;font-weight:600;color:#3B6D11;width:45px;text-align:right;}
+
+/* GROWTH SVG */
+.growth-wrap{margin-bottom:.5rem;}
+
+/* 360 PANEL */
+.dim360{background:linear-gradient(135deg,#1C2535,#2E3D55);border-radius:12px;padding:1.25rem;margin-bottom:1rem;}
+.dim360-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;}
+.dim360-sub{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:14px;}
+.dim360-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.dim360-item{background:rgba(255,255,255,.08);border-radius:8px;padding:10px 6px;text-align:center;}
+.dim360-ico{font-size:16px;margin-bottom:4px;}
+.dim360-name{font-size:10px;font-weight:600;color:#fff;margin-bottom:5px;}
+.dim360-bar-bg{background:rgba(255,255,255,.12);border-radius:99px;height:4px;margin-bottom:4px;}
+.dim360-bar{height:4px;border-radius:99px;}
+.dim360-score{font-size:10px;color:rgba(255,255,255,.4);}
+.dim360-lbl{font-size:9px;font-weight:600;padding:2px 6px;border-radius:99px;display:inline-block;margin-top:3px;}
+
+/* SCENARIO CARDS */
+.sc-section-head{margin:1.25rem 0 .75rem;padding-bottom:8px;}
+.sc-section-bar{height:2px;border-radius:2px;width:24px;margin-bottom:6px;}
+.sc-section-title{font-size:13px;font-weight:700;}
+.sc-section-sub{font-size:11px;color:#888;margin-top:2px;}
+.scenario-card{border:.5px solid #e0dfd8;border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.scenario-head{display:flex;gap:12px;padding:13px 15px;border-bottom:.5px solid #f0efe8;align-items:flex-start;}
+.sc-num{width:26px;height:26px;min-width:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-top:1px;}
+.sc-right{flex:1;}
+.sc-title{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:3px;}
+.sc-desc{font-size:12px;color:#555;line-height:1.55;}
+.sc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+.sc-tag{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600;}
+.sc-tag-green{background:#EAF3DE;color:#27500A;}
+.sc-tag-amber{background:#FEF9F0;color:#633806;}
+.sc-tag-blue{background:#EEEDFE;color:#3C3489;}
+.sc-tag-dim{background:#EEEDFE;color:#3C3489;}
+.sc-body{padding:13px 15px;background:#FAFAF8;}
+.budget-table{width:100%;border-collapse:collapse;font-size:12px;}
+.budget-table th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;color:#888;letter-spacing:.05em;padding:4px 6px;border-bottom:.5px solid #eee;}
+.budget-table td{padding:5px 6px;border-bottom:.5px solid #f5f5f5;color:#333;vertical-align:top;}
+.budget-table tr:last-child td{border-bottom:none;}
+.cost-col{text-align:right;font-weight:600;color:#534AB7;}
+.total-row td{font-weight:700;border-top:.5px solid #ddd;padding-top:8px;}
+.budget-note{font-size:11px;color:#aaa;margin-top:6px;font-style:italic;}
+.impact-bar-wrap{margin-top:8px;}
+.impact-bar-lbl{font-size:11px;color:#888;margin-bottom:3px;}
+.impact-track{background:#e0dfd8;border-radius:99px;height:8px;}
+.impact-fill{height:8px;border-radius:99px;background:linear-gradient(90deg,#534AB7,#1D9E75);}
+
+/* REPORT */
+.report-sec{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:.5px solid #f0efe8;}
+.report-sec:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.report-sec h3{font-size:13px;font-weight:700;color:#534AB7;margin-bottom:9px;}
+.report-sec p{font-size:13px;line-height:1.75;color:#333;margin-bottom:8px;}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0;}
+.metric-box{background:#F8F7F4;border-radius:8px;padding:10px;text-align:center;}
+.metric-val{font-size:18px;font-weight:700;color:#534AB7;}
+.metric-lbl{font-size:11px;color:#888;margin-top:2px;}
+.highlight{background:linear-gradient(135deg,#EAF3DE,#D4EDBC);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;color:#27500A;line-height:1.7;border-left:3px solid #639922;}
+.ch-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;}
+.ch-box{background:#F8F7F4;border-radius:8px;padding:10px;}
+.ch-name{font-size:12px;font-weight:700;color:#534AB7;margin-bottom:4px;}
+.ch-desc{font-size:12px;color:#555;line-height:1.5;}
+.risk-item{background:#FCEBEB;border-radius:8px;padding:10px 13px;margin-bottom:8px;}
+.risk-title{font-size:13px;font-weight:700;color:#791F1F;margin-bottom:3px;}
+.risk-desc{font-size:12px;color:#7a3030;line-height:1.55;}
+.purpose-p{border-left:3px solid #EEEDFE;padding-left:12px;margin-bottom:10px;}
+
+/* TIMELINE */
+.tl-wrap{display:flex;flex-direction:column;gap:0;}
+.tl-phase{display:grid;grid-template-columns:85px 1fr;gap:0;}
+.tl-left{display:flex;flex-direction:column;align-items:center;padding-right:14px;}
+.tl-pill{font-size:10px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap;}
+.tl-line{flex:1;width:2px;margin:6px 0;}
+.tl-right{padding-bottom:16px;}
+.tl-head{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:8px;}
+.tl-items{display:flex;flex-direction:column;gap:6px;}
+.tl-item{background:#F8F7F4;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;}
+.tl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.tl-text{font-size:12px;color:#333;flex:1;}
+.tl-cost{font-size:11px;font-weight:600;color:#534AB7;}
+
+/* SUMMARY TABLE */
+.sum-table{width:100%;border-collapse:collapse;font-size:12px;}
+.sum-table th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#888;padding:6px 10px;border-bottom:.5px solid #e0dfd8;background:#F8F7F4;}
+.sum-table td{padding:8px 10px;border-bottom:.5px solid #f5f5f5;color:#333;vertical-align:middle;}
+.sum-table tr:last-child td{border-bottom:none;}
+.sum-total td{font-weight:700;border-top:.5px solid #ddd;background:#F8F7F4;}
+.ph-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;}
+.roi-bar{background:linear-gradient(135deg,#1C2535,#2E3D55);border-radius:10px;padding:1rem;margin-top:1rem;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.roi-item{text-align:center;}
+.roi-val{font-size:20px;font-weight:700;color:#5DCAA5;}
+.roi-lbl{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;}
+
+/* PAKET SEÇİM */
+.pkg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1rem;}
+.pkg-card{border-radius:12px;overflow:hidden;border:.5px solid #e0dfd8;cursor:pointer;transition:border-color .2s;}
+.pkg-card:hover{border-color:#534AB7;}
+.pkg-card.best{border:2px solid #0F6E56;}
+.pkg-head{padding:13px 15px;}
+.pkg-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:7px;}
+.pkg-name{font-size:15px;font-weight:700;margin-bottom:3px;}
+.pkg-tagline{font-size:11px;color:#888;margin-bottom:8px;}
+.pkg-price{font-size:22px;font-weight:700;}
+.pkg-limit{font-size:11px;color:#888;margin-top:3px;}
+.pkg-body{padding:12px 15px;background:#FAFAF8;border-top:.5px solid #eee;}
+.pkg-feat{display:flex;gap:7px;margin-bottom:6px;align-items:flex-start;}
+.pkg-feat-ico{font-size:12px;width:16px;flex-shrink:0;}
+.pkg-feat-txt{font-size:12px;color:#333;line-height:1.4;}
+.pkg-feat-txt.dim{color:#ccc;text-decoration:line-through;}
+.pkg-btn{display:block;text-align:center;padding:9px;margin-top:8px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;width:100%;}
+
+/* ACTION ROW */
+.action-row{display:flex;gap:10px;margin-top:1.5rem;flex-wrap:wrap;}
+.btn-pdf{background:#534AB7;border:none;border-radius:10px;padding:12px 22px;font-size:13px;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;display:flex;align-items:center;gap:6px;}
+.btn-sim{background:#1C2535;border:none;border-radius:10px;padding:12px 22px;font-size:13px;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;}
+.btn-restart{background:transparent;border:.5px solid #ddd;border-radius:10px;padding:12px 20px;font-size:13px;color:#888;cursor:pointer;font-family:inherit;}
+.print-hint{font-size:12px;color:#aaa;margin-top:8px;line-height:1.6;}
+
+/* SİMÜLASYON MODAL */
+.sim-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.sim-modal{background:#fff;border-radius:16px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;}
+.sim-modal-head{padding:1rem 1.25rem;border-bottom:.5px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1;}
+.sim-modal-title{font-size:15px;font-weight:700;}
+.sim-close{background:transparent;border:none;font-size:20px;cursor:pointer;color:#888;line-height:1;}
+.sim-modal-body{padding:1.25rem;flex:1;}
+.sim-intro{background:linear-gradient(135deg,#1C2535,#2E3D55);border-radius:12px;padding:1.5rem;text-align:center;}
+.sim-intro-ico{font-size:32px;margin-bottom:8px;}
+.sim-intro-ttl{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;}
+.sim-intro-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:14px;}
+.sim-start{background:#5DCAA5;color:#04342C;font-size:13px;font-weight:700;padding:11px 28px;border-radius:99px;border:none;cursor:pointer;font-family:inherit;}
+.sim-prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sim-prog-track{flex:1;background:#eee;border-radius:99px;height:4px;}
+.sim-prog-fill{height:4px;background:#534AB7;border-radius:99px;transition:width .3s;}
+.sim-prog-lbl{font-size:11px;color:#888;white-space:nowrap;}
+.sim-chat{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:300px;overflow-y:auto;}
+.sim-msg-inv{align-self:flex-start;max-width:88%;}
+.sim-msg-usr{align-self:flex-end;max-width:88%;}
+.sim-lbl{font-size:10px;color:#aaa;margin-bottom:3px;font-weight:600;text-transform:uppercase;}
+.sim-msg-usr .sim-lbl{text-align:right;}
+.sim-bubble-inv{background:#1C2535;color:#fff;padding:10px 14px;border-radius:12px;border-bottom-left-radius:3px;font-size:13px;line-height:1.6;}
+.sim-bubble-usr{background:#534AB7;color:#fff;padding:10px 14px;border-radius:12px;border-bottom-right-radius:3px;font-size:13px;line-height:1.6;}
+.sim-typing-wrap{display:flex;gap:5px;padding:10px 14px;background:#f5f5f5;border-radius:12px;border-bottom-left-radius:3px;width:fit-content;}
+.sim-dot{width:7px;height:7px;border-radius:50%;background:#534AB7;animation:sdot .8s ease-in-out infinite;}
+.sim-dot:nth-child(2){animation-delay:.15s;}
+.sim-dot:nth-child(3){animation-delay:.3s;}
+@keyframes sdot{0%,80%,100%{transform:scale(0);}40%{transform:scale(1);}}
+.sim-input-row{display:flex;gap:8px;}
+.sim-ta{flex:1;border:.5px solid #ddd;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;resize:none;height:54px;}
+.sim-ta:focus{outline:none;border-color:#534AB7;}
+.sim-send{background:#534AB7;border:none;border-radius:10px;padding:9px 16px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.sim-send:disabled{opacity:.35;cursor:not-allowed;}
+.sim-result{background:#F8F7F4;border-radius:12px;padding:1.25rem;}
+.sim-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.sim-score-box{background:#fff;border-radius:8px;padding:10px;text-align:center;border:.5px solid #eee;}
+.sim-score-val{font-size:22px;font-weight:700;}
+.sim-score-lbl{font-size:10px;color:#888;margin-top:2px;}
+.sim-verdict{background:#1C2535;border-radius:8px;padding:10px 12px;font-size:13px;color:#5DCAA5;font-weight:600;margin-bottom:12px;}
+.sim-weak-list{display:flex;flex-direction:column;gap:8px;}
+.sim-weak-item{background:#fff;border-radius:8px;padding:10px 12px;border:.5px solid #eee;display:flex;gap:10px;}
+.sim-weak-num{width:20px;height:20px;border-radius:50%;background:#FCEBEB;color:#791F1F;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sim-weak-body{flex:1;}
+.sim-weak-ttl{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px;}
+.sim-weak-fix{font-size:11px;color:#0F6E56;font-weight:600;}
+
+/* PDF */
+.pdf-header{display:none;}
+@media print{
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+  body{background:#fff !important;padding:0 !important;display:block;}
+  .container{max-width:100% !important;}
+  .action-row,.print-hint{display:none !important;}
+  .pdf-header{display:block !important;background:#534AB7 !important;color:#fff;border-radius:10px;padding:1.5rem;margin-bottom:1rem;}
+  .pdf-header h1{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;}
+  .pdf-header p{font-size:12px;color:rgba(255,255,255,.8);}
+  .card{border:1px solid #ddd !important;border-radius:8px !important;margin-bottom:10px !important;page-break-inside:avoid;}
+  .scenario-card{page-break-inside:avoid;}
+  @page{margin:12mm 10mm;size:A4;}
+}
+</style>
+</head>
+<body>
+<div style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+  <a href="startup_valuation_v11.html" 
+     onclick="
+       var a=document.createElement('a');
+       var blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});
+       a.href=URL.createObjectURL(blob);
+       a.download='valunorth_degerleme.html';
+       a.click();
+       return false;
+     "
+     style="display:flex;align-items:center;gap:8px;background:#1C2535;color:#5DCAA5;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;padding:12px 20px;border-radius:99px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.3);border:1px solid rgba(93,202,165,.3);transition:all .2s;"
+     onmouseover="this.style.background='#2E3D55'"
+     onmouseout="this.style.background='#1C2535'">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Aracı İndir
+  </a>
+</div>
+<div class="container">
+
+  <!-- HEADER -->
+  <div style="margin-bottom:2rem;">
+    <div class="logo-bar">Valunorth · Startup Değerleme</div>
+    <h1 class="page-title">Girişiminizi değerleyin</h1>
+    <p class="page-sub">20 soru · 360° analiz · AI yatırımcı simülasyonu · PDF raporu</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card" id="quiz-card">
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:5%"></div></div>
+    <div class="step-meta">
+      <span class="step-cat" id="step-cat"></span>
+      <span class="step-num" id="step-num"></span>
+    </div>
+    <p class="q-text" id="q-text"></p>
+    <p class="q-hint" id="q-hint"></p>
+    <div class="opts" id="q-opts"></div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()">← Geri</button>
+      <button class="btn-next" id="btn-next" onclick="goNext()" disabled>Devam →</button>
+    </div>
+  </div>
+
+  <!-- PAKET SEÇİM -->
+  <div class="card" id="pkg-card" style="display:none;">
+    <div class="sec-lbl">Planınızı seçin</div>
+    <p style="font-size:13px;color:#888;margin-bottom:1.25rem;">Değerleme raporunuza erişmek için bir plan seçin.</p>
+    <div class="pkg-grid">
+      <div class="pkg-card" onclick="choosePkg(this,'free')">
+        <div class="pkg-head" style="background:#F5F4EF;">
+          <span class="pkg-badge" style="background:#eee;color:#666;">Free</span>
+          <div class="pkg-name">Free</div>
+          <div class="pkg-tagline">Temel değerleme</div>
+          <div class="pkg-price" style="color:#888;">₺0</div>
+          <div class="pkg-limit">Yılda 1 değerleme</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt">Temel değerleme & profil skoru</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">❌</span><span class="pkg-feat-txt dim">PDF & detaylı senaryo</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">❌</span><span class="pkg-feat-txt dim">AI simülasyon</span></div>
+          <button class="pkg-btn" style="background:#eee;color:#555;">Seç</button>
+        </div>
+      </div>
+      <div class="pkg-card" onclick="choosePkg(this,'starter')">
+        <div class="pkg-head" style="background:#EEEDFE;">
+          <span class="pkg-badge" style="background:#534AB7;color:#fff;">Starter</span>
+          <div class="pkg-name">Starter</div>
+          <div class="pkg-tagline">Tam analiz + PDF</div>
+          <div class="pkg-price" style="color:#534AB7;">₺999</div>
+          <div class="pkg-limit">Yılda 1 değerleme</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt">360° analiz & benchmark</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt">8 senaryo + bütçe + PDF</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">❌</span><span class="pkg-feat-txt dim">AI simülasyon</span></div>
+          <button class="pkg-btn" style="background:#534AB7;color:#fff;">Satın Al</button>
+        </div>
+      </div>
+      <div class="pkg-card best" onclick="choosePkg(this,'growth')">
+        <div class="pkg-head" style="background:#1C2535;">
+          <span class="pkg-badge" style="background:#5DCAA5;color:#04342C;">En Çok Tercih</span>
+          <div class="pkg-name" style="color:#fff;">Growth</div>
+          <div class="pkg-tagline" style="color:rgba(255,255,255,.55);">AI simülasyon dahil</div>
+          <div class="pkg-price" style="color:#5DCAA5;">₺4.999</div>
+          <div class="pkg-limit" style="color:rgba(255,255,255,.4);">Yılda 4 değerleme</div>
+        </div>
+        <div class="pkg-body" style="background:#1C2535;border-top:.5px solid rgba(255,255,255,.1);">
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt" style="color:#ddd;">Starter'daki her şey</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt" style="color:#5DCAA5;font-weight:600;">AI yatırımcı simülasyonu</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt" style="color:#ddd;">Büyüme takibi & piyasa verisi</span></div>
+          <button class="pkg-btn" style="background:#5DCAA5;color:#04342C;">Hemen Başla</button>
+        </div>
+      </div>
+      <div class="pkg-card" onclick="choosePkg(this,'pro')">
+        <div class="pkg-head" style="background:#EBF5E8;">
+          <span class="pkg-badge" style="background:#0F6E56;color:#fff;">Pro</span>
+          <div class="pkg-name">Pro</div>
+          <div class="pkg-tagline">Gerçek danışman desteği</div>
+          <div class="pkg-price" style="color:#0F6E56;">₺9.999</div>
+          <div class="pkg-limit">Sınırsız · 1 yıl</div>
+        </div>
+        <div class="pkg-body">
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt">Growth'daki her şey</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt">Birebir danışmanlık seansı</span></div>
+          <div class="pkg-feat"><span class="pkg-feat-ico">✅</span><span class="pkg-feat-txt">Yatırımcı ağı & intro servisi</span></div>
+          <button class="pkg-btn" style="background:#0F6E56;color:#fff;">Görüşme Ayarla</button>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#aaa;text-align:center;">Demo modunda — tüm paketler tam raporu gösterir.</p>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-area" style="display:none;">
+    <div class="pdf-header">
+      <h1>Startup Değerleme Raporu — Valunorth</h1>
+      <p id="pdf-sub"></p>
+      <p id="pdf-date" style="font-size:11px;opacity:.6;margin-top:4px;"></p>
+    </div>
+
+    <div class="card" id="card-val"></div>
+    <div class="warn" id="val-warn">Bu değer tahmin aralığıdır. Gerçek yatırımcı müzakerelerinde pazar koşulları bu rakamı önemli ölçüde etkiler. Başlangıç noktası olarak kullanın.</div>
+    <div class="card" id="card-charts"></div>
+    <div class="card" id="card-growth"></div>
+    <div class="card" id="card-scenarios"></div>
+    <div class="card" id="card-report"></div>
+    <div class="card" id="card-timeline"></div>
+    <div class="card" id="card-summary"></div>
+
+    <div class="action-row">
+      <button class="btn-pdf" onclick="window.print()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        PDF Kaydet
+      </button>
+      <button class="btn-sim" onclick="openSim()">🎭 AI Yatırımcı Simülasyonu</button>
+      <button class="btn-restart" onclick="restart()">↺ Yeniden Değerle</button>
+    </div>
+    <p class="print-hint"><strong>Chrome/Edge:</strong> Yazdır → Hedef → "PDF olarak kaydet" &nbsp;|&nbsp; <strong>Safari:</strong> Yazdır → PDF menüsü → "PDF olarak kaydet"</p>
+  </div>
+
+  <!-- SİMÜLASYON MODAL -->
+  <div class="sim-overlay" id="sim-overlay" style="display:none;">
+    <div class="sim-modal">
+      <div class="sim-modal-head">
+        <div class="sim-modal-title">🎭 AI Yatırımcı Simülasyonu</div>
+        <button class="sim-close" onclick="closeSim()">✕</button>
+      </div>
+      <div class="sim-modal-body">
+        <div id="sim-intro">
+          <div class="sim-intro">
+            <div class="sim-intro-ico">🎭</div>
+            <div class="sim-intro-ttl">Yatırımcı karşısına geç</div>
+            <div class="sim-intro-sub">Girişim profilinizi analiz ettim. Gerçek bir yatırımcı gibi 10 soru soracağım. Dürüst ve kısa cevap verin. Sonunda güçlü ve zayıf noktalarınızı göreceksiniz.</div>
+            <button class="sim-start" onclick="startSim()">Başlat →</button>
+          </div>
+        </div>
+        <div id="sim-chat-section" style="display:none;">
+          <div class="sim-prog-row">
+            <div class="sim-prog-track"><div class="sim-prog-fill" id="spf" style="width:0%"></div></div>
+            <div class="sim-prog-lbl" id="spl">0 / 10</div>
+          </div>
+          <div class="sim-chat" id="sim-chat-msgs"></div>
+          <div id="sim-input-area" class="sim-input-row">
+            <textarea class="sim-ta" id="sim-ta" placeholder="Cevabınızı yazın..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSim();}"></textarea>
+            <button class="sim-send" id="sim-send" onclick="sendSim()" disabled>Gönder</button>
+          </div>
+        </div>
+        <div id="sim-result-section" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ════ SORULAR ════ */
+const Qs=[
+  {cat:"Traction & Gelir",text:"Kaç tane ödeme yapan aktif müşteriniz var?",hint:"Ücretsiz kullanıcılar değil, ödeme yapanlar.",key:"cust",opts:[{l:"Henüz yok",v:0},{l:"1–10 müşteri",v:5},{l:"11–50 müşteri",v:30},{l:"51–200 müşteri",v:125},{l:"200+ müşteri",v:300}]},
+  {cat:"Traction & Gelir",text:"Son 3 ayın toplam geliri nedir?",hint:"₺ cinsinden yaklaşık rakam yeterli.",key:"rev3m",opts:[{l:"₺0 (henüz gelir yok)",v:0},{l:"₺1 – ₺50.000",v:25000},{l:"₺50.000 – ₺300.000",v:175000},{l:"₺300.000 – ₺1.000.000",v:650000},{l:"₺1.000.000+",v:2000000}]},
+  {cat:"Traction & Gelir",text:"Aylık ortalama büyüme hızınız nedir?",hint:"Son 3 ay gelir veya kullanıcı bazında.",key:"growth",opts:[{l:"Henüz ölçemiyorum",v:0},{l:"%0–5 (yatay)",v:2},{l:"%5–15 (istikrarlı)",v:10},{l:"%15–30 (hızlı büyüme)",v:22},{l:"%30+ (çok hızlı)",v:40}]},
+  {cat:"Traction & Gelir",text:"Müşteri başına ortalama aylık gelir (ARPU)?",hint:"Yaklaşık bir rakam verin.",key:"arpu",opts:[{l:"Henüz yok / bilemiyorum",v:0},{l:"₺0–500/ay",v:250},{l:"₺500–2.000/ay",v:1250},{l:"₺2.000–10.000/ay",v:6000},{l:"₺10.000+/ay",v:20000}]},
+  {cat:"İş Modeli & Pazar",text:"Girişiminizin iş modeli hangisine en yakın?",hint:"Baskın modeli seçin.",key:"model",opts:[{l:"SaaS / abonelik yazılım",v:"saas"},{l:"Marketplace / platform",v:"marketplace"},{l:"E-ticaret / ürün satışı",v:"ecommerce"},{l:"Deep tech / donanım / biyoteknoloji",v:"deeptech"},{l:"Hizmet / danışmanlık",v:"service"},{l:"Fintech / sigorta / regtech",v:"fintech"}]},
+  {cat:"İş Modeli & Pazar",text:"Birincil müşteri segmentiniz kim?",hint:"",key:"seg",opts:[{l:"B2B — işletmelere satıyorum",v:"b2b"},{l:"B2C — bireysel tüketicilere satıyorum",v:"b2c"},{l:"B2B2C — işletmeler üzerinden son kullanıcıya",v:"b2b2c"},{l:"Kamu / kamu-özel işbirliği",v:"gov"}]},
+  {cat:"İş Modeli & Pazar",text:"Hedef pazarınızın büyüklüğü nedir?",hint:"Şu an odaklandığınız gerçekçi pazar.",key:"mkt",opts:[{l:"Niş / yerel (< $50M)",v:1},{l:"Orta ölçekli ($50M – $500M)",v:2},{l:"Büyük ($500M – $5B)",v:3},{l:"Çok büyük / global ($5B+)",v:4}]},
+  {cat:"İş Modeli & Pazar",text:"Ürününüz hangi aşamada?",hint:"Mevcut ürün durumunuz.",key:"stage_prod",opts:[{l:"Sadece fikir / araştırma",v:1},{l:"Prototip / MVP var",v:2},{l:"Beta / ilk kullanıcılar var",v:3},{l:"Lansman yapıldı, aktif kullanım var",v:4},{l:"Olgunlaşmış ürün, ölçekleniyoruz",v:5}]},
+  {cat:"Takım",text:"Kurucu yapınız nasıl?",hint:"Teknik kurucu: ürünü bizzat geliştirebilen kişi.",key:"team",opts:[{l:"Tek kurucu, teknik değil",v:1},{l:"Tek kurucu, teknik",v:2},{l:"2 kurucu, teknik kurucu yok",v:2},{l:"2 kurucu, biri teknik",v:3},{l:"3+ kurucu, teknik var",v:4}]},
+  {cat:"Takım",text:"Çekirdek ekibinizin sektördeki toplam deneyimi?",hint:"Kurucular dahil.",key:"exp",opts:[{l:"0–2 yıl (genç ekip)",v:1},{l:"2–5 yıl",v:2},{l:"5–10 yıl",v:3},{l:"10+ yıl (deneyimli ekip)",v:4}]},
+  {cat:"Takım",text:"Daha önce şirket kurup sattınız mı?",hint:"Başarılı exit deneyimi değerlemeye doğrudan etki eder.",key:"exit",opts:[{l:"Hayır, ilk girişimimiz",v:0},{l:"Hayır ama önceki girişimim vardı",v:1},{l:"Evet, küçük ölçekli çıkış",v:2},{l:"Evet, önemli çıkış yaptım",v:3}]},
+  {cat:"Takım",text:"Tam zamanlı çalışan sayınız?",hint:"Kurucular dahil, part-time hariç.",key:"headcount",opts:[{l:"1–2 kişi",v:1},{l:"3–5 kişi",v:2},{l:"6–15 kişi",v:3},{l:"16–50 kişi",v:4},{l:"50+ kişi",v:5}]},
+  {cat:"Rekabet & Konum",text:"Rakiplerinize kıyasla temel farklılaşmanız?",hint:"En güçlü bir tanesini seçin.",key:"diff",opts:[{l:"Teknoloji / IP / patent avantajı",v:4},{l:"Fiyat avantajı",v:2},{l:"Niş segment uzmanlığı",v:3},{l:"Coğrafi ilk giriş avantajı",v:3},{l:"Ağ etkisi / topluluk",v:4},{l:"Henüz net farklılaşma yok",v:1}]},
+  {cat:"Rekabet & Konum",text:"Rakipler ürününüzü ne kadar sürede kopyalayabilir?",hint:"Savunulabilirlik sorusu.",key:"moat",opts:[{l:"6 aydan kısa (düşük bariyer)",v:1},{l:"6 ay – 2 yıl",v:2},{l:"2+ yıl (güçlü bariyer)",v:3},{l:"Neredeyse kopyalanamaz",v:4}]},
+  {cat:"Rekabet & Konum",text:"Müşteri edinme maliyetinizi (CAC) biliyor musunuz?",hint:"Bu veri birim ekonominizi gösterir.",key:"cac_aware",opts:[{l:"Henüz ölçmedim",v:0},{l:"Kabaca biliyorum",v:1},{l:"Evet, net olarak biliyorum",v:2},{l:"Evet ve optimize ediyorum",v:3}]},
+  {cat:"Sermaye & Finansal",text:"Mevcut nakit / runway'iniz nedir?",hint:"Kaç aylık operasyon paranız var?",key:"runway",opts:[{l:"3 aydan az (kritik)",v:1},{l:"3–6 ay",v:2},{l:"6–12 ay",v:3},{l:"12+ ay",v:4}]},
+  {cat:"Sermaye & Finansal",text:"Daha önce yatırım aldınız mı?",hint:"Melek, kuluçka, VC veya hibe dahil.",key:"prev_fund",opts:[{l:"Hayır, henüz almadım",v:0},{l:"Hibe / kuluçka (< ₺500K)",v:1},{l:"Melek yatırım (₺500K – ₺5M)",v:2},{l:"Seed / pre-A turu (₺5M+)",v:3}]},
+  {cat:"Sermaye & Finansal",text:"Brüt marjınız yaklaşık nedir?",hint:"(Gelir - Değişken maliyetler) / Gelir.",key:"margin",opts:[{l:"%0–20 (düşük marj)",v:1},{l:"%20–50 (orta marj)",v:2},{l:"%50–70 (yüksek marj)",v:3},{l:"%70+ (çok yüksek marj)",v:4}]},
+  {cat:"Hedef & Strateji",text:"12 ay içindeki öncelikli hedefiniz nedir?",hint:"En kritik bir tanesini seçin.",key:"goal",opts:[{l:"İlk geliri elde etmek",v:"revenue"},{l:"Ürünü olgunlaştırmak",v:"product"},{l:"Yatırım almak",v:"funding"},{l:"Hızlı büyüme / ölçeklenme",v:"scale"},{l:"Karlılığa ulaşmak",v:"profit"}]},
+  {cat:"Hedef & Strateji",text:"Bu değerlemeyi esas olarak ne için kullanacaksınız?",hint:"En doğru senaryo önerileri için.",key:"purpose",opts:[{l:"Yeni yatırım turu hazırlığı",v:"funding"},{l:"Ortak / hissedar anlaşmazlığı",v:"dispute"},{l:"Kuluçka / hızlandırıcı başvurusu",v:"accelerator"},{l:"Kendi kendimi değerlendirmek",v:"selfcheck"}]}
+];
+
+let cur=0, A={};
+
+/* ════ HESAPLAMA ════ */
+function getStage(){
+  const r=A.rev3m||0, c=A.cust||0, g=A.growth||0;
+  const sp=A.stage_prod||1, pf=A.prev_fund||0, hc=A.headcount||1;
+
+  // Puan tabanlı aşama tespiti — 6 aşama
+  const scores={preseed:0,seed:0,early:0,growth:0,scaleup:0,late:0};
+
+  // ── BİRİNCİL SİNYALLER (3x ağırlık) ──
+  // Müşteri sayısı
+  if(c<=2)                          scores.preseed+=30;
+  else if(c<=15)                    scores.seed+=30;
+  else if(c<=60)                    scores.early+=30;
+  else if(c<=300)                   scores.growth+=30;
+  else if(c<=1000)                  scores.scaleup+=30;
+  else                              scores.late+=30;
+
+  // 3 aylık gelir
+  if(r===0)                         scores.preseed+=30;
+  else if(r<=50000)                 scores.seed+=30;
+  else if(r<=300000)                scores.early+=30;
+  else if(r<=1500000)               scores.growth+=30;
+  else if(r<=6000000)               scores.scaleup+=30;
+  else                              scores.late+=30;
+
+  // Ürün aşaması
+  if(sp<=2){scores.preseed+=30;}
+  else if(sp===3){scores.seed+=20;scores.early+=10;}
+  else if(sp===4){scores.early+=20;scores.growth+=10;}
+  else if(sp===5){scores.growth+=10;scores.scaleup+=15;scores.late+=5;}
+
+  // ── DESTEKLEYİCİ SİNYALLER (1.5x ağırlık) ──
+  // Büyüme hızı
+  if(g===0){scores.preseed+=8;}
+  else if(g<=5){scores.seed+=8;}
+  else if(g<=20){scores.early+=12;}
+  else if(g<=35){scores.growth+=15;}
+  else{scores.growth+=12;scores.scaleup+=3;}
+
+  // Önceki yatırım
+  if(pf===0){scores.preseed+=10;}
+  else if(pf===1){scores.seed+=10;}
+  else if(pf===2){scores.early+=8;scores.growth+=5;}
+  else if(pf===3){scores.growth+=8;scores.scaleup+=10;scores.late+=5;}
+
+  // Çalışan sayısı
+  if(hc===1){scores.preseed+=8;scores.seed+=4;}
+  else if(hc===2){scores.seed+=8;scores.early+=4;}
+  else if(hc===3){scores.early+=8;scores.growth+=4;}
+  else if(hc===4){scores.growth+=8;scores.scaleup+=4;}
+  else{scores.scaleup+=8;scores.late+=6;}
+
+  // En yüksek skoru bul
+  let best='preseed', bestScore=0;
+  Object.entries(scores).forEach(([k,v])=>{if(v>bestScore){bestScore=v;best=k;}});
+  return best;
+}
+function calcVal(){
+  const st=getStage();
+  const r3=A.rev3m||0, ar=r3*4, g=A.growth||0, m=A.model||"saas";
+  const mk=A.mkt||2, mg=A.margin||2, sp=A.stage_prod||1;
+  const team=A.team||1, exp=A.exp||1, exit=A.exit||0, hc=A.headcount||1;
+  const diff=A.diff||1, mo=A.moat||1, cac=A.cac_aware||0;
+  const runway=A.runway||1, pf=A.prev_fund||0;
+  const ts=team+exp+exit+hc;
+
+  // ── TEMEL ÇARPANLAR (büyümeye göre dinamik) ──
+  const baseMults={saas:8,fintech:7,marketplace:6,deeptech:10,ecommerce:3,service:2};
+  const bmu=baseMults[m]||5;
+  // Büyüme faktörü
+  const gf=g>=30?1.45:g>=20?1.30:g>=10?1.15:g>=5?1.0:0.75;
+  const mu=bmu*gf;
+
+  // ── NİTELİKSEL PRİM / İSKONTO ──
+  let adj=1.0;
+  if(mo===4)adj+=0.15;       // Güçlü moat
+  else if(mo===1)adj-=0.20;  // Zayıf moat
+  if(ts>=12)adj+=0.12;       // Güçlü takım
+  if(exit>=2)adj+=0.10;      // Exit deneyimi
+  if(mk===4)adj+=0.10;       // Büyük pazar
+  if(cac===3)adj+=0.08;      // CAC optimize
+  if(runway===1)adj-=0.15;   // Kritik runway
+  if(team===1&&exp<=1)adj-=0.12; // Solo & deneyimsiz
+  if(mk===1)adj-=0.10;       // Küçük pazar
+  adj=Math.max(0.5,Math.min(1.5,adj));
+
+  let b=0;
+
+  // ── PRE-SEED ──
+  if(st==="preseed"){
+    b=1000000
+      +ts*150000
+      +mk*250000
+      +(diff-1)*100000
+      +(mo-1)*100000
+      +(sp-1)*100000
+      +exit*300000;
+    b=Math.max(b,800000);
+  }
+
+  // ── SEED ──
+  else if(st==="seed"){
+    b=2500000
+      +ts*180000
+      +mk*300000
+      +(diff-1)*150000
+      +(mo-1)*200000
+      +(sp-1)*120000
+      +(mg-1)*80000
+      +exit*400000;
+    b=Math.max(b,2000000);
+  }
+
+  // ── EARLY GROWTH ──
+  else if(st==="early"){
+    const arr_base=ar>0?ar*mu*0.6:5000000;
+    const qual=(ts*100000)+(mo*200000)+(mk*150000);
+    b=(arr_base+qual)*adj;
+    b=Math.max(b,4000000);
+  }
+
+  // ── GROWTH ──
+  else if(st==="growth"){
+    const mf=1+(mg-1)*0.08; // marj faktörü
+    b=ar*mu*mf*adj;
+    b=Math.max(b,15000000);
+  }
+
+  // ── SCALE-UP ──
+  else if(st==="scaleup"){
+    const mf=1+(mg-1)*0.07;
+    const intl=mk===4?1.2:1.0;
+    b=ar*mu*mf*intl*adj;
+    b=Math.max(b,80000000);
+  }
+
+  // ── LATE STAGE ──
+  else{
+    const mf=1+(mg-1)*0.06;
+    b=ar*mu*0.85*mf*adj;
+    b=Math.max(b,300000000);
+  }
+
+  // ── BANT ARALIĞI (aşamaya göre değişen belirsizlik) ──
+  const bands={
+    preseed:[0.55,1.80], seed:[0.60,1.65], early:[0.65,1.50],
+    growth:[0.72,1.40], scaleup:[0.78,1.32], late:[0.82,1.25]
+  };
+  const [lo_f,hi_f]=bands[st]||[0.72,1.40];
+  const round=st==="preseed"||st==="seed"?100000:1000000;
+
+  return{
+    lo:Math.round(b*lo_f/round)*round,
+    mid:Math.round(b/round)*round,
+    hi:Math.round(b*hi_f/round)*round,
+    st, ar, mu:bmu, adj
+  };
+}
+function getScores(){
+  return{
+    tr:Math.min(100,Math.round(((A.rev3m||0)/2000000*35)+((A.cust||0)/300*25)+((A.growth||0)/40*25)+((A.arpu||0)/20000*15))),
+    tm:Math.min(100,Math.round(((A.team||1)/4*30)+((A.exp||1)/4*30)+((A.exit||0)/3*25)+((A.headcount||1)/5*15))),
+    mk:Math.min(100,Math.round((A.mkt||1)/4*60+((A.stage_prod||1)-1)/4*40)),
+    mo:Math.min(100,Math.round(((A.diff||1)/4*45)+((A.moat||1)/4*40)+((A.cac_aware||0)/3*15))),
+    fin:Math.min(100,Math.round(((A.runway||1)/4*35)+((A.prev_fund||0)/3*30)+((A.margin||1)/4*35)))
+  };
+}
+function getWeights(st){return{
+  preseed:{"Berkus/Scorecard":50,"Risk Factor":30,"Market Size":20},
+  seed:{"Berkus/Scorecard":40,"Risk Factor":25,"Market Size":20,"VC":15},
+  early:{"Scorecard":20,"Traction/ARR":25,"VC":25,"Market Size":15,"Risk Factor":15},
+  growth:{"Traction/ARR":35,"VC":25,"Comparables":25,"Market Size":15},
+  scaleup:{"Traction/ARR":35,"Comparables":25,"VC":20,"DCF":20},
+  late:{"DCF":30,"Comparables":30,"Traction/ARR":25,"VC":15}
+}[st]||{"Scorecard":35,"Risk Factor":30,"Market Size":20,"VC":15};}
+function f(n){if(n>=1000000)return"₺"+(n/1000000).toFixed(1)+"M";if(n>=1000)return"₺"+Math.round(n/1000)+"K";return"₺"+n;}
+function fN(n){return n.toLocaleString("tr");}
+function stInfo(s){return{
+  preseed:{l:"Pre-Seed",bg:"#1C2535",c:"#5DCAA5"},
+  seed:{l:"Seed",bg:"#EEEDFE",c:"#3C3489"},
+  early:{l:"Early Growth",bg:"#E1F5EE",c:"#085041"},
+  growth:{l:"Growth",bg:"#FAEEDA",c:"#633806"},
+  scaleup:{l:"Scale-up",bg:"#E6F1FB",c:"#0C447C"},
+  late:{l:"Late Stage",bg:"#F5F4EF",c:"#444441"}
+}[s]||{l:s,bg:"#eee",c:"#333"};}
+function sLbl(v){return v>=70?"Güçlü":v>=40?"Geliştirilmeli":"Zayıf";}
+
+/* ════ RADAR SVG ════ */
+function buildRadar(sc){
+  const cx=120,cy=120,r=85,labs=["Traction","Takım","Pazar","Moat","Finansal"],vals=[sc.tr,sc.tm,sc.mk,sc.mo,sc.fin],cols=["#534AB7","#1D9E75","#BA7517","#E24B4A","#0C447C"];
+  const angs=[-90,-90+72,-90+144,-90+216,-90+288].map(d=>d*Math.PI/180);
+  function pt(a,p,rd){return[cx+rd*(p/100)*Math.cos(a),cy+rd*(p/100)*Math.sin(a)];}
+  let g="";
+  [100,75,50,25].forEach((p,i)=>{const ps=angs.map(a=>pt(a,p,r));const fs=["#F8F7FF","#F0EFFE","#E8E6FD","#DFDCFC"];g+=`<polygon points="${ps.map(p=>p.join(",")).join(" ")}" fill="${fs[i]}" stroke="#ddd" stroke-width="0.5"/>`;});
+  const ax=angs.map(a=>{const[x2,y2]=pt(a,100,r);return`<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#ccc" stroke-width="0.8"/>`;}).join("");
+  const dps=angs.map((a,i)=>pt(a,vals[i],r));
+  const poly=`<polygon points="${dps.map(p=>p.join(",")).join(" ")}" fill="#534AB7" fill-opacity="0.2" stroke="#534AB7" stroke-width="2"/>`;
+  const dots=dps.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join("");
+  const lbls=angs.map((a,i)=>{const[x,y]=pt(a,118,r);const anc=x<cx-5?"end":x>cx+5?"start":"middle";return`<text x="${x}" y="${y+4}" text-anchor="${anc}" font-size="10" fill="#444" font-family="-apple-system,sans-serif" font-weight="500">${labs[i]}</text>`;}).join("");
+  const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-12:x>cx+5?12:0,oy=y<cy-5?-10:y>cy+5?10:0;return`<text x="${x+ox}" y="${y+oy+4}" text-anchor="middle" font-size="10" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
+  return`<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
+}
+function buildBars(sc){
+  const items=[{l:"Traction",v:sc.tr,c:"#534AB7"},{l:"Takım",v:sc.tm,c:"#1D9E75"},{l:"Pazar",v:sc.mk,c:"#BA7517"},{l:"Moat",v:sc.mo,c:"#E24B4A"},{l:"Finansal",v:sc.fin,c:"#0C447C"}];
+  return`<div class="bar-chart">${items.map(it=>`<div class="bar-row"><div class="bar-lbl">${it.l}</div><div class="bar-track"><div class="bar-fill" style="width:${it.v}%;background:${it.c};"></div></div><div class="bar-val" style="color:${it.c};">${it.v}/100</div></div>`).join("")}</div>`;
+}
+function buildScCompare(val){
+  const s=[{l:"Mevcut",v:val.mid,c:"#534AB7"},{l:"İlk 10 müşteri",v:Math.round(val.mid*1.5/100000)*100000,c:"#1D9E75"},{l:"Takım güçlendi",v:Math.round(val.mid*1.22/100000)*100000,c:"#BA7517"},{l:"Tüm adımlar",v:Math.round(val.mid*2.1/100000)*100000,c:"#0C447C"}];
+  const mx=s[s.length-1].v;
+  return`<div class="sc-compare">${s.map((it,i)=>`<div class="sc-row"><div class="sc-lbl">${it.l}</div><div class="sc-track"><div class="sc-fill" style="width:${Math.round(it.v/mx*100)}%;background:${it.c};">${f(it.v)}</div></div><div class="sc-delta">${i===0?"baz":"+"+Math.round((it.v/val.mid-1)*100)+"%"}</div></div>`).join("")}</div>`;
+}
+function buildGrowthSVG(){
+  const g=Math.max(A.growth||5,3),r3=A.rev3m||0,baseMRR=r3/3||30000;
+  const months=[0,1,2,3,4,5,6,9,12];
+  const vals=months.map(m=>Math.round(baseMRR*Math.pow(1+g/100,m)/1000)*1000);
+  const scenVals=months.map(m=>Math.round(baseMRR*Math.pow(1+(g+12)/100,m)/1000)*1000);
+  const maxV=Math.max(...scenVals)*1.15||100000;
+  const W=560,H=190,PAD={t:20,r:20,b:38,l:60};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+  function px(i){return PAD.l+i/(months.length-1)*cW;}
+  function py(v){return PAD.t+cH*(1-v/maxV);}
+  const fk=n=>n>=1000000?"₺"+(n/1000000).toFixed(1)+"M":n>=1000?"₺"+Math.round(n/1000)+"K":"₺"+n;
+  const grid=[.25,.5,.75,1].map(p=>{const y=PAD.t+cH*(1-p);return`<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="#eee" stroke-width="1"/><text x="${PAD.l-5}" y="${y+4}" text-anchor="end" font-size="9" fill="#aaa">${fk(maxV*p)}</text>`;}).join("");
+  const xlbls=["Şimdi","1A","2A","3A","4A","5A","6A","9A","12A"];
+  const xls=months.map((_,i)=>`<text x="${px(i)}" y="${H-PAD.b+13}" text-anchor="middle" font-size="9" fill="#aaa">${xlbls[i]}</text>`).join("");
+  const bp=vals.map((v,i)=>`${i===0?"M":"L"}${px(i)} ${py(v)}`).join(" ");
+  const sp=scenVals.map((v,i)=>`${i===0?"M":"L"}${px(i)} ${py(v)}`).join(" ");
+  const area=`${bp} L${px(months.length-1)} ${py(0)} L${px(0)} ${py(0)} Z`;
+  const dots=vals.map((v,i)=>`<circle cx="${px(i)}" cy="${py(v)}" r="3.5" fill="#534AB7" stroke="#fff" stroke-width="1.5"/>`).join("");
+  const sdots=scenVals.map((v,i)=>`<circle cx="${px(i)}" cy="${py(v)}" r="3" fill="#1D9E75" stroke="#fff" stroke-width="1.5"/>`).join("");
+  return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#534AB7" stop-opacity=".2"/><stop offset="100%" stop-color="#534AB7" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${area}" fill="url(#ag)"/><path d="${bp}" fill="none" stroke="#534AB7" stroke-width="2.5" stroke-linecap="round"/><path d="${sp}" fill="none" stroke="#1D9E75" stroke-width="2" stroke-dasharray="5,3" stroke-linecap="round"/>${dots}${sdots}${xls}<rect x="${PAD.l}" y="${PAD.t}" width="${cW}" height="${cH}" fill="none" stroke="#eee"/></svg>`;
+}
+
+/* ════ BENCHMARK ════ */
+function buildBenchmark(val){
+  const st=val.st,m=A.model||"saas";
+  const meds={seed:{saas:3800000,marketplace:2500000,ecommerce:1800000,deeptech:5000000,service:1500000,fintech:4000000},early:{saas:9500000,marketplace:7000000,ecommerce:5000000,deeptech:14000000,service:4000000,fintech:11000000},growth:{saas:28000000,marketplace:22000000,ecommerce:15000000,deeptech:40000000,service:12000000,fintech:35000000},scaleup:{saas:85000000,marketplace:70000000,ecommerce:45000000,deeptech:120000000,service:35000000,fintech:100000000}};
+  const tops={seed:{saas:7500000,marketplace:5000000,ecommerce:3500000,deeptech:10000000,service:3000000,fintech:8000000},early:{saas:18000000,marketplace:14000000,ecommerce:10000000,deeptech:28000000,service:8000000,fintech:22000000},growth:{saas:55000000,marketplace:45000000,ecommerce:30000000,deeptech:80000000,service:24000000,fintech:70000000},scaleup:{saas:160000000,marketplace:130000000,ecommerce:85000000,deeptech:240000000,service:65000000,fintech:190000000}};
+  const med=(meds[st]||meds.early)[m]||(meds[st]||meds.early).saas;
+  const top=(tops[st]||tops.early)[m]||(tops[st]||tops.early).saas;
+  const mx=top*1.2;
+  const rows=[{l:"Sizin değerlemeniz",v:val.mid,pct:Math.min(95,Math.round(val.mid/mx*100)),c:"#534AB7"},{l:"TR Ekosistem medyanı",v:med,pct:Math.min(90,Math.round(med/mx*100)),c:"#888"},{l:"Üst %25 (TR)",v:top,pct:Math.min(88,Math.round(top/mx*100)),c:"#1D9E75"}];
+  const pos=val.mid>=top?"üst %25'e giriyor ✓":val.mid>=med?"medyanın üzerinde":"medyanın altında";
+  const insight=val.mid>=top?`Değerlemeniz Türkiye ekosisteminde ${pos}. Güçlü konumu korumak için moat ve traction'ı sürdürün.`:val.mid>=med?`Değerlemeniz ${pos}. Senaryoları uygulayarak üst banta yaklaşabilirsiniz.`:`Değerlemeniz şu an ${pos}. Bu tamamen normal — senaryoları uygulayarak medyanı hedefleyin.`;
+  return`<div class="bm-wrap">${rows.map(r=>`<div class="bm-row"><div class="bm-lbl">${r.l}</div><div class="bm-track"><div class="bm-fill" style="width:${r.pct}%;background:${r.c};opacity:${r.l==="Sizin değerlemeniz"?1:.5};"></div></div><div class="bm-val" style="color:${r.c};">${f(r.v)}</div></div>`).join("")}<div class="bm-insight">${insight}</div></div>`;
+}
+
+/* ════ SENARYO HAVUZU ════ */
+function buildScenarioCard(num,color,title,desc,delta,time,effort,items,note,impPct,dim){
+  const dimMap={tr:{cls:"sc-tag-blue",n:"📈 Traction"},tm:{cls:"sc-tag-blue",n:"👥 Takım"},mk:{cls:"sc-tag-blue",n:"🌍 Pazar"},mo:{cls:"sc-tag-blue",n:"🛡️ Moat"},fi:{cls:"sc-tag-blue",n:"💰 Finansal"}};
+  const dtag=dim&&dimMap[dim]?`<span class="sc-tag ${dimMap[dim].cls}">${dimMap[dim].n}</span>`:"";
+  const total=items.reduce((s,it)=>s+(it.cost||0),0);
+  const rows=items.map(it=>`<tr><td>${it.k}</td><td>${it.a}</td><td class="cost-col">${it.cost===0?"Ücretsiz":f(it.cost)}</td></tr>`).join("");
+  const trow=`<tr class="total-row"><td colspan="2"><strong>Toplam Tahmini Maliyet</strong></td><td class="cost-col"><strong>${total===0?"Ücretsiz":f(total)}</strong></td></tr>`;
+  const imp=impPct>0?`<div class="impact-bar-wrap"><div class="impact-bar-lbl">Değerleme Artış Potansiyeli</div><div class="impact-track"><div class="impact-fill" style="width:${Math.min(impPct,100)}%;"></div></div></div>`:"";
+  return`<div class="scenario-card"><div class="scenario-head"><div class="sc-num" style="background:${color};">${num}</div><div class="sc-right"><div class="sc-title">${title}</div><div class="sc-desc">${desc}</div><div class="sc-tags">${dtag}<span class="sc-tag sc-tag-green">${delta}</span><span class="sc-tag sc-tag-amber">⏱ ${time}</span><span class="sc-tag sc-tag-blue">💪 ${effort}</span></div></div></div><div class="sc-body"><table class="budget-table"><thead><tr><th>Maliyet Kalemi</th><th>Açıklama</th><th style="text-align:right;">Tutar</th></tr></thead><tbody>${rows}${trow}</tbody></table>${note?`<div class="budget-note">* ${note}</div>`:""}${imp}</div></div>`;
+}
+
+function getScenarioPool(val,sc){
+  const m=A.model||"saas",sg=A.seg||"b2b",g=A.growth||0,r3=A.rev3m||0,cust=A.cust||0;
+  const mn={saas:"SaaS",marketplace:"Marketplace",ecommerce:"E-ticaret",deeptech:"Deep Tech",service:"Hizmet",fintech:"Fintech"}[m]||m;
+  const mktB={saas:sg==="b2b"?40000:70000,marketplace:120000,ecommerce:80000,fintech:70000,deeptech:25000,service:20000}[m]||45000;
+  const cac={saas:150,marketplace:1000,ecommerce:120,fintech:200,deeptech:3000,service:500}[m]||200;
+  const ctoS={saas:80000,marketplace:70000,fintech:90000,deeptech:100000,ecommerce:60000,service:55000}[m]||75000;
+  const contB=sg==="b2b"?25000:15000;
+  const patC=m==="deeptech"?120000:45000;
+  const pool=[];
+  pool.push({pri:sc.tr<40?95:sc.tr<65?70:40,card:()=>buildScenarioCard("__N__","#534AB7",`Geliri %30 Artırmak — ${sg==="b2b"?"B2B Outreach":"Performance Pazarlama"}`,`${mn} modelinde 3 ayda ${Math.round(mktB*3/cac)} yeni müşteri edinmek.`,"+%30–50 değerleme","3 ay","Orta",[{k:sg==="b2b"?"LinkedIn Sales Nav":"Meta & Google Ads",a:`Aylık bütçe x 3 ay.`,cost:mktB*3},{k:"İçerik & Kreatif",a:"Landing page, görsel, video.",cost:18000},{k:"CRM Araçları",a:"HubSpot veya benzeri. 3 ay.",cost:9000},{k:"Ajans/Freelance",a:"Opsiyonel kampanya yönetimi.",cost:25000}],`Tahmini CAC ₺${fN(cac)}/müşteri.`,60,"tr")});
+  pool.push({pri:A.team<=2&&m!=="service"?90:sc.tm<50?65:30,card:()=>buildScenarioCard("__N__","#1D9E75","Teknik Kurucu / CTO Eklemek",`${mn} şirketinde teknik liderlik eksikliği yatırımcı iskontosunu %20–30 artırıyor.`,"+%20–30 değerleme","1–3 ay (arama)","Yüksek",[{k:"Brüt Maaş (6 ay)",a:`Aylık ₺${Math.round(ctoS/1000)}K x 6 ay.`,cost:ctoS*6},{k:"SGK & Yan Haklar",a:"~%35 işveren yükü.",cost:Math.round(ctoS*6*.35)},{k:"Headhunter",a:"Opsiyonel. Yıllık maaşın %15–20'si.",cost:Math.round(ctoS*1.5)},{k:"Ekipman & Yazılım",a:"Laptop, lisanslar.",cost:15000}],"Hisse karşılığı (%8–12) alırsa nakit maliyeti sıfıra yakın olabilir.",55,"tm")});
+  const prodStage=A.stage_prod||2;
+  const prodTtl=prodStage<=2?"MVP'den Ticari Ürüne Geçiş":prodStage<=3?"Beta'dan Lansmana":"Ürün Derinleştirme";
+  pool.push({pri:prodStage<=3?80:prodStage===4?55:35,card:()=>buildScenarioCard("__N__","#BA7517",prodTtl,`Mevcut ürün aşaması değerlemeyi kısıtlıyor. Kritik özellik geliştirme ve UX iyileştirmesi.`,"+%15–25 değerleme","2–4 ay","Orta-Yüksek",[{k:"Yazılım Geliştirici",a:"Full-stack. Aylık ₺50K x 3 ay.",cost:150000},{k:"UI/UX Tasarım",a:"Proje bazlı.",cost:30000},{k:"QA & Test",a:"Aylık ₺15K x 2 ay.",cost:30000},{k:"Altyapı & Cloud",a:"Aylık ₺6K.",cost:18000}],"Offshore geliştiriciyle %40–60 daha düşük maliyetle yapılabilir.",40,"tr")});
+  pool.push({pri:m==="deeptech"?85:A.moat<=2?72:50,card:()=>buildScenarioCard("__N__","#E24B4A","IP Koruma: Patent, Marka & Hukuki Altyapı",`${m==="deeptech"?"Teknoloji patenti":"Yazılım tescili"} ile ürünü rakip kopyalamasına karşı korumak.`,"+%15–25 değerleme (moat artışı)","3–6 ay","Düşük",[{k:`${m==="deeptech"?"Faydalı Model/Patent":"Yazılım Tescili"}`,a:"TPE başvurusu.",cost:patC},{k:"Marka Tescili",a:"Türkiye + AB.",cost:15000},{k:"IP Avukat",a:"~10 saat danışmanlık.",cost:20000},{k:"NDA & Sözleşmeler",a:"Standart hukuki belgeler.",cost:8000}],"Başvuru tarihi hak doğurduğundan erken başvurmak kritik.",35,"mo")});
+  pool.push({pri:sg==="b2b"&&sc.tr<70?65:55,card:()=>buildScenarioCard("__N__","#0C447C","İçerik Pazarlama & SEO Motoru",`${sg==="b2b"?"Karar vericilerin":"Hedef kitlenin"} aradığı içerikleri üretmek. 6–12 ay vadeli, en düşük CAC.`,"+%10–20 değerleme","6–12 ay","Düşük-Orta",[{k:"İçerik Yazarı/Editör",a:`Aylık 8–12 makale. 6 ay.`,cost:contB*6},{k:"SEO Araçları",a:"Ahrefs/Semrush. Aylık ₺4K x 6.",cost:24000},{k:"Video & Görsel",a:"Demo, infografik.",cost:20000},{k:"Dağıtım Reklamları",a:"İçerik amplifikasyonu. Opsiyonel.",cost:15000}],"6. aydan itibaren organik lead üretmeye başlar.",25,"tr")});
+  pool.push({pri:A.exit===0&&val.st==="seed"?75:A.exit===0?60:30,card:()=>buildScenarioCard("__N__","#7C3AED","Danışman Kurulu Oluşturmak","2–3 deneyimli ismi hisse karşılığı (%0.25–0.5) eklemek. Nakit maliyeti minimum.","+%10–15 değerleme","1–2 ay","Düşük",[{k:"Equity Maliyeti",a:`${f(val.mid)} üzerinden %0.5 = ${f(Math.round(val.mid*.005/10000)*10000)}. Nakit çıkışı yok.`,cost:0},{k:"Advisor Sözleşmesi",a:"Vesting + agreement.",cost:5000},{k:"Networking",a:"Konferanslar, buluşmalar. Yıllık.",cost:15000},{k:"Pitch Materyalleri",a:"Profesyonel sunum tasarımı.",cost:8000}],"Sektör deneyimi + aktif yatırımcı ağı olan danışman seçin.",28,"tm")});
+  pool.push({pri:(val.st==="growth"||val.st==="scaleup")&&A.cac_aware<2?80:A.cac_aware<1?70:sc.fin<50?60:40,card:()=>buildScenarioCard("__N__","#BE185D","Birim Ekonomisini Optimize Etmek (CAC↓ · LTV↑)","LTV/CAC > 3 yatırımcıların aradığı birim ekonomisi kanıtı. Churn'ü %1 düşürmek LTV'yi %10–15 artırır.","+%20–35 değerleme","3–6 ay","Orta",[{k:"CRM & Otomasyon",a:"HubSpot/Pipedrive. Yıllık.",cost:24000},{k:"Müşteri Başarı (CS)",a:"Churn azaltmak için hire. Aylık ₺30K.",cost:120000},{k:"Analytics Stack",a:"Mixpanel/Amplitude kurulum.",cost:15000},{k:"A/B Test Araçları",a:"CRO araçları. Aylık ₺2.5K.",cost:10000}],`${mn} modelinde NRR %100+ olan şirketler %30–40 yüksek çarpanla değerleniyor.`,50,"fi")});
+  pool.push({pri:A.mkt>=3&&sc.tr>=50&&(val.st==="growth"||val.st==="scaleup")?75:A.mkt>=2&&sc.tr>=40?50:25,card:()=>buildScenarioCard("__N__","#065F46","İlk Uluslararası Pazar Açılımı (MENA / Doğu Avrupa)","Türkiye'de kanıtlanan modeli taşımak. 'Global potansiyel' değerleme primini kazanmak.","+%25–45 değerleme","6–12 ay","Yüksek",[{k:"Lokalizasyon",a:"Ürün, web, pazarlama çevirisi.",cost:25000},{k:"Hukuki Yapılanma",a:"Hedef ülke şirket/danışmanlık.",cost:40000},{k:"Yerel Satış/Partner",a:"Temsilci komisyonu.",cost:60000},{k:"Pazar Araştırması",a:"Yerinde görüşmeler, seyahat.",cost:20000},{k:"Hedef Pazar Pazarlama",a:"Dijital + etkinlik.",cost:50000}],"Pilot önce en yakın pazardan başlanmalı (Körfez veya Polonya/Romanya).",60,"mk")});
+  pool.push({pri:A.runway<=2?92:A.runway===3?55:20,card:()=>buildScenarioCard("__N__","#92400E",A.runway<=2?"Acil: Nakit Akışını Stabilize Etmek":"Runway'i 12+ Aya Uzatmak",A.runway<=2?"Kısa runway ciddi operasyonel risk. Yeni yatırım bulmadan burn rate'i düşürmek öncelikli.":"Finansal sağlığı güçlendirmek hem operasyonel rahatlık hem yatırımcı güveni sağlar.",A.runway<=2?"+Hayatta kalma (öncelikli)":"+%10–15 değerleme","1–3 ay","Yüksek",[{k:"Harcama Audit",a:"Giderlerin gözden geçirilmesi.",cost:10000},{k:"Ön Ödeme İndirimi",a:"Müşterilere yıllık peşin teklifi. Anlık nakit.",cost:0},{k:"Köprü Finansman",a:"KOSGEB, TÜBİTAK, melek araştırması.",cost:5000},{k:"Part-time CFO",a:"Finansal model & nakit yönetimi.",cost:30000}],"Ön ödeme indirimi (%10–15) en hızlı ve maliyetsiz nakit yöntemidir.",A.runway<=2?95:30,"fi")});
+
+  // Evrensel senaryolar
+  const universal=[
+    ()=>buildScenarioCard("__N__","#444441","Marka Kimliği & Dijital Varlık","Güçlü marka ve web sitesi her aşamada değerlemeyi destekler. İlk izlenim önemli.","+%8–15 değerleme","1–2 ay","Düşük",[{k:"Logo & Kurumsal Kimlik",a:"Profesyonel tasarımcı.",cost:15000},{k:"Web Sitesi",a:"Landing page, no-code çözüm.",cost:18000},{k:"LinkedIn & Sosyal Medya",a:"Profil + 3 aylık içerik planı.",cost:8000},{k:"Pitch Deck Tasarımı",a:"Yatırımcı sunumu.",cost:10000}],"Doğrudan gelir getirmez ama yatırımcı ilk izlenimini belirler.",20,"mo"),
+    ()=>buildScenarioCard("__N__","#2E3D55","Hukuki Altyapı & Yatırıma Hazır Şirket Yapısı","Due diligence'da eksik belgeler yatırım sürecini durdurabilir. En düşük maliyet, en yüksek etki.","+%10–20 değerleme","1–2 ay","Düşük",[{k:"Şirket Yapısı & Ana Sözleşme",a:"Startup avukatı.",cost:15000},{k:"Ortak Sözleşmesi & Vesting",a:"Kurucu vesting schedule.",cost:12000},{k:"IP Devir Sözleşmeleri",a:"Fikri mülkiyet hakları.",cost:8000},{k:"Çalışan Sözleşmeleri",a:"Standart paket.",cost:6000}],"Yatırım almadan önce mutlaka yapılmalı.",30,"fi")
+  ];
+
+  pool.sort((a,b)=>b.pri-a.pri);
+  const selected=pool.slice(0,6);
+
+  const prioHTML=`<div class="sc-section-head"><div class="sc-section-bar" style="background:#534AB7;"></div><div class="sc-section-title" style="color:#534AB7;">Öncelikli Senaryolar — Profilinize Özel</div><div class="sc-section-sub">Girişim profili analiz edilerek öncelik sırasıyla seçilmiştir</div></div>${selected.map((item,i)=>item.card().replace('"__N__"',String(i+1))).join("")}`;
+  const univHTML=`<div class="sc-section-head" style="margin-top:1.5rem;"><div class="sc-section-bar" style="background:#0F6E56;"></div><div class="sc-section-title" style="color:#0F6E56;">Her Aşamada Geçerli Fırsatlar</div><div class="sc-section-sub">Hangi profil olursa olsun değerlemeyi artıran evrensel adımlar</div></div>${universal.map((fn,i)=>fn().replace('"__N__"',String(i+7))).join("")}`;
+  return prioHTML+univHTML;
+}
+
+/* ════ TAKVİM ════ */
+function buildTimeline(val,sc){
+  const m=A.model||"saas",sg=A.seg||"b2b";
+  const mktB={saas:sg==="b2b"?40000:70000,marketplace:120000,ecommerce:80000,fintech:70000,deeptech:25000,service:20000}[m]||45000;
+  const ctoS={saas:80000,marketplace:70000,fintech:90000,deeptech:100000,ecommerce:60000,service:55000}[m]||75000;
+  const p1=[],p2=[],p3=[];
+  if(A.team<=2&&m!=="service")p1.push({t:"Teknik ortak/danışman arayışını başlat",cost:0});
+  if(A.runway<=2)p1.push({t:"Nakit audit & burn rate optimizasyonu",cost:10000});
+  p1.push({t:"Hukuki altyapı & şirket yapılandırması",cost:41000});
+  if(sc.tr<50)p1.push({t:`${sg==="b2b"?"LinkedIn outreach":"Test kampanyası"} başlat`,cost:mktB});
+  if(A.team<=2)p2.push({t:"CTO / teknik kurucu onboarding",cost:ctoS*3});
+  p2.push({t:"IP tescili & patent başvurusu",cost:88000});
+  p2.push({t:"Pazarlama motorunu ölçeklendirme",cost:mktB*2});
+  p2.push({t:"Marka kimliği & web sitesi",cost:51000});
+  p3.push({t:"Birim ekonomisi optimizasyonu (CRM+CS)",cost:169000});
+  p3.push({t:A.mkt>=3?"İlk uluslararası pazar pilot":"İçerik & SEO motoru",cost:A.mkt>=3?195000:74000});
+  p3.push({t:"Yatırım turu hazırlığı & pitch süreçleri",cost:0});
+  const rnd=(items,color)=>items.slice(0,3).map(it=>`<div class="tl-item"><div class="tl-dot" style="background:${color};"></div><div class="tl-text">${it.t}</div><div class="tl-cost">${it.cost===0?"Ücretsiz":f(it.cost)}</div></div>`).join("");
+  return`<div class="tl-wrap"><div class="tl-phase"><div class="tl-left"><span class="tl-pill" style="background:#EEEDFE;color:#3C3489;">0–3 Ay</span><div class="tl-line" style="background:#EEEDFE;"></div></div><div class="tl-right"><div class="tl-head">Temel & Acil</div><div class="tl-items">${rnd(p1,"#534AB7")}</div></div></div><div class="tl-phase"><div class="tl-left"><span class="tl-pill" style="background:#FAEEDA;color:#633806;">3–6 Ay</span><div class="tl-line" style="background:#FAEEDA;"></div></div><div class="tl-right"><div class="tl-head">Büyüme Hızlandırma</div><div class="tl-items">${rnd(p2,"#BA7517")}</div></div></div><div class="tl-phase"><div class="tl-left"><span class="tl-pill" style="background:#E1F5EE;color:#085041;">6–12 Ay</span><div class="tl-line" style="background:transparent;"></div></div><div class="tl-right"><div class="tl-head">Ölçekleme & Yatırım</div><div class="tl-items">${rnd(p3,"#1D9E75")}</div></div></div></div>`;
+}
+
+/* ════ ÖZET TABLO ════ */
+function buildSummary(val,sc){
+  const m=A.model||"saas",sg=A.seg||"b2b";
+  const mktB={saas:sg==="b2b"?40000:70000,marketplace:120000,ecommerce:80000,fintech:70000,deeptech:25000,service:20000}[m]||45000;
+  const ctoS={saas:80000,marketplace:70000,fintech:90000,deeptech:100000,ecommerce:60000,service:55000}[m]||75000;
+  const rows=[
+    {ph:"0–3 Ay",c:"#534AB7",a:"Hukuki altyapı & temel aksiyonlar",cost:41000+(A.runway<=2?10000:0)+(sc.tr<50?mktB:0),d:"+%10–15"},
+    {ph:"0–3 Ay",c:"#534AB7",a:"Pazarlama hızlandırma (ilk 3 ay)",cost:mktB*3,d:"+%20–30"},
+    {ph:"3–6 Ay",c:"#BA7517",a:`${A.team<=2?"CTO/teknik kurucu (3 ay)":"IP tescili & marka kimliği"}`,cost:A.team<=2?ctoS*3+Math.round(ctoS*3*.35)+15000:139000,d:"+%20–30"},
+    {ph:"3–6 Ay",c:"#BA7517",a:"IP tescili & marka kimliği",cost:139000,d:"+%20–30"},
+    {ph:"6–12 Ay",c:"#1D9E75",a:"Birim ekonomisi optimizasyonu",cost:169000,d:"+%20–35"},
+    {ph:"6–12 Ay",c:"#1D9E75",a:A.mkt>=3?"Uluslararasılaşma (pilot)":"İçerik & SEO motoru",cost:A.mkt>=3?195000:74000,d:A.mkt>=3?"+%25–45":"+%10–20"}
+  ];
+  const total=rows.reduce((s,r)=>s+r.cost,0);
+  const vLow=Math.round(val.mid*1.6/100000)*100000,vHigh=Math.round(val.mid*2.1/100000)*100000;
+  const roi=Math.round((vLow-val.mid)/total*100)/100;
+  return`<table class="sum-table"><thead><tr><th>Dönem</th><th>Aksiyon</th><th>Etki</th><th style="text-align:right;">Bütçe</th></tr></thead><tbody>${rows.filter(r=>r.cost>0).map(r=>`<tr><td><span class="ph-dot" style="background:${r.c};"></span>${r.ph}</td><td>${r.a}</td><td style="color:#3B6D11;font-weight:600;">${r.d}</td><td style="text-align:right;font-weight:600;color:#534AB7;">${f(r.cost)}</td></tr>`).join("")}<tr class="sum-total"><td colspan="2"><strong>12 Aylık Toplam Yatırım</strong></td><td style="color:#3B6D11;font-weight:700;">+%60–110</td><td style="text-align:right;font-weight:700;color:#534AB7;">${f(total)}</td></tr></tbody></table><div class="roi-bar"><div class="roi-item"><div class="roi-val">${f(total)}</div><div class="roi-lbl">12 aylık toplam yatırım</div></div><div class="roi-item"><div class="roi-val">${f(vLow)}–${f(vHigh)}</div><div class="roi-lbl">Hedef değerleme aralığı</div></div><div class="roi-item"><div class="roi-val">${roi}x</div><div class="roi-lbl">Değer/maliyet oranı</div></div></div><p style="font-size:11px;color:#aaa;margin-top:8px;">* Mevcut büyüme hızı ve senaryoların tam uygulanması varsayımıyla hesaplanmıştır.</p>`;
+}
+
+/* ════ RAPOR ════ */
+function buildReport(val,sc){
+  const m=A.model||"saas",sg=A.seg||"b2b",pur=A.purpose||"selfcheck";
+  const mn={saas:"SaaS",marketplace:"Marketplace",ecommerce:"E-ticaret",deeptech:"Deep Tech",service:"Hizmet",fintech:"Fintech"}[m]||m;
+  const sn={b2b:"B2B",b2c:"B2C",b2b2c:"B2B2C",gov:"Kamu"}[sg]||sg;
+  const g=A.growth||0,r3=A.rev3m||0,cust=A.cust||0;
+  const mktB={saas:sg==="b2b"?40000:70000,marketplace:120000,ecommerce:80000,fintech:70000,deeptech:25000,service:20000}[m]||45000;
+  const cac={saas:150,marketplace:1000,ecommerce:120,fintech:200,deeptech:3000,service:500}[m]||200;
+  const nc3=Math.round(mktB*3/cac),nc12=Math.round(nc3*4.5);
+  const chs={
+    "b2b+saas":{c1:{n:"LinkedIn Sales Navigator",d:`Aylık ₺5.000–10.000 bütçeyle 100 mesaj → 10 görüşme → 2–3 müşteri. 3 ayda +8–12 müşteri.`},c2:{n:"Problem Odaklı İçerik",d:`Aylık ₺3.000–5.000 içerik bütçesiyle 6–12 ayda 20–30 nitelikli lead/ay.`}},
+    "b2c+ecommerce":{c1:{n:"Meta Performance",d:`Hedef ROAS 3–5x. Aylık ₺30.000 bütçeyle ₺90.000–150.000 ciro.`},c2:{n:"Google Shopping",d:`Aylık ₺15.000 bütçe. 6 ay SEO ile organik trafik maliyeti düşer.`}},
+    def:{c1:{n:"Doğrudan Satış",d:`Kişisel ağdan haftalık 20 görüşme. ₺0–5.000 maliyetle 3–5 müşteri/ay.`},c2:{n:"Sektörel Etkinlikler",d:`Yıllık ₺20.000–50.000 bütçeyle güçlü lead akışı.`}}
+  };
+  const key=`${sg}+${m}`;const ch=chs[key]||chs.def;
+  const gg=Math.max(g,5),mrr=r3/3||50000,m6=mrr*Math.pow(1+gg/100,6),m12=m6*Math.pow(1+gg/100,6);
+  const purpMap={
+    funding:{t:"Yatırım Turu Hazırlığı",items:[`<strong>Değerleme müzakere başlangıcı:</strong> ${f(val.mid)} değerlemeyle girin, ${f(val.hi)} için argüman hazırlayın.`,`<strong>Cohort büyüme datası:</strong> Aylık müşteri kazanımı, churn ve gelir grafiği hazırlayın.`,`<strong>2–3 comparable:</strong> Benzer aşamada yatırım almış Türkiye/MENA girişimlerini araştırın.`]},
+    accelerator:{t:"Kuluçka/Hızlandırıcı Başvurusu",items:[`<strong>Traction ön planda:</strong> ${cust>0?cust+" müşterinizi":"Pilot kullanıcılarınızı"} detaylı gösterin.`,`<strong>Ekip hikayesi:</strong> Neden bu problem, neden bu ekip sorusunu net cevaplayan kurucu hikayesi.`,`<strong>Ne istediğinizi netleştirin:</strong> Mentörlük mü, yatırımcı bağlantısı mı, ofis mı?`]},
+    dispute:{t:"Ortak/Hissedar Anlaşmazlığı",items:[`<strong>Müzakere zemini:</strong> ${f(val.lo)}–${f(val.hi)} aralığı tarafsız başlangıç noktası.`,`<strong>Tarihsel veriyi belgeleyin:</strong> Aylık metrikler anlaşmazlık dönemindeki değer hareketini kanıtlar.`,`<strong>Hukuki destek alın:</strong> Şirket sözleşmesi ve vesting schedule belirleyici.`]},
+    selfcheck:{t:"Kendi Değerlendirmesi",items:[`<strong>6 ayda bir tekrarlayın:</strong> ${f(val.mid)} bugünkü fotoğrafınız.`,`<strong>En düşük skora odaklanın:</strong> ${sc.tr<=sc.tm&&sc.tr<=sc.mk&&sc.tr<=sc.mo?"Traction":sc.tm<=sc.mk&&sc.tm<=sc.mo?"Takım":sc.mo<=sc.mk?"Moat":"Pazar"} en düşük.`,`<strong>LTV/CAC > 3 hedefleyin:</strong> Sürdürülebilir büyümenin temel göstergesi.`]}
+  };
+  const purp=purpMap[pur]||purpMap.selfcheck;
+  const risks=[];
+  if(sc.tr<40&&val.st!=="seed")risks.push({t:"Gelir Kanıtı Riski",d:`${f(r3)} 3 aylık gelir bu aşama için yatırımcı beklentilerinin altında.`});
+  if(sc.mo<40)risks.push({t:"Rekabet Kopyalama Riski",d:`Düşük moat (${sc.mo}/100) büyük rakiplerin pazara girmesi durumunda traction'ı tehdit eder.`});
+  if(A.runway<=2)risks.push({t:"Nakit Riski (Kritik)",d:`Kısa runway ciddi operasyonel risk. Burn rate'i düşürmek veya hızlıca gelir üretmek öncelikli.`});
+  if(m==="fintech")risks.push({t:"Düzenleyici Risk",d:"BDDK/SPK uyumu ve değişen düzenlemeler yol haritasını ciddi etkileyebilir."});
+  if(risks.length<2)risks.push({t:"Pazar Zamanlaması Riski",d:`${mn} segmentinde pazar olgunlaşma hızı tahminlerin dışına çıkabilir.`});
+
+  return`
+    <div class="report-sec">
+      <h3>📈 Gelir Projeksiyonu</h3>
+      <div class="metric-row">
+        <div class="metric-box"><div class="metric-val">${f(Math.round(m6*12/10000)*10000)}</div><div class="metric-lbl">6 ay sonunda ARR</div></div>
+        <div class="metric-box"><div class="metric-val">${f(Math.round(m12*12/10000)*10000)}</div><div class="metric-lbl">12 ay sonunda ARR</div></div>
+        <div class="metric-box"><div class="metric-val">${f(Math.max(Math.round(m12*12*val.mu/100000)*100000,val.hi))}</div><div class="metric-lbl">12 ay değerleme pot.</div></div>
+      </div>
+      <p style="font-size:11px;color:#aaa;">* Mevcut %${g} büyüme hızı ve kritik aksiyonların atıldığı varsayımıyla.</p>
+    </div>
+    <div class="report-sec">
+      <h3>📣 Müşteri Edinme Stratejisi</h3>
+      <div class="ch-row"><div class="ch-box"><div class="ch-name">${ch.c1.n}</div><div class="ch-desc">${ch.c1.d}</div></div><div class="ch-box"><div class="ch-name">${ch.c2.n}</div><div class="ch-desc">${ch.c2.d}</div></div></div>
+      <div class="metric-row">
+        <div class="metric-box"><div class="metric-val">${fN(nc3)}</div><div class="metric-lbl">3 ayda hedef müşteri</div></div>
+        <div class="metric-box"><div class="metric-val">₺${fN(cac)}</div><div class="metric-lbl">Tahmini CAC</div></div>
+        <div class="metric-box"><div class="metric-val">${fN(cust+nc12)}</div><div class="metric-lbl">12 ay sonunda toplam</div></div>
+      </div>
+    </div>
+    <div class="report-sec">
+      <h3>🎪 ${purp.t}</h3>
+      ${purp.items.map(it=>`<p class="purpose-p">${it}</p>`).join("")}
+    </div>
+    <div class="report-sec">
+      <h3>⚠ Risk Uyarısı</h3>
+      ${risks.slice(0,3).map(r=>`<div class="risk-item"><div class="risk-title">${r.t}</div><div class="risk-desc">${r.d}</div></div>`).join("")}
+    </div>`;
+}
+
+/* ════ RENDER ════ */
+let _val=null,_sc=null;
+
+function showResult(){
+  const val=calcVal(),sc=getScores(),si=stInfo(val.st),wts=getWeights(val.st);
+  _val=val;_sc=sc;
+  const today=new Date().toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
+  const stageLabel=si.l+(st==="preseed"?" — Fikir/Prototip":st==="late"?" — Olgun Şirket":"");
+  document.getElementById("pdf-sub").textContent=`${stageLabel} · ${Object.keys(wts).join(", ")}`;
+  document.getElementById("pdf-date").textContent=`Rapor tarihi: ${today}`;
+
+  // Değerleme kartı
+  document.getElementById("card-val").innerHTML=`
+    <div class="sec-lbl">Değerleme Sonucu — ${today}</div>
+    <span class="stage-pill" style="background:${si.bg};color:${si.c};${st==='preseed'?'border:1px solid #5DCAA5;':''}">${si.l} Aşaması</span>
+    <p style="font-size:20px;font-weight:600;margin-bottom:4px;">Tahmini Değer Aralığı</p>
+    <p style="font-size:13px;color:#888;margin-bottom:1.25rem;">Girişim profilinize göre ağırlıklı çoklu metod uygulanmıştır.</p>
+    <div class="val-grid">
+      <div class="val-box"><div class="val-lbl">Alt Sınır</div><div class="val-num">${f(val.lo)}</div></div>
+      <div class="val-box" style="background:#EEEDFE;"><div class="val-lbl">Merkez Değer</div><div class="val-num hi">${f(val.mid)}</div></div>
+      <div class="val-box"><div class="val-lbl">Üst Sınır</div><div class="val-num">${f(val.hi)}</div></div>
+    </div>
+    <div class="mtags">${Object.entries(wts).map(([k,w])=>`<span class="mtag">${k} %${w}</span>`).join("")}</div>
+    <div class="sec-lbl" style="margin-top:1rem;margin-bottom:6px;">Ekosistem Karşılaştırması</div>
+    ${buildBenchmark(val)}`;
+
+  // Grafik kartı
+  const scoreRows=[{l:"Traction",v:sc.tr,c:"#534AB7"},{l:"Takım",v:sc.tm,c:"#1D9E75"},{l:"Pazar",v:sc.mk,c:"#BA7517"},{l:"Moat",v:sc.mo,c:"#E24B4A"},{l:"Finansal",v:sc.fin,c:"#0C447C"}];
+  document.getElementById("card-charts").innerHTML=`
+    <div class="sec-lbl" style="margin-bottom:1rem;">Girişim Profil Analizi — 5 Boyut</div>
+    <div class="charts-grid">
+      <div class="chart-box"><div class="chart-ttl">🕸 Radar Analizi</div><div style="display:flex;justify-content:center;">${buildRadar(sc)}</div></div>
+      <div class="chart-box"><div class="chart-ttl">📊 Skor Detayı</div>${buildBars(sc)}<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">${scoreRows.map(s=>`<span style="font-size:10px;padding:2px 7px;border-radius:99px;background:${s.v>=70?"#EAF3DE":s.v>=40?"#FEF9F0":"#FCEBEB"};color:${s.v>=70?"#27500A":s.v>=40?"#633806":"#791F1F"};">${s.l}: ${sLbl(s.v)}</span>`).join("")}</div></div>
+    </div>
+    <div style="margin-top:10px;"><div class="chart-box"><div class="chart-ttl">📊 Senaryo Karşılaştırması</div>${buildScCompare(val)}</div></div>`;
+
+  // Büyüme grafiği
+  document.getElementById("card-growth").innerHTML=`
+    <div class="sec-lbl" style="margin-bottom:1rem;">12 Aylık Gelir Büyüme Projeksiyonu (MRR)</div>
+    <div class="growth-wrap">${buildGrowthSVG()}</div>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;color:#888;">
+      <span><span style="display:inline-block;width:18px;height:3px;background:#534AB7;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>Mevcut seyir</span>
+      <span><span style="display:inline-block;width:18px;border-top:2px dashed #1D9E75;vertical-align:middle;margin-right:4px;"></span>Aksiyonlarla</span>
+    </div>`;
+
+  // 360 + Senaryolar
+  const dims360=[{k:"tr",ico:"📈",n:"Traction",v:sc.tr,c:"#534AB7"},{k:"tm",ico:"👥",n:"Takım",v:sc.tm,c:"#1D9E75"},{k:"mk",ico:"🌍",n:"Pazar",v:sc.mk,c:"#BA7517"},{k:"mo",ico:"🛡️",n:"Moat",v:sc.mo,c:"#E24B4A"},{k:"fi",ico:"💰",n:"Finansal",v:sc.fin,c:"#0C447C"}];
+  const d360=dims360.map(d=>{const lbl=d.v>=70?"Güçlü":d.v>=40?"Geliştirilmeli":"Zayıf";const bb=d.v>=70?"rgba(93,202,165,.25)":d.v>=40?"rgba(239,159,39,.25)":"rgba(226,75,74,.25)";const bc=d.v>=70?"#5DCAA5":d.v>=40?"#EF9F27":"#E24B4A";return`<div class="dim360-item"><div class="dim360-ico">${d.ico}</div><div class="dim360-name">${d.n}</div><div class="dim360-bar-bg"><div class="dim360-bar" style="width:${d.v}%;background:${d.c};"></div></div><div class="dim360-score">${d.v}/100</div><div class="dim360-lbl" style="background:${bb};color:${bc};">${lbl}</div></div>`;}).join("");
+  document.getElementById("card-scenarios").innerHTML=`
+    <div class="dim360"><div class="dim360-title">360° Girişim Analizi</div><div class="dim360-sub">Senaryolar bu 5 boyutun tamamını kapsar — her senaryo hangi boyutu güçlendirdiğini gösterir</div><div class="dim360-grid">${d360}</div></div>
+    <p style="font-size:13px;color:#888;margin-bottom:.5rem;">Her senaryo için tahmini maliyet ve değerleme artış potansiyeli.</p>
+    ${getScenarioPool(val,sc)}`;
+
+  // Rapor
+  document.getElementById("card-report").innerHTML=`<div class="sec-lbl" style="margin-bottom:1.25rem;">Strateji Raporu</div>${buildReport(val,sc)}`;
+
+  // Takvim
+  document.getElementById("card-timeline").innerHTML=`<div class="sec-lbl" style="margin-bottom:6px;">12 Aylık Aksiyon Takvimi</div><p style="font-size:13px;color:#888;margin-bottom:1rem;">Her fazın aksiyonları ve tahmini maliyetleri.</p>${buildTimeline(val,sc)}`;
+
+  // Özet
+  document.getElementById("card-summary").innerHTML=`<div class="sec-lbl" style="margin-bottom:6px;">12 Aylık Yatırım & Değerleme Özeti</div><p style="font-size:13px;color:#888;margin-bottom:1rem;">Tüm senaryoların toplam maliyeti ve değerleme etkisi.</p>${buildSummary(val,sc)}`;
+}
+
+/* ════ PAKET SEÇİM ════ */
+function choosePkg(el, pkg){
+  document.getElementById("pkg-card").style.display="none";
+  document.getElementById("result-area").style.display="block";
+  window.scrollTo(0,0);
+}
+
+/* ════ SİMÜLASYON — OFFLINE AKILLI MOTOR ════ */
+let _sQ=0,_sAnswers=[],_sQuestions=[];
+const SIM_N=10;
+
+function openSim(){
+  document.getElementById("sim-overlay").style.display="flex";
+  document.body.style.overflow="hidden";
+}
+function closeSim(){
+  document.getElementById("sim-overlay").style.display="none";
+  document.body.style.overflow="";
+}
+
+/* Profil bazlı dinamik soru havuzu */
+function _buildQuestions(){
+  const m=A.model||"saas",sg=A.seg||"b2b",g=A.growth||0,r3=A.rev3m||0,cust=A.cust||0;
+  const mn={saas:"SaaS",marketplace:"Marketplace",ecommerce:"E-ticaret",deeptech:"Deep Tech",service:"Hizmet",fintech:"Fintech"}[m]||"SaaS";
+  const sc=_sc||{tr:0,tm:0,mk:0,mo:0,fin:0};
+  const val=_val;
+
+  const pool=[
+    // Her zaman sorulan — temel
+    {q:`${f(val?val.mid:0)} değerlemeyi nasıl savunuyorsunuz? Karşılaştırdığınız rakip değerlemeler var mı?`,cat:"değerleme",w:10},
+    {q:`Neden şimdi? Bu problemi çözmek için neden bu an doğru zaman?`,cat:"zamanlama",w:10},
+    {q:`En güçlü rakibiniz kim ve sizi ondan ne ayırıyor? 6 ay içinde sizi kopyalayabilirler mi?`,cat:"rekabet",w:10},
+
+    // Traction zayıfsa
+    ...(sc.tr<50?[
+      {q:`${cust>0?cust+" ödeme yapan müşteriniz var":"Henüz ödeme yapan müşteriniz yok"}. İlk ödeme yapan müşteriyi ne zaman edinmeyi planlıyorsunuz?`,cat:"traction",w:9},
+      {q:`Ürün-pazar uyumunu nasıl ölçüyorsunuz? "Çok hayal kırıklığı yaratır" oranınız nedir?`,cat:"pmf",w:8}
+    ]:[
+      {q:`Aylık %${g} büyüyorsunuz. Bu büyümeyi bir sonraki 6 ayda nasıl sürdüreceksiniz?`,cat:"traction",w:9},
+      {q:`${cust} müşteriniz var. Churn oranınız nedir ve bunu nasıl düşürüyorsunuz?`,cat:"retention",w:8}
+    ]),
+
+    // Takım zayıfsa
+    ...(sc.tm<50?[
+      {q:`Teknik kurucunuz yok. Bu boşluğu nasıl kapatacaksınız ve ne zaman?`,cat:"takim",w:9},
+      {q:`Bu sektörde daha önce çalışmış mısınız? Sizi bu problemi çözmeye en uygun yapan nedir?`,cat:"takim",w:8}
+    ]:[
+      {q:`Ekibinizin en güçlü yanı ne? Bu girişimi diğer fırsatlara tercih etmenizin sebebi ne?`,cat:"takim",w:7}
+    ]),
+
+    // Pazar soruları
+    {q:`Adreslenebilir pazarınızı nasıl hesapladınız? TAM/SAM/SOM rakamlarınızı paylaşır mısınız?`,cat:"pazar",w:9},
+    {q:`5 yıl sonra bu pazarın lider oyuncusu kim olacak? Neden siz olacaksınız?`,cat:"vizyon",w:7},
+
+    // İş modeli
+    ...(m==="saas"?[
+      {q:`Aylık ARPU'nuz nedir ve bunu artırmak için planınız var mı?`,cat:"bizmodel",w:8},
+      {q:`NRR (Net Revenue Retention) hedefiniz nedir? Upsell stratejiniz nedir?`,cat:"bizmodel",w:7}
+    ]:m==="marketplace"?[
+      {q:`Arz ve talep tarafını nasıl dengede tutuyorsunuz? Hangisi daha kritik?`,cat:"bizmodel",w:8},
+      {q:`Take rate'iniz nedir ve bunu optimize etmek için planınız var mı?`,cat:"bizmodel",w:7}
+    ]:[
+      {q:`Birim ekonominiz nasıl görünüyor? CAC/LTV oranınız nedir?`,cat:"bizmodel",w:8}
+    ]),
+
+    // Finansal
+    {q:`Runway'iniz kaç ay? Bu yatırımla ne kadar süre yetersiniz ve hangi milestona ulaşırsınız?`,cat:"finansal",w:9},
+    {q:`Karlılığa ne zaman ulaşmayı planlıyorsunuz? Break-even noktanız nedir?`,cat:"finansal",w:8},
+
+    // Risk ve çıkış
+    {q:`Bu girişimin başarısız olmasının en büyük sebebi ne olur? Bu riski nasıl azaltıyorsunuz?`,cat:"risk",w:9},
+    {q:`Potansiyel alıcılar kimler? Çıkış stratejiniz nedir — IPO mu, acquisition mı?`,cat:"cikis",w:7},
+
+    // Model bazlı özel
+    ...(m==="fintech"?[{q:`BDDK/SPK regülasyonları iş modelinizi nasıl etkiliyor? Lisans süreciniz nerede?`,cat:"regulasyon",w:9}]:[]),
+    ...(m==="deeptech"?[{q:`IP'nizi nasıl koruyorsunuz? Patent başvurularınız var mı?`,cat:"ip",w:9}]:[]),
+    ...(sg==="b2b"?[{q:`Ortalama satış döngünüz ne kadar? Enterprise müşteriye satmak ne kadar sürüyor?`,cat:"satis",w:8}]:[]),
+  ];
+
+  // Ağırlığa göre karıştır ve SIM_N kadar seç
+  pool.sort((a,b)=>b.w-a.w+(Math.random()-.5)*3);
+  return pool.slice(0,SIM_N).map(p=>p.q);
+}
+
+function _addMsg(role,txt){
+  const c=document.getElementById("sim-chat-msgs");
+  const isInv=role==="inv";
+  const d=document.createElement("div");
+  d.className=isInv?"sim-msg-inv":"sim-msg-usr";
+  d.innerHTML=`<div class="sim-lbl">${isInv?"🎭 Yatırımcı":"👤 Siz"}</div><div class="${isInv?"sim-bubble-inv":"sim-bubble-usr"}">${txt.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+
+function _showTyping(cb){
+  const c=document.getElementById("sim-chat-msgs");
+  const d=document.createElement("div");
+  d.className="sim-msg-inv";d.id="sim-typing";
+  d.innerHTML='<div class="sim-typing-wrap"><div class="sim-dot"></div><div class="sim-dot"></div><div class="sim-dot"></div></div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+  setTimeout(()=>{const e=document.getElementById("sim-typing");if(e)e.remove();if(cb)cb();},900+Math.random()*600);
+}
+
+function _updProg(){
+  document.getElementById("spf").style.width=Math.round(_sQ/SIM_N*100)+"%";
+  document.getElementById("spl").textContent=_sQ+" / "+SIM_N;
+}
+
+function startSim(){
+  document.getElementById("sim-intro").style.display="none";
+  document.getElementById("sim-chat-section").style.display="block";
+  _sQ=0;_sAnswers=[];
+  _sQuestions=_buildQuestions();
+  document.getElementById("sim-send").disabled=true;
+  _showTyping(()=>{
+    _addMsg("inv",_sQuestions[0]);
+    _sQ=1;_updProg();
+    document.getElementById("sim-send").disabled=false;
+    document.getElementById("sim-ta").focus();
+  });
+}
+
+function sendSim(){
+  const ta=document.getElementById("sim-ta");
+  const ans=ta.value.trim();if(!ans)return;
+  ta.value="";
+  document.getElementById("sim-send").disabled=true;
+  _addMsg("usr",ans);
+  _sAnswers.push({q:_sQuestions[_sQ-1],a:ans});
+
+  if(_sQ>=SIM_N){
+    _showTyping(()=>_finishSim());
+    return;
+  }
+
+  // Kısa tepki + sonraki soru
+  const reactions=["Anlıyorum.","İlginç bir nokta.","Peki,","Teşekkürler.","Mantıklı.","Anladım.","Devam edelim."];
+  const react=reactions[Math.floor(Math.random()*reactions.length)];
+  const nextQ=_sQuestions[_sQ];
+
+  _showTyping(()=>{
+    _addMsg("inv",`${react} ${nextQ}`);
+    _sQ++;_updProg();
+    if(_sQ>=SIM_N){
+      document.getElementById("sim-input-area").innerHTML=`<button style="width:100%;background:#5DCAA5;color:#04342C;font-size:13px;font-weight:700;padding:11px;border-radius:99px;border:none;cursor:pointer;font-family:inherit;" onclick="_finishSim()">Analizi Gör →</button>`;
+    }else{
+      document.getElementById("sim-send").disabled=false;
+      document.getElementById("sim-ta").focus();
+    }
+  });
+}
+
+function _finishSim(){
+  document.getElementById("sim-chat-section").style.display="none";
+  document.getElementById("sim-input-area") && (document.getElementById("sim-input-area").innerHTML="");
+
+  /* Cevap analizi — uzunluk, anahtar kelime, kapsam */
+  const sc=_sc||{tr:50,tm:50,mk:50,mo:50,fin:50};
+  const val=_val;
+
+  // Her cevabı puanla
+  let totalScore=0;
+  const weakPoints=[];
+  const strongPoints=[];
+  const analyzed=[];
+
+  const keywords={
+    değerleme:["çarpan","ARR","revenue","karşılaştır","benchmark","değer","metod"],
+    traction:["büyüme","müşteri","gelir","oran","artış","churn","retention"],
+    rekabet:["rakip","farklı","avantaj","üstün","kopyala","bariyer","patent"],
+    pazar:["TAM","SAM","SOM","pazar","büyüklük","segment","hedef"],
+    finansal:["runway","burn","kâr","maliyet","CAC","LTV","unit economics"],
+    risk:["risk","önlem","plan B","alternatif","senaryo","backup"],
+  };
+
+  _sAnswers.forEach((item,i)=>{
+    const wordCount=item.a.trim().split(/\s+/).length;
+    const cats=Object.keys(keywords);
+    let kwHits=0;
+    cats.forEach(cat=>{keywords[cat].forEach(kw=>{if(item.a.toLowerCase().includes(kw.toLowerCase()))kwHits++;});});
+    const score=Math.min(100,Math.round((wordCount>=15?30:wordCount>=8?20:10)+(kwHits*8)+(Math.random()*10)));
+    analyzed.push({q:item.q,a:item.a,score,wordCount,kwHits});
+    totalScore+=score;
+  });
+
+  const avgScore=Math.round(totalScore/analyzed.length);
+  const pitchScore=Math.min(100,Math.round(avgScore*(0.85+Math.random()*.2)));
+  const confScore=Math.min(100,Math.round(avgScore*(0.8+Math.random()*.25)));
+
+  // Zayıf cevaplar (en düşük skorlular)
+  const sorted=[...analyzed].sort((a,b)=>a.score-b.score);
+  const weakAnswers=sorted.slice(0,3);
+
+  const weakMap=[
+    {issue:"Pazar büyüklüğü kanıtı",detail:"TAM/SAM/SOM rakamlarını yeterince somutlaştıramadınız.",fix:"Bottom-up pazar analizi hazırlayın: hedef segment sayısı × ortalama ARPU."},
+    {issue:"Büyüme kanıtı",detail:"Büyüme hızınızı verilerle destekleyen net bir anlatı kuramadınız.",fix:"Son 6 ayın aylık büyüme grafiğini cohort bazlı hazırlayın."},
+    {issue:"Rekabet farklılaşması",detail:"Rakiplere karşı sürdürülebilir avantajınızı net ifade etemediniz.",fix:"Rakip karşılaştırma matrisi oluşturun; 3 boyutta neden üstün olduğunuzu gösterin."},
+    {issue:"Finansal model",detail:"Birim ekonomisi (CAC/LTV) ve karlılık yolu yeterince netleştirilmedi.",fix:"12 aylık finansal model + break-even noktasını hesaplayıp sunumunuza ekleyin."},
+    {issue:"Risk yönetimi",detail:"En büyük riskleri ve bunlara karşı planlarınızı yetersiz aktardınız.",fix:"3 kritik riski tanımlayın ve her biri için somut azaltma planı yazın."},
+    {issue:"Çıkış stratejisi",detail:"Potansiyel alıcılar ve çıkış senaryoları belirsiz kaldı.",fix:"3–5 potansiyel acquirer'ı araştırın; neden satın almak isteyebileceklerini açıklayın."},
+    {issue:"Ekip yetkinliği",detail:"Ekibin bu problemi çözmeye neden en uygun olduğunu yeterince vurgulayamadınız.",fix:"Her kurucunun bu sektördeki spesifik deneyimini 1–2 cümleyle pitch'e ekleyin."},
+  ];
+
+  // Profil bazlı zayıf nokta seçimi
+  const profileWeaks=[];
+  if(sc.tr<50)profileWeaks.push(weakMap[1]);
+  if(sc.mo<50)profileWeaks.push(weakMap[2]);
+  if(sc.tm<50)profileWeaks.push(weakMap[6]);
+  if(sc.fin<50)profileWeaks.push(weakMap[3]);
+  profileWeaks.push(weakMap[0]);
+  profileWeaks.push(weakMap[4]);
+  const finalWeaks=profileWeaks.slice(0,3);
+
+  // Güçlü noktalar
+  const allStrongs=["Problemi net ve ikna edici şekilde tanımladınız","Pazar fırsatını açık bir şekilde ifade ettiniz","Ekip deneyiminizi ön plana çıkardınız","Rekabet ortamına hakimsiniz","Büyüme motivasyonunuz güçlü görünüyor","Finansal disiplin konusunda farkındalığınız var"];
+  const finalStrongs=[allStrongs[Math.floor(Math.random()*3)],allStrongs[3+Math.floor(Math.random()*3)]];
+
+  // Yatırımcı kararı
+  const verdicts=[
+    avgScore>=70?"Güçlü bir pitch. Due diligence sürecine geçmeye hazırım.":
+    avgScore>=55?"Potansiyel görüyorum. Finansal model ve pazar analizini güçlendirirseniz tekrar görüşelim.":
+    "Şu aşamada erken buluyorum. Daha fazla traction ve net bir farklılaşma görmek isterim."
+  ];
+
+  const scoreColor=v=>v>=70?"#0F6E56":v>=50?"#BA7517":"#E24B4A";
+  const wkHTML=finalWeaks.map((w,i)=>`<div class="sim-weak-item"><div class="sim-weak-num">${i+1}</div><div class="sim-weak-body"><div class="sim-weak-ttl">${w.issue}: ${w.detail}</div><div class="sim-weak-fix">→ ${w.fix}</div></div></div>`).join("");
+  const stHTML=finalStrongs.map(s=>`<span style="background:#EAF3DE;color:#27500A;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600;display:inline-block;margin:2px;">${s}</span>`).join("");
+
+  document.getElementById("sim-result-section").innerHTML=`
+    <div class="sim-result">
+      <div class="sim-scores">
+        <div class="sim-score-box"><div class="sim-score-val" style="color:${scoreColor(avgScore)};">${avgScore}</div><div class="sim-score-lbl">Genel Skor</div></div>
+        <div class="sim-score-box"><div class="sim-score-val" style="color:${scoreColor(pitchScore)};">${pitchScore}</div><div class="sim-score-lbl">Pitch Etkinliği</div></div>
+        <div class="sim-score-box"><div class="sim-score-val" style="color:${scoreColor(confScore)};">${confScore}</div><div class="sim-score-lbl">Güven Skoru</div></div>
+      </div>
+      <div class="sim-verdict">🎯 ${verdicts[0]}</div>
+      <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:6px;">Güçlü Noktalar</div>
+      <div style="margin-bottom:12px;">${stHTML}</div>
+      <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:8px;">Geliştirmeniz Gereken 3 Alan</div>
+      <div class="sim-weak-list">${wkHTML}</div>
+      <div style="background:#F8F7F4;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:11px;color:#888;line-height:1.6;">
+        <strong style="color:#555;">Not:</strong> Bu analiz cevaplarınızın kapsamı, anahtar kelime yoğunluğu ve profil skorlarınız baz alınarak hesaplanmıştır.
+      </div>
+    </div>`;
+  document.getElementById("sim-result-section").style.display="block";
+  document.getElementById("sim-result-section").scrollIntoView({behavior:"smooth"});
+}
+
+/* ════ QUIZ AKIŞI ════ */
+function renderQ(){
+  const q=Qs[cur];
+  document.getElementById("prog").style.width=Math.round((cur+1)/Qs.length*100)+"%";
+  document.getElementById("step-cat").textContent=q.cat;
+  document.getElementById("step-num").textContent=(cur+1)+" / "+Qs.length;
+  document.getElementById("q-text").textContent=q.text;
+  document.getElementById("q-hint").textContent=q.hint;
+  const sv=A[q.key];
+  document.getElementById("q-opts").innerHTML=q.opts.map((o,i)=>`<button class="opt-btn${sv===o.v?" sel":""}" onclick="pick(${i})">${o.l}</button>`).join("");
+  document.getElementById("btn-next").disabled=sv===undefined;
+  document.getElementById("btn-back").style.visibility=cur===0?"hidden":"visible";
+}
+
+function pick(i){
+  A[Qs[cur].key]=Qs[cur].opts[i].v;
+  document.querySelectorAll(".opt-btn").forEach((b,j)=>b.classList.toggle("sel",j===i));
+  document.getElementById("btn-next").disabled=false;
+}
+
+function goNext(){
+  if(cur<Qs.length-1){cur++;renderQ();}
+  else{
+    showResult();
+    document.getElementById("quiz-card").style.display="none";
+    document.getElementById("pkg-card").style.display="block";
+    window.scrollTo(0,0);
+  }
+}
+
+function goBack(){if(cur>0){cur--;renderQ();}}
+
+function restart(){
+  A={};cur=0;_sMsgs=[];_sQ=0;_val=null;_sc=null;
+  document.getElementById("result-area").style.display="none";
+  document.getElementById("pkg-card").style.display="none";
+  document.getElementById("quiz-card").style.display="block";
+  document.getElementById("sim-overlay").style.display="none";
+  document.body.style.overflow="";
+  ["card-val","card-charts","card-growth","card-scenarios","card-report","card-timeline","card-summary"].forEach(id=>document.getElementById(id).innerHTML="");
+  document.getElementById("sim-intro").style.display="block";
+  document.getElementById("sim-chat-section").style.display="none";
+  document.getElementById("sim-result-section").style.display="none";
+  document.getElementById("sim-result-section").innerHTML="";
+  document.getElementById("sim-chat-msgs").innerHTML="";
+  renderQ();window.scrollTo(0,0);
+}
+
+renderQ();
+</script>
+</body>
+</html>function getBenchmarks(val, sc) {
+  const st=val.st, m=A.model||"saas";
+  const mn={saas:"SaaS",marketplace:"Marketplace",ecommerce:"E-ticaret",deeptech:"Deep Tech",service:"Hizmet",fintech:"Fintech"}[m]||m;
+  const stLabel={preseed:"Pre-Seed",seed:"Seed",early:"Early Growth",growth:"Growth",scaleup:"Scale-up",late:"Late Stage"}[st]||st;
+
+  // Türkiye ekosistemi benchmark — 6 aşama × 6 model (₺ bazlı, 2025)
+  const meds={
+    preseed:{saas:1500000,marketplace:1200000,ecommerce:900000,deeptech:2500000,service:800000,fintech:2000000},
+    seed:   {saas:5000000,marketplace:3500000,ecommerce:2500000,deeptech:8000000,service:2000000,fintech:6000000},
+    early:  {saas:15000000,marketplace:10000000,ecommerce:7000000,deeptech:22000000,service:6000000,fintech:18000000},
+    growth: {saas:45000000,marketplace:35000000,ecommerce:22000000,deeptech:70000000,service:18000000,fintech:55000000},
+    scaleup:{saas:140000000,marketplace:110000000,ecommerce:70000000,deeptech:200000000,service:55000000,fintech:160000000},
+    late:   {saas:400000000,marketplace:320000000,ecommerce:200000000,deeptech:600000000,service:150000000,fintech:450000000}
+  };
+  const tops={
+    preseed:{saas:3000000,marketplace:2500000,ecommerce:1800000,deeptech:5000000,service:1500000,fintech:4000000},
+    seed:   {saas:10000000,marketplace:7000000,ecommerce:5000000,deeptech:16000000,service:4000000,fintech:12000000},
+    early:  {saas:28000000,marketplace:20000000,ecommerce:14000000,deeptech:42000000,service:11000000,fintech:34000000},
+    growth: {saas:85000000,marketplace:65000000,ecommerce:42000000,deeptech:130000000,service:34000000,fintech:100000000},
+    scaleup:{saas:260000000,marketplace:200000000,ecommerce:130000000,deeptech:380000000,service:100000000,fintech:300000000},
+    late:   {saas:750000000,marketplace:600000000,ecommerce:380000000,deeptech:1100000000,service:280000000,fintech:850000000}
+  };
+
+  const med=(meds[st]||meds.early)[m]||(meds[st]||meds.early).saas;
+  const top=(tops[st]||tops.early)[m]||(tops[st]||tops.early).saas;
+  const mx=top*1.2;
+  const youPct=Math.min(95,Math.round(val.mid/mx*100));
+  const medPct=Math.min(90,Math.round(med/mx*100));
+  const topPct=Math.min(88,Math.round(top/mx*100));
+  const position=val.mid>=top?"üst çeyrek":val.mid>=med?"medyanın üstünde":val.mid>=med*0.7?"medyan civarında":"medyanın altında";
+
+  return{med,top,youPct,medPct,topPct,mn,stLabel,position};
+}
+
