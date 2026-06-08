@@ -808,34 +808,36 @@ function buildReport(val,sc){
 
 /* ══ BENCHMARK VERİLERİ ══ */
 function getBenchmarks(val, sc) {
-  const st=val.st, m=A.model||"saas", sg=A.seg||"b2b";
-  const mn={saas:"SaaS",marketplace:"Marketplace",ecommerce:"E-ticaret",deeptech:"Deep Tech",service:"Hizmet",fintech:"Fintech"}[m]||m;
-  // Türkiye ekosistemi benchmark verileri (aşama + model bazlı medyan değerler)
-  const medians = {
-    seed:    {saas:3800000, marketplace:2500000, ecommerce:1800000, deeptech:5000000, service:1500000, fintech:4000000},
-    early:   {saas:9500000, marketplace:7000000, ecommerce:5000000, deeptech:14000000, service:4000000, fintech:11000000},
-    growth:  {saas:28000000, marketplace:22000000, ecommerce:15000000, deeptech:40000000, service:12000000, fintech:35000000},
-    scaleup: {saas:85000000, marketplace:70000000, ecommerce:45000000, deeptech:120000000, service:35000000, fintech:100000000}
+  const st=val.st, m=A.model||"saas";
+  const mn={saas:"SaaS",marketplace:"Marketplace",ecommerce:"E-ticaret",deeptech:"Deep Tech",service:"Hizmet",fintech:"Fintech",ai:"AI/GenAI",defense:"Savunma"}[m]||m;
+  const stLabel={preseed:"Pre-Seed",seed:"Seed",early:"Early Growth",growth:"Growth",scaleup:"Scale-up",late:"Late Stage"}[st]||st;
+
+  // Türkiye ekosistemi benchmark — yeni metodoloji ile kalibre edildi (2025)
+  const medians={
+    preseed: {saas:6000000,marketplace:4000000,ecommerce:3000000,deeptech:10000000,service:2500000,fintech:8000000,ai:15000000,defense:18000000},
+    seed:    {saas:18000000,marketplace:12000000,ecommerce:8000000,deeptech:30000000,service:7000000,fintech:22000000,ai:35000000,defense:40000000},
+    early:   {saas:55000000,marketplace:38000000,ecommerce:22000000,deeptech:90000000,service:18000000,fintech:70000000,ai:120000000,defense:140000000},
+    growth:  {saas:180000000,marketplace:130000000,ecommerce:75000000,deeptech:280000000,service:55000000,fintech:220000000,ai:350000000,defense:400000000},
+    scaleup: {saas:500000000,marketplace:380000000,ecommerce:200000000,deeptech:750000000,service:150000000,fintech:600000000,ai:900000000,defense:1000000000},
+    late:    {saas:1500000000,marketplace:1100000000,ecommerce:600000000,deeptech:2200000000,service:400000000,fintech:1800000000,ai:3000000000,defense:3500000000}
   };
-  const top25 = {
-    seed:    {saas:7500000, marketplace:5000000, ecommerce:3500000, deeptech:10000000, service:3000000, fintech:8000000},
-    early:   {saas:18000000, marketplace:14000000, ecommerce:10000000, deeptech:28000000, service:8000000, fintech:22000000},
-    growth:  {saas:55000000, marketplace:45000000, ecommerce:30000000, deeptech:80000000, service:24000000, fintech:70000000},
-    scaleup: {saas:160000000, marketplace:130000000, ecommerce:85000000, deeptech:240000000, service:65000000, fintech:190000000}
+  const tops={
+    preseed: {saas:14000000,marketplace:9000000,ecommerce:6000000,deeptech:22000000,service:5000000,fintech:16000000,ai:32000000,defense:38000000},
+    seed:    {saas:38000000,marketplace:25000000,ecommerce:16000000,deeptech:60000000,service:14000000,fintech:44000000,ai:70000000,defense:80000000},
+    early:   {saas:110000000,marketplace:75000000,ecommerce:45000000,deeptech:180000000,service:35000000,fintech:140000000,ai:240000000,defense:280000000},
+    growth:  {saas:360000000,marketplace:260000000,ecommerce:150000000,deeptech:560000000,service:110000000,fintech:440000000,ai:700000000,defense:800000000},
+    scaleup: {saas:1000000000,marketplace:750000000,ecommerce:400000000,deeptech:1500000000,service:300000000,fintech:1200000000,ai:1800000000,defense:2000000000},
+    late:    {saas:3000000000,marketplace:2200000000,ecommerce:1200000000,deeptech:4400000000,service:800000000,fintech:3600000000,ai:6000000000,defense:7000000000}
   };
-  const med = (medians[st]||medians.early)[m] || (medians[st]||medians.early).saas;
-  const top = (top25[st]||top25.early)[m] || (top25[st]||top25.early).saas;
-  const stLabel = {seed:"Seed",early:"Early Growth",growth:"Growth",scaleup:"Scale-up"}[st];
 
-  // Kullanıcının konumu
-  const youPct = Math.min(95, Math.round(val.mid / (top * 1.2) * 100));
-  const medPct = Math.min(90, Math.round(med / (top * 1.2) * 100));
-  const topPct = Math.min(88, Math.round(top / (top * 1.2) * 100));
-
-  const position = val.mid >= top ? "üst çeyrek" : val.mid >= med ? "medyanın üstünde" : val.mid >= med * 0.7 ? "medyan civarında" : "medyanın altında";
-  const positionColor = val.mid >= top ? "#3B6D11" : val.mid >= med ? "#185FA5" : val.mid >= med * 0.7 ? "#BA7517" : "#A32D2D";
-
-  return { med, top, youPct, medPct, topPct, mn, stLabel, position, positionColor };
+  const med=(medians[st]||medians.early)[m]||(medians[st]||medians.early).saas;
+  const top=(tops[st]||tops.early)[m]||(tops[st]||tops.early).saas;
+  const mx=top*1.3;
+  const youPct=Math.min(95,Math.round(val.mid/mx*100));
+  const medPct=Math.min(88,Math.round(med/mx*100));
+  const topPct=Math.min(85,Math.round(top/mx*100));
+  const position=val.mid>=top?"üst çeyrek":val.mid>=med?"medyanın üstünde":val.mid>=med*0.7?"medyan civarında":"medyanın altında";
+  return{med,top,youPct,medPct,topPct,mn,stLabel,position};
 }
 
 function buildBenchmarkHTML(val, sc) {
