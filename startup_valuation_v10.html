@@ -190,7 +190,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   .action-row,.quiz-section,.print-hint{display:none !important;}
   .pdf-header{display:block !important;background:#534AB7 !important;color:#fff;border-radius:10px;padding:1.5rem;margin-bottom:1rem;}
   .pdf-header h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;}
-  .pdf-header .sub{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:4px;}
+  .pdf-header .sub{font-size:13px;font-weight:500;letter-spacing:0.03em;color:rgba(255,255,255,.8);margin-bottom:4px;}
   .pdf-header .date{font-size:11px;color:rgba(255,255,255,.6);}
   .card{border:1px solid #e0dfd8 !important;border-radius:10px !important;margin-bottom:10px !important;padding:1rem !important;page-break-inside:avoid;}
   .scenario-card{page-break-inside:avoid;border:1px solid #ddd !important;}
@@ -218,9 +218,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <body>
 <div class="container">
   <div class="header quiz-section">
-    <div class="logo">Startup Değerleme Motoru · v6</div>
+    <div class="logo">Valu<span style="color:#5DCAA5;">north</span> <span style="color:rgba(255,255,255,0.4);font-size:11px;font-weight:400;">Startup Değerleme</span></div>
     <h1>Girişiminizi değerleyin</h1>
-    <p>20 soru · 5 grafik · Profile özel öncelikli senaryolar · Kapsamlı PDF raporu</p>
+    <p style="font-size:13px;font-weight:600;letter-spacing:0.05em;color:#5DCAA5;margin-bottom:0;">20 Soru &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; 5 Grafik &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; Profile Özel Senaryolar &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; Kapsamlı PDF Raporu</p>
   </div>
 
   <div class="card quiz-section" id="quiz-card">
@@ -411,7 +411,7 @@ function sLbl(v){return v>=70?"Güçlü":v>=40?"Geliştirilmeli":"Zayıf";}
 
 /* ══ GRAFİKLER ══ */
 function buildRadarSVG(sc){
-  const cx=120,cy=120,r=85;
+  const cx=130,cy=130,r=85;
   const labs=["Traction","Takım","Pazar","Moat","Finansal"];
   const vals=[sc.tr,sc.tm,sc.mk,sc.mo,sc.fin];
   const cols=["#534AB7","#1D9E75","#BA7517","#E24B4A","#0C447C"];
@@ -423,9 +423,21 @@ function buildRadarSVG(sc){
   const dps=angs.map((a,i)=>pt(a,vals[i],r));
   const poly=`<polygon points="${dps.map(p=>p.join(",")).join(" ")}" fill="#534AB7" fill-opacity="0.2" stroke="#534AB7" stroke-width="2"/>`;
   const dots=dps.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join("");
-  const lbls=angs.map((a,i)=>{const[x,y]=pt(a,118,r);const anc=x<cx-5?"end":x>cx+5?"start":"middle";return`<text x="${x}" y="${y+4}" text-anchor="${anc}" font-size="10" fill="#444" font-family="-apple-system,sans-serif" font-weight="500">${labs[i]}</text>`;}).join("");
-  const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-12:x>cx+5?12:0,oy=y<cy-5?-10:y>cy+5?10:0;return`<text x="${x+ox}" y="${y+oy+4}" text-anchor="middle" font-size="10" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
-  return`<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
+  // Her etiket için sabit offset — viewBox'a sığacak şekilde
+  const offsets=[
+    [0,-14,"middle"],   // Traction: üst
+    [16,-6,"start"],    // Takım: sağ üst
+    [14,10,"start"],    // Pazar: sağ alt
+    [-14,10,"end"],     // Moat: sol alt
+    [-16,-6,"end"]      // Finansal: sol üst
+  ];
+  const lbls=angs.map((a,i)=>{
+    const[x,y]=pt(a,115,r);
+    const[ox,oy,anc]=offsets[i];
+    return`<text x="${x+ox}" y="${y+oy+4}" text-anchor="${anc}" font-size="11" fill="${cols[i]}" font-family="-apple-system,sans-serif" font-weight="600">${labs[i]}</text>`;
+  }).join("");
+  const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-14:x>cx+5?14:0,oy=y<cy-5?-12:y>cy+5?12:0;return`<text x="${x+ox}" y="${y+oy+4}" text-anchor="middle" font-size="11" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
+  return`<svg width="260" height="260" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
 }
 function buildBarChart(sc){
   const items=[{l:"Traction",v:sc.tr,c:"#534AB7"},{l:"Takım",v:sc.tm,c:"#1D9E75"},{l:"Pazar",v:sc.mk,c:"#BA7517"},{l:"Moat",v:sc.mo,c:"#E24B4A"},{l:"Finansal",v:sc.fin,c:"#0C447C"}];
