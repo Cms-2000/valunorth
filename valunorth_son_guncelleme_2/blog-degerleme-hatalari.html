@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Girişimcilerin Yaptığı 7 Değerleme Hatası ve Nasıl Kaçınılır? — Valunorth Blog</title>
+<meta name="description" content="Girişimcilerin Yaptığı 7 Değerleme Hatası ve Nasıl Kaçınılır?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1C2535;--navy2:#2E3D55;--green-dark:#0F6E56;--green-mid:#1D9E75;--green-light:#5DCAA5;--green-pale:#EBF5E8;--cream:#F5F4EF;--purple:#534AB7;--text:#1C2535;--text-muted:#6B6A65;--border:#E0DFD8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(28,37,53,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);}
+.nav-inner{max-width:1140px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:32px;height:32px;background:var(--green-light);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.nav-logo-text{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;}
+.nav-logo-text b{color:var(--green-light);}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:5px 10px;font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lang-btn.active{background:var(--green-dark);border-color:var(--green-dark);color:#fff;}
+.nav-cta{background:var(--green-light);color:#04342C;font-size:13px;font-weight:600;padding:8px 18px;border-radius:99px;text-decoration:none;font-family:'Syne',sans-serif;}
+.hero{background:var(--navy);padding:120px 28px 60px;}
+.hero-inner{max-width:800px;margin:0 auto;}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:24px;}
+.breadcrumb a{color:rgba(255,255,255,.4);text-decoration:none;}
+.breadcrumb a:hover{color:var(--green-light);}
+.blog-tag{display:inline-block;background:rgba(93,202,165,.15);color:var(--green-light);font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;margin-bottom:16px;border:1px solid rgba(93,202,165,.2);}
+.blog-hero-title{font-size:40px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-.5px;margin-bottom:16px;}
+.blog-meta-row{display:flex;align-items:center;gap:20px;font-size:13px;color:rgba(255,255,255,.4);}
+.blog-meta-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2);}
+.content-wrap{max-width:800px;margin:0 auto;padding:60px 28px;}
+.content-body{background:#fff;border-radius:20px;padding:48px;border:1px solid var(--border);}
+.content-body h2{font-size:24px;font-weight:700;color:var(--navy);margin:36px 0 14px;}
+.content-body h3{font-size:19px;font-weight:700;color:var(--navy);margin:28px 0 10px;}
+.content-body p{font-size:16px;line-height:1.8;color:#444;margin-bottom:16px;}
+.content-body ul,.content-body ol{padding-left:20px;margin-bottom:16px;}
+.content-body li{font-size:16px;line-height:1.8;color:#444;margin-bottom:6px;}
+.content-body strong{color:var(--navy);font-weight:600;}
+.highlight-box{background:var(--green-pale);border-left:4px solid var(--green-dark);border-radius:0 12px 12px 0;padding:20px 24px;margin:28px 0;}
+.highlight-box p{color:var(--green-dark);font-weight:500;margin:0;}
+.key-metric{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0;}
+.metric-box{background:var(--cream);border-radius:12px;padding:20px;text-align:center;border:1px solid var(--border);}
+.metric-val{font-size:28px;font-weight:800;color:var(--purple);font-family:'Syne',sans-serif;}
+.metric-lbl{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.cta-box{background:var(--navy);border-radius:16px;padding:32px;text-align:center;margin-top:40px;}
+.cta-box h3{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;}
+.cta-box p{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;}
+.cta-box a{background:var(--green-light);color:#04342C;font-size:14px;font-weight:600;padding:12px 28px;border-radius:99px;text-decoration:none;font-family:'Syne',sans-serif;display:inline-block;}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:14px;text-decoration:none;margin-bottom:32px;}
+.back-link:hover{color:var(--green-dark);}
+[data-tr],[data-en]{transition:opacity .2s;}
+body.lang-en [data-tr]{display:none;}
+body.lang-tr [data-en]{display:none;}
+@media(max-width:768px){.blog-hero-title{font-size:28px;}.content-body{padding:28px;}.key-metric{grid-template-columns:1fr;}}
+</style>
+</head>
+<body class="lang-tr">
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#1C2535" stroke-width="1.5"/><line x1="9" y1="2" x2="9" y2="6" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="12" x2="9" y2="16" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="9" x2="6" y2="9" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="9" x2="16" y2="9" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="9" r="2" fill="#1C2535"/></svg></div>
+      <span class="nav-logo-text">Valu<b>north</b></span>
+    </a>
+    <div class="nav-actions">
+      <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <a href="startup_valuation_v10.html" class="nav-cta"><span data-tr>Ücretsiz Değerle</span><span data-en>Value Free</span></a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html"><span data-tr>Ana Sayfa</span><span data-en>Home</span></a>
+      <span>›</span>
+      <a href="index.html#blog">Blog</a>
+      <span>›</span>
+      <span data-tr>Strateji</span><span data-en>Strategy</span>
+    </div>
+    <div class="blog-tag"><span data-tr>Strateji</span><span data-en>Strategy</span></div>
+    <h1 class="blog-hero-title">
+      <span data-tr>Girişimcilerin Yaptığı 7 Değerleme Hatası ve Nasıl Kaçınılır?</span>
+      <span data-en>7 Valuation Mistakes Founders Make and How to Avoid Them</span>
+    </h1>
+    <div class="blog-meta-row">
+      <span>Valunorth</span>
+      <div class="blog-meta-dot"></div>
+      <span>Şubat 2025</span>
+      <div class="blog-meta-dot"></div>
+      <span data-tr>7 dakika okuma</span><span data-en>7 min read</span>
+    </div>
+  </div>
+</section>
+
+<div class="content-wrap">
+  <a href="index.html#blog" class="back-link">← <span data-tr>Blog'a dön</span><span data-en>Back to Blog</span></a>
+  <div class="content-body">
+    <div data-tr>
+<p>Değerleme hataları yatırımcı görüşmelerini mahvedebilir, ortaklık müzakerelerini çıkmaza sokabilir veya şirket satışında ciddi para kaybettirebilir. İşte en sık yapılan 7 hata ve kaçınma stratejileri.</p>
+<h2>Hata 1: Gerçekçi Olmayan Beklentiler</h2>
+<p>"Biz en az $50M değeriz" diyip hiçbir veriyle desteklememek. Yatırımcılar her gün bu tür talepleri görür ve anında güvenilirlik kaybedersiniz. Değerleme iddialarınızı karşılaştırılabilir işlemler, metrikler veya somut büyüme verileriyle destekleyin.</p>
+<h2>Hata 2: Tek Metoda Bağlı Kalmak</h2>
+<p>Sadece DCF veya sadece Scorecard kullanmak. Her metodun önyargıları ve zayıf noktaları vardır. Birden fazla metodu birleştirerek savunulabilir bir aralık oluşturun.</p>
+<h2>Hata 3: Piyasa Koşullarını Görmezden Gelmek</h2>
+<p>2021 bull market değerlemelerini 2024'te uygulamaya çalışmak. Faiz ortamı, risk iştahı ve sektör çarpanları sürekli değişir. Güncel benchmark verilerini kullanın.</p>
+<div class="key-metric">
+  <div class="metric-box"><div class="metric-val">%67</div><div class="metric-lbl">Aşırı değerleme oranı</div></div>
+  <div class="metric-box"><div class="metric-val">3x</div><div class="metric-lbl">Ortalama beklenti fazlası</div></div>
+  <div class="metric-box"><div class="metric-val">%40</div><div class="metric-lbl">Down round riski</div></div>
+</div>
+<h2>Hata 4: Dilution Hesabını Atlılamak</h2>
+<p>Yüksek değerleme isterken dilution etkisini hesaplamamak. $5M için %20 hisse vermek ile $4M için %15 hisse vermek arasındaki fark kurucuların uzun vadeli kontrolünü ciddi etkiler. Her tura önce cap table simülasyonu yapın.</p>
+<h2>Hata 5: Kötü Zamanlama</h2>
+<p>Parayla değil panik anında, mecburiyetten yatırım toplamak. Zorunlu durumda olan kurucu her zaman daha kötü koşullar kabul eder. Runway hâlâ 12+ aydayken yatırım sürecini başlatın.</p>
+<h2>Hata 6: Qualitative Faktörleri Göz Ardı Etmek</h2>
+<p>Sadece gelir ve büyüme rakamlarına odaklanıp ekip, moat ve pazar dinamiklerini değerleme dışında tutmak. Yatırımcılar değerlemenin yarısından fazlasını "niteliksel" faktörlere dayandırır.</p>
+<h2>Hata 7: Müzakereye Hazırlıksız Girmek</h2>
+<p>BATNA (Best Alternative to Negotiated Agreement) olmadan masaya oturmak. Alternatif teklifiniz yoksa, pazarlık gücünüz olmaz. En az 2-3 yatırımcıyla paralel süreç yürütün.</p>
+<div class="highlight-box">
+  <p>En yaygın hata, değerlemeyi bir rakam olarak değil bir hikâye olarak anlatamamaktır. Yatırımcı rakama değil, o rakamın arkasındaki mantığa yatırım yapar.</p>
+</div>
+</div>
+    <div data-en>
+<p>Valuation mistakes can ruin investor meetings, deadlock partnership negotiations, or cause serious financial losses in company sales. Here are the 7 most common mistakes and strategies to avoid them.</p>
+<h2>Mistake 1: Unrealistic Expectations</h2>
+<p>Saying "We're worth at least $50M" without supporting it with any data. Investors see these kinds of claims every day and you instantly lose credibility. Support your valuation claims with comparable transactions, metrics, or concrete growth data.</p>
+<h2>Mistake 2: Sticking to a Single Method</h2>
+<p>Using only DCF or only Scorecard. Every method has biases and weak points. Create a defensible range by combining multiple methods.</p>
+<h2>Mistake 3: Ignoring Market Conditions</h2>
+<p>Trying to apply 2021 bull market valuations in 2024. Interest rate environment, risk appetite, and sector multiples constantly change. Use current benchmark data.</p>
+<div class="key-metric">
+  <div class="metric-box"><div class="metric-val">67%</div><div class="metric-lbl">Overvaluation rate</div></div>
+  <div class="metric-box"><div class="metric-val">3x</div><div class="metric-lbl">Average expectation excess</div></div>
+  <div class="metric-box"><div class="metric-val">40%</div><div class="metric-lbl">Down round risk</div></div>
+</div>
+<h2>Mistake 4: Skipping Dilution Calculations</h2>
+<p>Wanting a high valuation without calculating the dilution effect. The difference between giving 20% equity for $5M vs 15% equity for $4M seriously affects founders' long-term control. Do a cap table simulation before each round.</p>
+<h2>Mistake 5: Bad Timing</h2>
+<p>Raising investment out of panic and necessity rather than from a position of strength. A founder in a forced situation always accepts worse terms. Start the investment process when runway is still 12+ months.</p>
+<h2>Mistake 6: Ignoring Qualitative Factors</h2>
+<p>Focusing only on revenue and growth numbers while keeping team, moat, and market dynamics outside of valuation. Investors base more than half of valuation on "qualitative" factors.</p>
+<h2>Mistake 7: Entering Negotiations Unprepared</h2>
+<p>Sitting at the table without a BATNA (Best Alternative to Negotiated Agreement). Without an alternative offer, you have no bargaining power. Run parallel processes with at least 2-3 investors.</p>
+<div class="highlight-box">
+  <p>The most common mistake is not being able to tell valuation as a story rather than a number. The investor invests in the logic behind the number, not the number itself.</p>
+</div>
+</div>
+    
+</div>
+
+<script>
+function setLang(l){document.body.className='lang-'+l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.lang-btn[onclick="setLang(''+l+'')"]').classList.add('active');}
+</script>
+</body>
+</html>

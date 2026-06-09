@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seed Aşamasında Değerleme Nasıl Yapılır? 9 Metodun Karşılaştırması — Valunorth Blog</title>
+<meta name="description" content="Seed Aşamasında Değerleme Nasıl Yapılır? 9 Metodun Karşılaştırması">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1C2535;--navy2:#2E3D55;--green-dark:#0F6E56;--green-mid:#1D9E75;--green-light:#5DCAA5;--green-pale:#EBF5E8;--cream:#F5F4EF;--purple:#534AB7;--text:#1C2535;--text-muted:#6B6A65;--border:#E0DFD8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(28,37,53,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);}
+.nav-inner{max-width:1140px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:32px;height:32px;background:var(--green-light);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.nav-logo-text{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;}
+.nav-logo-text b{color:var(--green-light);}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:5px 10px;font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lang-btn.active{background:var(--green-dark);border-color:var(--green-dark);color:#fff;}
+.nav-cta{background:var(--green-light);color:#04342C;font-size:13px;font-weight:600;padding:8px 18px;border-radius:99px;text-decoration:none;font-family:'Syne',sans-serif;}
+.hero{background:var(--navy);padding:120px 28px 60px;}
+.hero-inner{max-width:800px;margin:0 auto;}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.4);margin-bottom:24px;}
+.breadcrumb a{color:rgba(255,255,255,.4);text-decoration:none;}
+.breadcrumb a:hover{color:var(--green-light);}
+.blog-tag{display:inline-block;background:rgba(93,202,165,.15);color:var(--green-light);font-size:12px;font-weight:600;padding:4px 12px;border-radius:99px;margin-bottom:16px;border:1px solid rgba(93,202,165,.2);}
+.blog-hero-title{font-size:40px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-.5px;margin-bottom:16px;}
+.blog-meta-row{display:flex;align-items:center;gap:20px;font-size:13px;color:rgba(255,255,255,.4);}
+.blog-meta-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2);}
+.content-wrap{max-width:800px;margin:0 auto;padding:60px 28px;}
+.content-body{background:#fff;border-radius:20px;padding:48px;border:1px solid var(--border);}
+.content-body h2{font-size:24px;font-weight:700;color:var(--navy);margin:36px 0 14px;}
+.content-body h3{font-size:19px;font-weight:700;color:var(--navy);margin:28px 0 10px;}
+.content-body p{font-size:16px;line-height:1.8;color:#444;margin-bottom:16px;}
+.content-body ul,.content-body ol{padding-left:20px;margin-bottom:16px;}
+.content-body li{font-size:16px;line-height:1.8;color:#444;margin-bottom:6px;}
+.content-body strong{color:var(--navy);font-weight:600;}
+.highlight-box{background:var(--green-pale);border-left:4px solid var(--green-dark);border-radius:0 12px 12px 0;padding:20px 24px;margin:28px 0;}
+.highlight-box p{color:var(--green-dark);font-weight:500;margin:0;}
+.key-metric{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0;}
+.metric-box{background:var(--cream);border-radius:12px;padding:20px;text-align:center;border:1px solid var(--border);}
+.metric-val{font-size:28px;font-weight:800;color:var(--purple);font-family:'Syne',sans-serif;}
+.metric-lbl{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.cta-box{background:var(--navy);border-radius:16px;padding:32px;text-align:center;margin-top:40px;}
+.cta-box h3{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;}
+.cta-box p{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;}
+.cta-box a{background:var(--green-light);color:#04342C;font-size:14px;font-weight:600;padding:12px 28px;border-radius:99px;text-decoration:none;font-family:'Syne',sans-serif;display:inline-block;}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:var(--text-muted);font-size:14px;text-decoration:none;margin-bottom:32px;}
+.back-link:hover{color:var(--green-dark);}
+[data-tr],[data-en]{transition:opacity .2s;}
+body.lang-en [data-tr]{display:none;}
+body.lang-tr [data-en]{display:none;}
+@media(max-width:768px){.blog-hero-title{font-size:28px;}.content-body{padding:28px;}.key-metric{grid-template-columns:1fr;}}
+</style>
+</head>
+<body class="lang-tr">
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#1C2535" stroke-width="1.5"/><line x1="9" y1="2" x2="9" y2="6" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="12" x2="9" y2="16" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="9" x2="6" y2="9" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="9" x2="16" y2="9" stroke="#1C2535" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="9" r="2" fill="#1C2535"/></svg></div>
+      <span class="nav-logo-text">Valu<b>north</b></span>
+    </a>
+    <div class="nav-actions">
+      <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <a href="startup_valuation_v10.html" class="nav-cta"><span data-tr>Ücretsiz Değerle</span><span data-en>Value Free</span></a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html"><span data-tr>Ana Sayfa</span><span data-en>Home</span></a>
+      <span>›</span>
+      <a href="index.html#blog">Blog</a>
+      <span>›</span>
+      <span data-tr>Değerleme</span><span data-en>Valuation</span>
+    </div>
+    <div class="blog-tag"><span data-tr>Değerleme</span><span data-en>Valuation</span></div>
+    <h1 class="blog-hero-title">
+      <span data-tr>Seed Aşamasında Değerleme Nasıl Yapılır? 9 Metodun Karşılaştırması</span>
+      <span data-en>How to Value a Seed-Stage Startup? Comparison of 9 Methods</span>
+    </h1>
+    <div class="blog-meta-row">
+      <span>Valunorth</span>
+      <div class="blog-meta-dot"></div>
+      <span>Ocak 2025</span>
+      <div class="blog-meta-dot"></div>
+      <span data-tr>8 dakika okuma</span><span data-en>8 min read</span>
+    </div>
+  </div>
+</section>
+
+<div class="content-wrap">
+  <a href="index.html#blog" class="back-link">← <span data-tr>Blog'a dön</span><span data-en>Back to Blog</span></a>
+  <div class="content-body">
+    <div data-tr>
+<p>Girişiminizin değerini bilmek, yatırımcıyla müzakere masasına oturmadan önce sahip olmanız gereken en kritik bilgilerden biridir. Ancak seed aşamasında —henüz gelir yok, ürün beta'da, müşteri sayısı az— geleneksel değerleme metodları yetersiz kalır.</p>
+<p>Bu yazıda seed aşamasında kullanılan 9 farklı değerleme metodunu, güçlü ve zayıf yönleriyle karşılaştırıyoruz.</p>
+
+<h2>Neden Seed Aşaması Farklıdır?</h2>
+<p>Geleneksel değerleme yaklaşımları (DCF, P/E çarpanı) geçmiş finansal verilere dayanır. Seed aşamasındaki bir girişimde bu veriler ya yoktur ya da istatistiksel olarak anlamsızdır. Bu nedenle seed değerlemesi büyük ölçüde <strong>potansiyel, ekip ve pazar büyüklüğüne</strong> dayanır.</p>
+
+<div class="key-metric">
+  <div class="metric-box"><div class="metric-val">9+</div><div class="metric-lbl">Farklı değerleme metodu</div></div>
+  <div class="metric-box"><div class="metric-val">%40</div><div class="metric-lbl">Değerlemede ekip ağırlığı</div></div>
+  <div class="metric-box"><div class="metric-val">3x</div><div class="metric-lbl">Yatırımcı müzakere aralığı</div></div>
+</div>
+
+<h2>9 Metod ve Karşılaştırması</h2>
+
+<h3>1. Berkus Metodu</h3>
+<p>Dave Berkus tarafından geliştirilen bu metod, 5 faktörü değerlendirir: temel fikir, prototip, yönetim ekibi, stratejik ilişkiler ve ürün lansmanı. Her faktör için maksimum $500K değer atanır. Toplam maksimum $2.5M değerleme çıkar.</p>
+<p><strong>Güçlü:</strong> Basit, hızlı, öznellik az. <strong>Zayıf:</strong> Yüksek potansiyelli girişimleri düşük değerler.</p>
+
+<h3>2. Scorecard Metodu</h3>
+<p>Bölgedeki benzer girişimlerin medyan değerlemesini baz alır, sonra 6 faktörü ağırlıklı olarak karşılaştırır: ekip (%30), fırsat büyüklüğü (%25), ürün/teknoloji (%15), rekabet ortamı (%10), pazarlama kanalları (%10), diğer (%10).</p>
+<p><strong>Güçlü:</strong> Ekosisteme dayalı, gerçekçi. <strong>Zayıf:</strong> Bölgesel veri gerektirir.</p>
+
+<h3>3. Risk Factor Summation</h3>
+<p>12 risk kategorisini değerlendirir (yönetim riski, aşama riski, pazarlama riski, teknoloji riski vb.) ve her birini +2'den -2'ye puanlar. Bölge medyanından başlayarak risk puanına göre yukarı veya aşağı ayarlar.</p>
+<p><strong>Güçlü:</strong> Kapsamlı risk analizi. <strong>Zayıf:</strong> Çok subjektif.</p>
+
+<h3>4. VC Metodu</h3>
+<p>Yatırımcının beklenen getirisini tersine mühendislik ederek değerleyen bu metod şu formüle dayanır: Pre-money değerleme = Terminal değer ÷ Beklenen ROI - Yatırım tutarı.</p>
+<p><strong>Güçlü:</strong> Yatırımcı bakış açısını yansıtır. <strong>Zayıf:</strong> Terminal değer tahmini çok belirsiz.</p>
+
+<h3>5. Comparable Transaction</h3>
+<p>Benzer aşama ve sektördeki son yatırım turlarını kıyaslar. "X şirketi geçen çeyrekte $5M pre-money ile seed aldıysa, biz de benzer profilde olduğumuz için..." mantığıyla çalışır.</p>
+<p><strong>Güçlü:</strong> Piyasayı yansıtır. <strong>Zayıf:</strong> Veri bulmak zor, özellikle Türkiye ekosisteminde.</p>
+
+<h3>6. First Chicago Metodu</h3>
+<p>En iyi, orta ve en kötü senaryo için ayrı ayrı DCF hesabı yapar, sonra olasılık ağırlıklı ortalama alır. Daha olgun seed girişimler için uygundur.</p>
+
+<h3>7. Market Size Yaklaşımı</h3>
+<p>Ulaşılabilir pazar büyüklüğünden tersine gider: "Bu pazar $1B ise ve biz %1 pay alırsak $10M gelir, bu da 5x çarpanla $50M değerleme demek."</p>
+
+<h3>8. Maliyet-Bazlı Yaklaşım</h3>
+<p>Şimdiye kadar yapılan yatırımı (zaman + para) değerleme tabanı olarak kullanır. Genellikle düşük çıkar ve yatırımcılar tarafından pek kabul görmez.</p>
+
+<h3>9. Kombinasyon (Valunorth Yaklaşımı)</h3>
+<p>Tek bir metodun yetersiz kaldığı durumlarda birden fazla metodu ağırlıklı olarak birleştirmek en sağlıklı sonucu verir. Valunorth tam da bunu yapıyor: profilinize göre hangi metodların daha güvenilir olduğunu belirleyip ağırlıklı ortalama hesaplıyor.</p>
+
+<div class="highlight-box">
+  <p>Seed aşamasında değerleme bir bilimden çok sanattır. Önemli olan tek bir "doğru" rakama ulaşmak değil, savunulabilir bir aralık oluşturmak ve bu aralığı verilerle desteklemektir.</p>
+</div>
+
+<h2>Hangi Metodu Seçmelisiniz?</h2>
+<p>Metodun seçimi büyük ölçüde mevcut veriye bağlıdır. Gelir yoksa Berkus veya Scorecard; ilk gelir varsa VC Metodu; karşılaştırılabilir işlemler varsa Comparable Transaction en iyi sonucu verir.</p>
+<p>Valunorth, profilinizi analiz edip otomatik olarak en uygun metod kombinasyonunu seçer ve 9 farklı metodun ağırlıklı ortalamasını hesaplar. Böylece tek bir metodun önyargısından arınmış, savunulabilir bir değerleme aralığı elde edersiniz.</p>
+</div>
+    <div data-en>
+<p>Knowing your startup's value is one of the most critical pieces of information you need before sitting at the negotiation table with investors. However, at the seed stage — no revenue yet, product in beta, few customers — traditional valuation methods fall short.</p>
+<p>In this article, we compare 9 different valuation methods used at the seed stage, with their strengths and weaknesses.</p>
+
+<h2>Why is the Seed Stage Different?</h2>
+<p>Traditional valuation approaches (DCF, P/E multiples) rely on historical financial data. In a seed-stage startup, this data either doesn't exist or is statistically meaningless. Therefore, seed valuation largely depends on <strong>potential, team, and market size</strong>.</p>
+
+<div class="key-metric">
+  <div class="metric-box"><div class="metric-val">9+</div><div class="metric-lbl">Different valuation methods</div></div>
+  <div class="metric-box"><div class="metric-val">40%</div><div class="metric-lbl">Team weight in valuation</div></div>
+  <div class="metric-box"><div class="metric-val">3x</div><div class="metric-lbl">Investor negotiation range</div></div>
+</div>
+
+<h2>9 Methods Compared</h2>
+
+<h3>1. Berkus Method</h3>
+<p>Developed by Dave Berkus, this method evaluates 5 factors: basic idea, prototype, management team, strategic relationships, and product launch. A maximum of $500K value is assigned to each factor, resulting in a maximum valuation of $2.5M.</p>
+<p><strong>Strong:</strong> Simple, fast, less subjective. <strong>Weak:</strong> Undervalues high-potential startups.</p>
+
+<h3>2. Scorecard Method</h3>
+<p>Uses the median valuation of similar startups in the region as a base, then compares 6 weighted factors: team (30%), opportunity size (25%), product/technology (15%), competitive environment (10%), marketing channels (10%), other (10%).</p>
+<p><strong>Strong:</strong> Ecosystem-based, realistic. <strong>Weak:</strong> Requires regional data.</p>
+
+<h3>3. Risk Factor Summation</h3>
+<p>Evaluates 12 risk categories (management risk, stage risk, marketing risk, technology risk, etc.) and scores each from +2 to -2. Adjusts up or down from the regional median based on risk score.</p>
+<p><strong>Strong:</strong> Comprehensive risk analysis. <strong>Weak:</strong> Highly subjective.</p>
+
+<h3>4. VC Method</h3>
+<p>Values the startup by reverse-engineering the investor's expected return: Pre-money valuation = Terminal value ÷ Expected ROI - Investment amount.</p>
+<p><strong>Strong:</strong> Reflects investor perspective. <strong>Weak:</strong> Terminal value estimation is very uncertain.</p>
+
+<h3>5. Comparable Transaction</h3>
+<p>Compares recent investment rounds of similar stage and sector companies. Works on the logic of "If company X received seed funding at $5M pre-money last quarter, and we have a similar profile..."</p>
+<p><strong>Strong:</strong> Reflects the market. <strong>Weak:</strong> Hard to find data, especially in the Turkish ecosystem.</p>
+
+<h3>6. First Chicago Method</h3>
+<p>Performs separate DCF calculations for best, middle, and worst case scenarios, then takes a probability-weighted average. Suitable for more mature seed startups.</p>
+
+<h3>7. Market Size Approach</h3>
+<p>Works backwards from addressable market size: "If this market is $1B and we capture 1% share, that's $10M revenue, which at a 5x multiple equals $50M valuation."</p>
+
+<h3>8. Cost-Based Approach</h3>
+<p>Uses investment to date (time + money) as the valuation base. Generally comes out low and isn't widely accepted by investors.</p>
+
+<h3>9. Combination (Valunorth Approach)</h3>
+<p>When a single method is insufficient, combining multiple methods with appropriate weights gives the most reliable result. This is exactly what Valunorth does: it determines which methods are most reliable for your profile and calculates a weighted average.</p>
+
+<div class="highlight-box">
+  <p>At the seed stage, valuation is more art than science. What matters is not reaching a single "correct" number, but creating a defensible range and supporting it with data.</p>
+</div>
+
+<h2>Which Method Should You Choose?</h2>
+<p>Method selection largely depends on available data. If there's no revenue, use Berkus or Scorecard; if there's initial revenue, use the VC Method; if comparable transactions exist, Comparable Transaction gives the best results.</p>
+<p>Valunorth analyzes your profile and automatically selects the most appropriate method combination, calculating the weighted average of 9 different methods. This gives you a defensible valuation range free from the bias of any single method.</p>
+</div>
+    
+</div>
+
+<script>
+function setLang(l){document.body.className='lang-'+l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.lang-btn[onclick="setLang(''+l+'')"]').classList.add('active');}
+</script>
+</body>
+</html>
