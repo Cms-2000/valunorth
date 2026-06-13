@@ -296,16 +296,16 @@ let cur=0,A={};
 
 /* ══ HESAPLAMA ══ */
 function getStage(){const r=A.rev3m||0,c=A.cust||0,g=A.growth||0,sp=A.stage_prod||1,pf=A.prev_fund||0,hc=A.headcount||1;const sc={preseed:0,seed:0,early:0,growth:0,scaleup:0,late:0};
-  // Gelir sinyali (ağırlık 1.5x - birincil sinyal)
+  // Gelir sinyali (ağırlık 30 - temel)
   let revStage="preseed";
-  if(r===0){sc.preseed+=45;revStage="preseed";}else if(r<=100000){sc.seed+=45;revStage="seed";}else if(r<=500000){sc.early+=45;revStage="early";}else if(r<=2000000){sc.growth+=45;revStage="growth";}else if(r<=6000000){sc.scaleup+=45;revStage="scaleup";}else{sc.late+=45;revStage="late";}
-  // Müşteri sinyali (ağırlık 1x)
+  if(r===0){sc.preseed+=30;revStage="preseed";}else if(r<=100000){sc.seed+=30;revStage="seed";}else if(r<=500000){sc.early+=30;revStage="early";}else if(r<=2000000){sc.growth+=30;revStage="growth";}else if(r<=6000000){sc.scaleup+=30;revStage="scaleup";}else{sc.late+=30;revStage="late";}
+  // Müşteri sinyali (ağırlık 30 - temel)
   let custStage="preseed";
   if(c<=2){sc.preseed+=30;custStage="preseed";}else if(c<=15){sc.seed+=30;custStage="seed";}else if(c<=60){sc.early+=30;custStage="early";}else if(c<=300){sc.growth+=30;custStage="growth";}else if(c<=1000){sc.scaleup+=30;custStage="scaleup";}else{sc.late+=30;custStage="late";}
-  // Eğer müşteri sinyali gelir sinyalinden 2+ aşama ötedeyse (yüksek kullanıcı, düşük gelir), gelir sinyalini güçlendir
+  // Eğer müşteri sinyali gelir sinyalinden 2+ aşama ötedeyse (yüksek kullanıcı, çok düşük gelir = consumer app paterni), gelir sinyalini güçlendir
   const stageOrder=["preseed","seed","early","growth","scaleup","late"];
   const revIdx=stageOrder.indexOf(revStage), custIdx=stageOrder.indexOf(custStage);
-  if(custIdx-revIdx>=2){sc[revStage]+=20;} // gelir geride kalmışsa ekstra ağırlık
+  if(custIdx-revIdx>=2){sc[revStage]+=15;}
   if(sp<=2){sc.preseed+=30;}else if(sp===3){sc.seed+=20;sc.early+=10;}else if(sp===4){sc.early+=20;sc.growth+=10;}else if(sp===5){sc.growth+=10;sc.scaleup+=15;sc.late+=5;}if(g===0){sc.preseed+=8;}else if(g<=5){sc.seed+=8;}else if(g<=20){sc.early+=12;}else if(g<=35){sc.growth+=15;}else{sc.growth+=12;sc.scaleup+=3;}if(pf===0){sc.preseed+=10;}else if(pf===1){sc.seed+=10;}else if(pf===2){sc.early+=8;sc.growth+=5;}else if(pf===3){sc.growth+=8;sc.scaleup+=10;sc.late+=5;}if(hc===1){sc.preseed+=8;sc.seed+=4;}else if(hc===2){sc.seed+=8;sc.early+=4;}else if(hc===3){sc.early+=8;sc.growth+=4;}else if(hc===4){sc.growth+=8;sc.scaleup+=4;}else{sc.scaleup+=8;sc.late+=6;}let best="preseed",bestScore=0;Object.entries(sc).forEach(([k,v])=>{if(v>bestScore){bestScore=v;best=k;}});return best;}
 function calcVal(){
   const st=getStage();
