@@ -427,7 +427,7 @@ function getScores(){
     fin:Math.min(100,Math.round(((A.runway||1)/4*35)+((A.prev_fund||0)/3*30)+((A.margin||1)/4*35)))
   };
 }
-function getWeights(st){return{seed:{"Scorecard":35,"Risk Factor":30,"Market Size":20,"VC Metodu":15},early:{"Scorecard":25,"Traction":30,"Comparables":25,"VC Metodu":20},growth:{"Comparables":30,"VC Metodu":30,"Traction":25,"DCF":15},scaleup:{"DCF":35,"Comparables":35,"VC Metodu":20,"First Chicago":10}}[st];}
+function getWeights(st){return{preseed:{"Berkus/Scorecard":50,"Risk Factor":30,"Market Size":20},seed:{"Berkus/Scorecard":40,"Risk Factor":25,"Market Size":20,"VC Metodu":15},early:{"Scorecard":20,"Traction/ARR":25,"VC Metodu":25,"Market Size":15,"Risk Factor":15},growth:{"Traction/ARR":35,"VC Metodu":25,"Comparables":25,"Market Size":15},scaleup:{"Traction/ARR":35,"Comparables":25,"VC Metodu":20,"DCF":20},late:{"DCF":30,"Comparables":30,"Traction/ARR":25,"VC Metodu":15}}[st]||{"Scorecard":35,"Risk Factor":30,"Market Size":20,"VC Metodu":15};}
 function f(n){if(n>=1000000)return"₺"+(n/1000000).toFixed(1)+"M";if(n>=1000)return"₺"+Math.round(n/1000)+"K";return"₺"+n;}
 function fN(n){return n.toLocaleString("tr");}
 function stInfo(s){return{preseed:{l:"Pre-Seed",bg:"#1C2535",c:"#5DCAA5"},seed:{l:"Seed",bg:"#EEEDFE",c:"#3C3489"},early:{l:"Early Growth",bg:"#E1F5EE",c:"#085041"},growth:{l:"Growth",bg:"#FAEEDA",c:"#633806"},scaleup:{l:"Scale-up",bg:"#E6F1FB",c:"#0C447C"},late:{l:"Late Stage",bg:"#F5F4EF",c:"#444441"}}[s]||{l:s,bg:"#eee",c:"#333"};}
