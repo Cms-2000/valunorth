@@ -396,13 +396,12 @@ function calcVal(){
   else{curVal=ar*mu*0.85*(1+(mg-1)*0.07)*qualMult;}
 
   // D2: B2C Platform - ödeme yapan müşteri + toplam kullanıcı tabanı birleşik değer
+  let userPotMin=0;
   if((m==="marketplace"||m==="ecommerce")&&A.seg==="b2c"){
     const custVal=(A.cust||0)*(m==="marketplace"?300000:200000);
     const totalUsersVal=(A.total_users||0)*(m==="marketplace"?8000:5000);
     curVal+=( custVal+totalUsersVal)*expF*techF;
-    // Potansiyel de minimum kullanıcı tabanı bazlı olsun
-    const userPotMin=(A.total_users||0)*bmu*scopeF*3000;
-    potVal=Math.max(potVal,userPotMin);
+    userPotMin=(A.total_users||0)*bmu*scopeF*3000;
   }
   curVal=Math.max(curVal,500000);
 
@@ -418,7 +417,7 @@ function calcVal(){
     if(ms===4&&isEarlyish){potVal*=0.65;}
     else{potVal*=1.10;}
   }
-  potVal=Math.max(potVal,curVal*1.5);
+  potVal=Math.max(potVal,curVal*1.5,userPotMin);
 
   // ── BİRLEŞTİRME ──
   let b=curVal*wc+potVal*wp;
