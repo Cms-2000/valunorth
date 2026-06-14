@@ -220,7 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="header quiz-section">
     <div class="logo">Valu<span style="color:#5DCAA5;">north</span> <span style="color:rgba(255,255,255,0.4);font-size:11px;font-weight:400;">Startup Değerleme</span></div>
     <h1>Girişiminizi değerleyin</h1>
-    <p style="font-size:13px;font-weight:600;letter-spacing:0.05em;color:#5DCAA5;margin-bottom:0;">20 Soru &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; 5 Grafik &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; Profile Özel Senaryolar &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; Kapsamlı PDF Raporu</p>
+    <p style="font-size:13px;font-weight:600;letter-spacing:0.05em;color:#5DCAA5;margin-bottom:0;">25 Soru &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; 5 Grafik &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; Profile Özel Senaryolar &nbsp;<span style="color:rgba(255,255,255,0.3);">·</span>&nbsp; Kapsamlı PDF Raporu</p>
   </div>
 
   <div class="card quiz-section" id="quiz-card">
@@ -289,7 +289,12 @@ const Qs=[
   {cat:"Sermaye & Finansal",text:"Daha önce yatırım aldınız mı?",hint:"Melek, kuluçka, VC veya hibe dahil.",key:"prev_fund",opts:[{l:"Hayır, henüz almadım",v:0},{l:"Hibe / kuluçka (< ₺500K)",v:1},{l:"Melek yatırım (₺500K – ₺5M)",v:2},{l:"Seed / pre-A turu (₺5M+)",v:3}]},
   {cat:"Sermaye & Finansal",text:"Brüt marjınız yaklaşık nedir?",hint:"(Gelir - Değişken maliyetler) / Gelir.",key:"margin",opts:[{l:"%0–20 (düşük marj)",v:1},{l:"%20–50 (orta marj)",v:2},{l:"%50–70 (yüksek marj)",v:3},{l:"%70+ (çok yüksek marj)",v:4}]},
   {cat:"Hedef & Strateji",text:"12 ay içindeki öncelikli hedefiniz nedir?",hint:"En kritik bir tanesini seçin.",key:"goal",opts:[{l:"İlk geliri elde etmek",v:"revenue"},{l:"Ürünü olgunlaştırmak",v:"product"},{l:"Yatırım almak",v:"funding"},{l:"Hızlı büyüme / ölçeklenme",v:"scale"},{l:"Karlılığa ulaşmak",v:"profit"}]},
-  {cat:"Hedef & Strateji",text:"Girişiminizin hedef pazarı ve büyüme yönü nedir?",hint:"Gelir ve yatırımcı profilinizi düşünerek seçin.",key:"market_scope",opts:[{l:"Yalnızca Türkiye iç pazarı",v:1},{l:"Türkiye + MENA / Orta Doğu",v:2},{l:"Türkiye + Avrupa / Batı",v:3},{l:"Global — baştan uluslararası",v:4}]}
+  {cat:"Hedef & Strateji",text:"Girişiminizin hedef pazarı ve büyüme yönü nedir?",hint:"Gelir ve yatırımcı profilinizi düşünerek seçin.",key:"market_scope",opts:[{l:"Yalnızca Türkiye iç pazarı",v:1},{l:"Türkiye + MENA / Orta Doğu",v:2},{l:"Türkiye + Avrupa / Batı",v:3},{l:"Global — baştan uluslararası",v:4}]},
+  {cat:"İş Modeli & Gelir",text:"Birincil gelir modeliniz nedir?",hint:"En büyük gelir kaynağını seçin.",key:"rev_model",opts:[{l:"Abonelik / SaaS",v:5},{l:"Lisans / kurumsal satış",v:4},{l:"Komisyon / take-rate",v:3},{l:"Reklam / freemium",v:2},{l:"Proje bazlı / danışmanlık",v:1}]},
+  {cat:"Traction & Gelir",text:"Ücretsiz dahil toplam kullanıcı / kayıtlı üye sayınız?",hint:"Ödeme yapmayan kullanıcılar dahil toplam.",key:"total_users",opts:[{l:"Henüz yok",v:0},{l:"1 – 1.000",v:500},{l:"1.001 – 10.000",v:5000},{l:"10.001 – 100.000",v:50000},{l:"100.001 – 1.000.000",v:500000},{l:"1.000.000+",v:2000000}]},
+  {cat:"Rekabet & Konum",text:"Pazarınızda doğrudan rakip sayısı nedir?",hint:"Aynı problemi aynı segmente çözen rakipler.",key:"competition",opts:[{l:"Rakip yok, pazar yaratıyoruz",v:5},{l:"1–3 rakip var",v:4},{l:"4–10 rakip var",v:3},{l:"10+ rakip var",v:2},{l:"Çok kalabalık, fiyat rekabeti var",v:1}]},
+  {cat:"Traction & Gelir",text:"Mevcut gelirinizin yurt dışından gelen kısmı nedir?",hint:"Gerçek tahsilat, hedef değil.",key:"intl_rev",opts:[{l:"Tamamı yurt içi",v:1},{l:"%1–20 yurt dışı",v:2},{l:"%20–50 yurt dışı",v:3},{l:"%50+ yurt dışı",v:4}]},
+  {cat:"Rekabet & Konum",text:"Sektörünüzde lisans veya regülasyon zorunluluğu var mı?",hint:"Fintech, sağlık, savunma gibi sektörler için kritik.",key:"regulation",opts:[{l:"Yok, serbest pazar",v:1},{l:"Var ama henüz almadık",v:2},{l:"Var, başvuru sürecindeyiz",v:3},{l:"Var ve lisansımız mevcut",v:4}]}
 ];
 
 let cur=0,A={};
@@ -306,7 +311,7 @@ function getStage(){const r=A.rev3m||0,c=A.cust||0,g=A.growth||0,sp=A.stage_prod
   const stageOrder=["preseed","seed","early","growth","scaleup","late"];
   const revIdx=stageOrder.indexOf(revStage), custIdx=stageOrder.indexOf(custStage);
   if(custIdx-revIdx>=2){sc[revStage]+=15;}
-  if(sp<=2){sc.preseed+=30;}else if(sp===3){sc.seed+=20;sc.early+=10;}else if(sp===4){sc.early+=20;sc.growth+=10;}else if(sp===5){sc.growth+=10;sc.scaleup+=15;sc.late+=5;}if(g===0){sc.preseed+=8;}else if(g<=5){sc.seed+=8;}else if(g<=20){sc.early+=12;}else if(g<=35){sc.growth+=15;}else{sc.growth+=12;sc.scaleup+=3;}if(pf===0){sc.preseed+=10;}else if(pf===1){sc.seed+=10;}else if(pf===2){sc.early+=8;sc.growth+=5;}else if(pf===3){sc.growth+=8;sc.scaleup+=10;sc.late+=5;}if(hc===1){sc.preseed+=8;sc.seed+=4;}else if(hc===2){sc.seed+=8;sc.early+=4;}else if(hc===3){sc.early+=8;sc.growth+=4;}else if(hc===4){sc.growth+=8;sc.scaleup+=4;}else{sc.scaleup+=8;sc.late+=6;}let best="preseed",bestScore=0;Object.entries(sc).forEach(([k,v])=>{if(v>bestScore){bestScore=v;best=k;}});return best;}
+  if(sp<=2){sc.preseed+=30;}else if(sp===3){sc.seed+=20;sc.early+=10;}else if(sp===4){sc.early+=20;sc.growth+=10;}else if(sp===5){sc.growth+=10;sc.scaleup+=15;sc.late+=5;}if(g===0){sc.preseed+=8;}else if(g<=5){sc.seed+=8;}else if(g<=20){sc.early+=12;}else if(g<=35){sc.growth+=15;}else{sc.growth+=12;sc.scaleup+=3;}if(pf===0){sc.preseed+=10;}else if(pf===1){sc.seed+=10;}else if(pf===2){sc.early+=8;sc.growth+=5;}else if(pf===3){sc.growth+=8;sc.scaleup+=10;sc.late+=5;}if(hc===1){sc.preseed+=8;sc.seed+=4;}else if(hc===2){sc.seed+=8;sc.early+=4;}else if(hc===3){sc.early+=8;sc.growth+=4;}else if(hc===4){sc.growth+=8;sc.scaleup+=4;}else{sc.scaleup+=5;sc.late+=15;}if(r>6000000&&hc===5){sc.late+=15;}let best="preseed",bestScore=0;Object.entries(sc).forEach(([k,v])=>{if(v>bestScore){bestScore=v;best=k;}});return best;}
 function calcVal(){
   const st=getStage();
   const r3=A.rev3m||0,ar=r3*4,g=A.growth||0,m=A.model||"saas";
@@ -318,7 +323,11 @@ function calcVal(){
 
   // ── TEMEL ÇARPANLAR (8 model) ──
   const baseMults={saas:8,fintech:9,marketplace:6,deeptech:10,ecommerce:3,service:2,ai:13,defense:12};
-  const bmu=baseMults[m]||5;
+  let bmu=baseMults[m]||5;
+  // D4: Fintech B2B için prim - regülasyon moatı hesaba katılır
+  if(m==="fintech"&&A.seg==="b2b")bmu=11;
+  // D5: E-ticaret B2C için hafif prim
+  if(m==="ecommerce"&&A.seg==="b2c")bmu=5;
 
   // ── FAKTÖRLER ──
   const gf=g>=30?1.55:g>=20?1.35:g>=10?1.15:g>=5?1.0:0.75;
@@ -329,6 +338,10 @@ function calcVal(){
   const techF=team>=4?1.18:team>=3?1.10:team>=2?1.05:1.0;
 
   // ── NİTELİKSEL PRİM / İSKONTO ──
+  const intl_rev=A.intl_rev||1;
+  const regulation=A.regulation||1;
+  const competition=A.competition||3;
+  const rev_model=A.rev_model||3;
   let adj=1.0;
   if(mo===4)adj+=0.20;else if(mo===3)adj+=0.10;else if(mo===1)adj-=0.25;
   if(ts>=12)adj+=0.15;
@@ -338,7 +351,12 @@ function calcVal(){
   if(runway===1)adj-=0.25;
   if(mk===1)adj-=0.12;
   if(m==="ai"||m==="defense")adj+=0.10;
-  adj=Math.max(0.45,Math.min(1.70,adj));
+  // Yeni soru etkileri
+  if(intl_rev>=4)adj+=0.18;else if(intl_rev===3)adj+=0.10;else if(intl_rev===2)adj+=0.05;
+  if(regulation===4)adj+=0.15;else if(regulation===3)adj+=0.08;else if(regulation===1&&(m==="fintech"||m==="defense"))adj-=0.08;
+  if(competition===5)adj+=0.15;else if(competition===4)adj+=0.08;else if(competition===1)adj-=0.15;
+  if(rev_model===5)adj+=0.10;else if(rev_model===1)adj-=0.08;
+  adj=Math.max(0.45,Math.min(1.80,adj));
 
   // ── RADAR BONUS ──
   const trRaw=Math.min(100,Math.round((Math.min(A.cust||0,300)/300)*35+(Math.min(g,40)/40)*25+(Math.min(r3,2000000)/2000000)*25+(Math.min(A.arpu||0,20000)/20000)*15));
@@ -377,12 +395,14 @@ function calcVal(){
   else if(st==="scaleup"){curVal=ar*mu*(1+(mg-1)*0.08)*(mk===4?1.2:1.0)*qualMult;}
   else{curVal=ar*mu*0.85*(1+(mg-1)*0.07)*qualMult;}
 
-  // FIX2: B2C Marketplace/E-ticaret için kullanıcı tabanı bonusu
-  // Yüksek kullanıcı sayısı + düşük gelir = "platform değeri" - mevcut değere ekstra katkı
+  // D2: B2C Platform - ödeme yapan müşteri + toplam kullanıcı tabanı birleşik değer
   if((m==="marketplace"||m==="ecommerce")&&A.seg==="b2c"){
-    const cust=A.cust||0;
-    const userBaseVal=cust*(m==="marketplace"?80000:50000); // kullanıcı başına platform değeri
-    curVal+=userBaseVal*expF*techF;
+    const custVal=(A.cust||0)*(m==="marketplace"?300000:200000);
+    const totalUsersVal=(A.total_users||0)*(m==="marketplace"?8000:5000);
+    curVal+=( custVal+totalUsersVal)*expF*techF;
+    // Potansiyel de minimum kullanıcı tabanı bazlı olsun
+    const userPotMin=(A.total_users||0)*bmu*scopeF*3000;
+    potVal=Math.max(potVal,userPotMin);
   }
   curVal=Math.max(curVal,500000);
 
@@ -393,7 +413,11 @@ function calcVal(){
   const targetARR=mktSize*reachPct;
   const potMult=bmu*scopeF*expF*techF*adj;
   let potVal=targetARR*potMult*riskDisc;
-  if(m==="ai"||m==="defense")potVal*=1.15;
+  // D1: AI/Defense + Global + erken aşamada potansiyel freni
+  if(m==="ai"||m==="defense"){
+    if(ms===4&&isEarlyish){potVal*=0.65;}
+    else{potVal*=1.10;}
+  }
   potVal=Math.max(potVal,curVal*1.5);
 
   // ── BİRLEŞTİRME ──
