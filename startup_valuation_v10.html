@@ -303,7 +303,7 @@ let cur=0,A={};
 function getStage(){const r=A.rev3m||0,c=A.cust||0,g=A.growth||0,sp=A.stage_prod||1,pf=A.prev_fund||0,hc=A.headcount||1;const sc={preseed:0,seed:0,early:0,growth:0,scaleup:0,late:0};
   // Gelir sinyali (ağırlık 30 - temel)
   let revStage="preseed";
-  if(r===0){sc.preseed+=30;revStage="preseed";}else if(r<=100000){sc.seed+=30;revStage="seed";}else if(r<=500000){sc.early+=30;revStage="early";}else if(r<=2000000){sc.growth+=30;revStage="growth";}else if(r<=6000000){sc.scaleup+=30;revStage="scaleup";}else{sc.late+=30;revStage="late";}
+  if(r===0){sc.preseed+=30;revStage="preseed";}else if(r<=100000){sc.seed+=30;revStage="seed";}else if(r<=350000){sc.early+=30;revStage="early";}else if(r<=2000000){sc.growth+=30;revStage="growth";}else if(r<=3000000){sc.scaleup+=30;revStage="scaleup";}else{sc.late+=30;revStage="late";}
   // Müşteri sinyali (ağırlık 30 - temel)
   let custStage="preseed";
   if(c<=2){sc.preseed+=30;custStage="preseed";}else if(c<=15){sc.seed+=30;custStage="seed";}else if(c<=60){sc.early+=30;custStage="early";}else if(c<=300){sc.growth+=30;custStage="growth";}else if(c<=1000){sc.scaleup+=30;custStage="scaleup";}else{sc.late+=30;custStage="late";}
@@ -320,14 +320,16 @@ function calcVal(){
   const diff=A.diff||1,mo=A.moat||1,cac=A.cac_aware||0;
   const runway=A.runway||1,pf=A.prev_fund||0,ms=A.market_scope||1;
   const ts=team+exp+exit_v+hc;
+  const cust=A.cust||0, total_users=A.total_users||0;
+  const intl_rev=A.intl_rev||1, regulation=A.regulation||1;
+  const competition=A.competition||3, rev_model=A.rev_model||3;
+  const seg=A.seg||"b2b";
 
-  // ── TEMEL ÇARPANLAR (8 model) ──
+  // ── TEMEL ÇARPANLAR (8 model + segment primleri) ──
   const baseMults={saas:8,fintech:9,marketplace:6,deeptech:10,ecommerce:3,service:2,ai:13,defense:12};
   let bmu=baseMults[m]||5;
-  // D4: Fintech B2B için prim - regülasyon moatı hesaba katılır
-  if(m==="fintech"&&A.seg==="b2b")bmu=11;
-  // D5: E-ticaret B2C için hafif prim
-  if(m==="ecommerce"&&A.seg==="b2c")bmu=5;
+  if(m==="fintech"&&seg==="b2b")bmu=11;
+  if(m==="ecommerce"&&seg==="b2c")bmu=5;
 
   // ── FAKTÖRLER ──
   const gf=g>=30?1.55:g>=20?1.35:g>=10?1.15:g>=5?1.0:0.75;
@@ -338,10 +340,6 @@ function calcVal(){
   const techF=team>=4?1.18:team>=3?1.10:team>=2?1.05:1.0;
 
   // ── NİTELİKSEL PRİM / İSKONTO ──
-  const intl_rev=A.intl_rev||1;
-  const regulation=A.regulation||1;
-  const competition=A.competition||3;
-  const rev_model=A.rev_model||3;
   let adj=1.0;
   if(mo===4)adj+=0.20;else if(mo===3)adj+=0.10;else if(mo===1)adj-=0.25;
   if(ts>=12)adj+=0.15;
@@ -351,7 +349,6 @@ function calcVal(){
   if(runway===1)adj-=0.25;
   if(mk===1)adj-=0.12;
   if(m==="ai"||m==="defense")adj+=0.10;
-  // Yeni soru etkileri
   if(intl_rev>=4)adj+=0.18;else if(intl_rev===3)adj+=0.10;else if(intl_rev===2)adj+=0.05;
   if(regulation===4)adj+=0.15;else if(regulation===3)adj+=0.08;else if(regulation===1&&(m==="fintech"||m==="defense"))adj-=0.08;
   if(competition===5)adj+=0.15;else if(competition===4)adj+=0.08;else if(competition===1)adj-=0.15;
@@ -359,7 +356,7 @@ function calcVal(){
   adj=Math.max(0.45,Math.min(1.80,adj));
 
   // ── RADAR BONUS ──
-  const trRaw=Math.min(100,Math.round((Math.min(A.cust||0,300)/300)*35+(Math.min(g,40)/40)*25+(Math.min(r3,2000000)/2000000)*25+(Math.min(A.arpu||0,20000)/20000)*15));
+  const trRaw=Math.min(100,Math.round((Math.min(cust,300)/300)*35+(Math.min(g,40)/40)*25+(Math.min(r3,2000000)/2000000)*25+(Math.min(A.arpu||0,20000)/20000)*15));
   const tmRaw=Math.min(100,Math.round((team/5)*30+(exp/5)*30+(exit_v/3)*25+(hc/5)*15));
   const mkRaw=Math.min(100,Math.round((mk/4)*60+((sp-1)/4)*40));
   const moRaw=Math.min(100,Math.round((diff/6)*45+(mo/4)*40+(cac/3)*15));
@@ -372,6 +369,9 @@ function calcVal(){
   if(above65>=3)radarBonus+=0.12;
   radarBonus=Math.min(radarBonus,1.40);
 
+  // ── AŞAMA TESPİTİ İÇİN GELİR EŞİĞİ NOTU ──
+  // getStage() içinde: early üst sınır 350K, scaleup üst sınır 3M olarak ayarlandı
+
   // ── AŞAMA AĞIRLIKLARI ──
   const stageW={
     preseed:[0.10,0.90],seed:[0.20,0.80],early:[0.35,0.65],
@@ -379,7 +379,6 @@ function calcVal(){
   };
   let[wc,wp]=stageW[st]||[0.35,0.65];
 
-  // FIX3: AI/Defense + Global (ms=4) + erken aşamada (preseed/seed/early) potansiyel ağırlığını frenle
   const isAIDefense=(m==="ai"||m==="defense");
   const isEarlyish=(st==="preseed"||st==="seed"||st==="early");
   if(isAIDefense&&ms===4&&isEarlyish){wc=Math.min(wc+0.10,0.95);wp=1-wc;}
@@ -388,20 +387,20 @@ function calcVal(){
   const mu=bmu*gf*scopeF;
   const qualMult=adj*expF*runF*mgF*techF*radarBonus;
   let curVal=0;
-  if(st==="preseed"){curVal=(800000+ts*120000+mk*200000+(mo-1)*100000+(sp-1)*80000+exit_v*300000)*expF*techF;}
-  else if(st==="seed"){curVal=(2000000+ts*160000+mk*280000+(mo-1)*180000+(sp-1)*120000+(mg-1)*80000+exit_v*400000)*expF*techF;}
+  if(st==="preseed"){curVal=(1100000+ts*150000+mk*260000+(mo-1)*130000+(sp-1)*100000+exit_v*350000)*qualMult;}
+  else if(st==="seed"){curVal=(2800000+ts*200000+mk*350000+(mo-1)*220000+(sp-1)*150000+(mg-1)*100000+exit_v*450000)*qualMult;}
   else if(st==="early"){const ab=ar>0?ar*mu*0.6:4000000;const ql=ts*100000+mo*220000+mk*160000;curVal=(ab+ql)*qualMult;}
   else if(st==="growth"){curVal=ar*mu*(1+(mg-1)*0.10)*qualMult;}
   else if(st==="scaleup"){curVal=ar*mu*(1+(mg-1)*0.08)*(mk===4?1.2:1.0)*qualMult;}
   else{curVal=ar*mu*0.85*(1+(mg-1)*0.07)*qualMult;}
 
-  // D2: B2C Platform - ödeme yapan müşteri + toplam kullanıcı tabanı birleşik değer
+  // ── B2C PLATFORM (Marketplace/E-ticaret) - kullanıcı tabanı bonusu ──
   let userPotMin=0;
-  if((m==="marketplace"||m==="ecommerce")&&A.seg==="b2c"){
-    const custVal=(A.cust||0)*(m==="marketplace"?300000:200000);
-    const totalUsersVal=(A.total_users||0)*(m==="marketplace"?8000:5000);
-    curVal+=( custVal+totalUsersVal)*expF*techF;
-    userPotMin=(A.total_users||0)*bmu*scopeF*3000;
+  if((m==="marketplace"||m==="ecommerce")&&seg==="b2c"){
+    const custVal=cust*(m==="marketplace"?80000:50000);
+    const totalUsersVal=total_users*(m==="marketplace"?60:35);
+    curVal+=(custVal+totalUsersVal)*expF*techF;
+    userPotMin=total_users*bmu*scopeF*15;
   }
   curVal=Math.max(curVal,500000);
 
@@ -410,9 +409,12 @@ function calcVal(){
   const reachPct={preseed:0.001,seed:0.002,early:0.003,growth:0.007,scaleup:0.015,late:0.025}[st]||0.003;
   const riskDisc={preseed:0.10,seed:0.18,early:0.28,growth:0.45,scaleup:0.60,late:0.75}[st]||0.28;
   const targetARR=mktSize*reachPct;
-  const potMult=bmu*scopeF*expF*techF*adj;
+  let potMult=bmu*scopeF*expF*techF*adj;
+  // AI/Deeptech/Defense Early ve Seed'de potansiyel freni (model çarpanı çok agresif)
+  if((st==="early"||st==="seed")&&(m==="ai"||m==="deeptech"||m==="defense")){
+    potMult*=0.45;
+  }
   let potVal=targetARR*potMult*riskDisc;
-  // D1: AI/Defense + Global + erken aşamada potansiyel freni
   if(m==="ai"||m==="defense"){
     if(ms===4&&isEarlyish){potVal*=0.65;}
     else{potVal*=1.10;}
