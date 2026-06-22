@@ -277,6 +277,30 @@ body{padding-top:44px;}
 .ai-sim-sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.6;}
 .ai-sim-lock{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border-radius:10px;padding:14px 16px;}
 .ai-sim-lock-text{font-size:13px;color:rgba(255,255,255,0.6);}
+
+/* ── KURUMSAL PORTFÖY PANELİ ── */
+.corp-panel{display:none;min-height:100vh;background:#F5F4EF;padding:80px 20px 40px;}
+.corp-header{max-width:900px;margin:0 auto 32px;}
+.corp-title{font-size:28px;font-weight:700;color:#1C2535;margin-bottom:4px;}
+.corp-sub{font-size:14px;color:#888;}
+.corp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto 32px;}
+.corp-stat{background:#fff;border-radius:12px;padding:20px;border:1px solid #eee;}
+.corp-stat-val{font-size:28px;font-weight:700;color:#534AB7;}
+.corp-stat-lbl{font-size:13px;color:#888;margin-top:4px;}
+.corp-actions{max-width:900px;margin:0 auto 24px;display:flex;gap:12px;}
+.corp-add-btn{padding:10px 24px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.corp-add-btn:hover{background:#3C3489;}
+.corp-table-wrap{max-width:900px;margin:0 auto;}
+.corp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #eee;}
+.corp-table th{background:#1C2535;color:#fff;padding:12px 16px;text-align:left;font-size:13px;font-weight:600;}
+.corp-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid #f5f5f5;color:#333;}
+.corp-table tr:last-child td{border-bottom:none;}
+.corp-table tr:hover td{background:#f9f9f9;}
+.corp-stage-badge{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;}
+.corp-empty{text-align:center;padding:48px;color:#aaa;font-size:14px;}
+.corp-limit-bar{max-width:900px;margin:0 auto 20px;}
+.corp-limit-track{background:#eee;border-radius:99px;height:6px;margin-top:8px;}
+.corp-limit-fill{background:#534AB7;border-radius:99px;height:6px;transition:width .3s;}
 </style>
 </head>
 <body>
@@ -290,7 +314,8 @@ body{padding-top:44px;}
   </div>
   <div id="auth-logged-in" class="auth-user" style="display:none;">
     <span class="auth-user-name" id="auth-user-email"></span>
-    <button class="auth-btn auth-btn-login" onclick="openHistory()" style="font-size:11px;">📋 Geçmişim</button>
+    <button class="auth-btn auth-btn-login" id="corp-return-btn" onclick="returnToCorpPanel()" style="font-size:11px;display:none;">🏢 Panele Dön</button>
+    <button class="auth-btn auth-btn-login" onclick="openHistory()" style="font-size:11px;" id="history-btn">📋 Geçmişim</button>
     <button class="auth-btn auth-btn-logout" onclick="signOutUser()">Çıkış</button>
   </div>
 </div>
@@ -321,6 +346,58 @@ body{padding-top:44px;}
   <div class="history-modal">
     <h2>📋 Değerleme Geçmişim</h2>
     <div id="history-list"><div class="history-empty">Yükleniyor...</div></div>
+  </div>
+</div>
+
+
+<!-- KURUMSAL PORTFÖY PANELİ -->
+<div class="corp-panel" id="corp-panel">
+  <div class="corp-header">
+    <div class="corp-title">Portföy Paneli</div>
+    <div class="corp-sub" id="corp-sub">Kurumsal hesabınızdaki girişimler</div>
+  </div>
+
+  <div class="corp-stats">
+    <div class="corp-stat">
+      <div class="corp-stat-val" id="corp-total">0</div>
+      <div class="corp-stat-lbl">Toplam Girişim</div>
+    </div>
+    <div class="corp-stat">
+      <div class="corp-stat-val" id="corp-limit-val">50</div>
+      <div class="corp-stat-lbl">Paket Limiti</div>
+    </div>
+    <div class="corp-stat">
+      <div class="corp-stat-val" id="corp-remaining">50</div>
+      <div class="corp-stat-lbl">Kalan Slot</div>
+    </div>
+  </div>
+
+  <div class="corp-limit-bar">
+    <div style="font-size:12px;color:#888;">Kullanım: <span id="corp-usage-text">0 / 50</span></div>
+    <div class="corp-limit-track">
+      <div class="corp-limit-fill" id="corp-limit-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="corp-actions">
+    <button class="corp-add-btn" onclick="startCorpValuation()">+ Yeni Girişim Değerle</button>
+  </div>
+
+  <div class="corp-table-wrap">
+    <table class="corp-table">
+      <thead>
+        <tr>
+          <th>Girişim / Tarih</th>
+          <th>Aşama</th>
+          <th>Model</th>
+          <th>Değer Bandı</th>
+          <th>Merkez Değer</th>
+        </tr>
+      </thead>
+      <tbody id="corp-table-body">
+        <tr><td colspan="5" class="corp-empty">Henüz portföyde girişim yok.<br>Yukarıdaki butona tıklayarak ilk değerlemeyi ekleyin.</td></tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -1466,6 +1543,94 @@ renderQ();
       document.getElementById("history-modal-overlay").classList.remove("open");
   };
 
+  // ── KURUMSAL PANEL ──
+  let corpData = null; // {account_type, enterprise_limit, enterprise_active}
+  let isCorpUser = false;
+
+  async function loadUserProfile(uid) {
+    try {
+      const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      const docRef = doc(db, "users", uid);
+      const snap = await getDoc(docRef);
+      if(snap.exists()) {
+        corpData = snap.data();
+        isCorpUser = corpData.account_type === "enterprise" && corpData.enterprise_active === true;
+      }
+    } catch(e) { console.error("Profil yüklenemedi:", e); }
+  }
+
+  async function loadCorpPortfolio() {
+    const { collection, getDocs, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const limit = corpData?.enterprise_limit || 50;
+    try {
+      const q = query(collection(db, "users", currentUser.uid, "reports"), orderBy("createdAt","desc"));
+      const snap = await getDocs(q);
+      const total = snap.size;
+
+      // Stats güncelle
+      document.getElementById("corp-total").textContent = total;
+      document.getElementById("corp-limit-val").textContent = limit === 999 ? "∞" : limit;
+      document.getElementById("corp-remaining").textContent = limit === 999 ? "∞" : Math.max(0, limit - total);
+      document.getElementById("corp-usage-text").textContent = limit === 999 ? total + " / ∞" : total + " / " + limit;
+      document.getElementById("corp-limit-fill").style.width = limit === 999 ? "10%" : Math.min(100, (total/limit*100)) + "%";
+
+      const tbody = document.getElementById("corp-table-body");
+      if(snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="5" class="corp-empty">Henüz portföyde girişim yok.<br>Yukarıdaki butona tıklayarak ilk değerlemeyi ekleyin.</td></tr>';
+        return;
+      }
+
+      const stageColors = {
+        preseed:"#EEEDFE", seed:"#E1F5EE", early:"#E6F1FB",
+        growth:"#FAEEDA", scaleup:"#F1EFE8", late:"#FCEBEB"
+      };
+      const stageNames = {
+        preseed:"Pre-Seed", seed:"Seed", early:"Early Growth",
+        growth:"Growth", scaleup:"Scale-up", late:"Late Stage"
+      };
+
+      tbody.innerHTML = "";
+      snap.forEach(doc => {
+        const d = doc.data();
+        const date = d.createdAt?.toDate?.()?.toLocaleDateString("tr-TR") || "—";
+        const stage = d.stage || "—";
+        const stageName = stageNames[stage] || stage;
+        const stageColor = stageColors[stage] || "#eee";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><div style="font-weight:600;color:#1C2535;">${d.answers?.model?.toUpperCase() || "Girişim"}</div><div style="font-size:11px;color:#aaa;">${date}</div></td>
+          <td><span class="corp-stage-badge" style="background:${stageColor};color:#333;">${stageName}</span></td>
+          <td style="text-transform:capitalize;">${d.model || "—"}</td>
+          <td style="color:#888;">${d.lo || "—"} – ${d.hi || "—"}</td>
+          <td style="font-weight:700;color:#534AB7;">${d.mid || "—"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch(e) { console.error("Portföy yüklenemedi:", e); }
+  }
+
+  window.startCorpValuation = function() {
+    const limit = corpData?.enterprise_limit || 50;
+    const total = parseInt(document.getElementById("corp-total").textContent) || 0;
+    if(limit !== 999 && total >= limit) {
+      alert("Paket limitinize ulaştınız (" + limit + " girişim). Üst pakete geçmek için hello@valunorth.com ile iletişime geçin.");
+      return;
+    }
+    // Normal değerleme akışına geç
+    document.getElementById("corp-panel").style.display = "none";
+    document.getElementById("corp-return-btn").style.display = "flex";
+    document.querySelector(".container").style.display = "block";
+    window.scrollTo(0,0);
+  };
+
+  window.returnToCorpPanel = function() {
+    document.getElementById("corp-panel").style.display = "block";
+    document.getElementById("corp-return-btn").style.display = "none";
+    document.querySelector(".container").style.display = "none";
+    loadCorpPortfolio();
+    window.scrollTo(0,0);
+  };
+
   // ── PLUS KİLİT SİSTEMİ ──
   const LOCKED_SECTIONS = ["card-scenarios","card-timeline","card-summary"];
   const PDF_LOCKED = true;
@@ -1523,15 +1688,26 @@ renderQ();
   };
 
   // Auth değişince kilitleri güncelle
-  onAuthStateChanged(auth, user => {
+  onAuthStateChanged(auth, async user => {
     currentUser = user;
     if(user){
       document.getElementById("auth-logged-out").style.display = "none";
       document.getElementById("auth-logged-in").style.display = "flex";
       document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
+      // Kurumsal kontrolü
+      await loadUserProfile(user.uid);
+      if(isCorpUser) {
+        document.querySelector(".container").style.display = "none";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("corp-panel").style.display = "block";
+        loadCorpPortfolio();
+      }
     } else {
       document.getElementById("auth-logged-out").style.display = "flex";
       document.getElementById("auth-logged-in").style.display = "none";
+      document.getElementById("corp-panel").style.display = "none";
+      document.querySelector(".container").style.display = "block";
+      isCorpUser = false; corpData = null;
     }
     // Rapor görünüyorsa kilitleri güncelle
     if(document.getElementById("result-area").style.display !== "none") {
