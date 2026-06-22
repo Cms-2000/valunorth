@@ -257,6 +257,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .history-empty{text-align:center;color:#aaa;font-size:14px;padding:24px 0;}
 
 body{padding-top:44px;}
+
+/* ── PLUS KİLİT SİSTEMİ ── */
+.locked-section{position:relative;}
+.lock-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;padding:24px;text-align:center;}
+.lock-icon{font-size:32px;margin-bottom:10px;}
+.lock-title{font-size:16px;font-weight:700;color:#1C2535;margin-bottom:6px;}
+.lock-sub{font-size:13px;color:#888;margin-bottom:16px;line-height:1.5;}
+.lock-btn{padding:10px 24px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.lock-btn:hover{background:#3C3489;}
+.lock-btn-green{background:#0F6E56;}
+.lock-btn-green:hover{background:#085041;}
+
+/* AI Simülasyon kartı */
+.ai-sim-card{background:linear-gradient(135deg,#1C2535 0%,#2D3A52 100%);border-radius:12px;padding:28px;margin-bottom:1rem;position:relative;overflow:hidden;}
+.ai-sim-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(93,202,165,0.08);}
+.ai-sim-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(93,202,165,0.15);border:1px solid rgba(93,202,165,0.3);border-radius:99px;padding:4px 12px;font-size:11px;color:#5DCAA5;font-weight:600;margin-bottom:12px;}
+.ai-sim-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:8px;}
+.ai-sim-sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.6;}
+.ai-sim-lock{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border-radius:10px;padding:14px 16px;}
+.ai-sim-lock-text{font-size:13px;color:rgba(255,255,255,0.6);}
 </style>
 </head>
 <body>
@@ -340,6 +360,21 @@ body{padding-top:44px;}
     <div class="card" id="card-report"></div>
     <div class="card" id="card-timeline"></div>
     <div class="card" id="card-summary"></div>
+    <!-- AI SİMÜLASYON KARTI -->
+    <div class="ai-sim-card" id="card-ai-sim">
+      <div class="ai-sim-badge">✨ Plus Özelliği</div>
+      <div class="ai-sim-title">AI Yatırımcı Simülasyonu</div>
+      <div class="ai-sim-sub">Profilinize özel bir yatırımcı gibi sorular alın. Pitch sürecinizi test edin, zayıf noktalarınızı keşfedin ve yatırımcı karşısına hazırlıklı çıkın.</div>
+      <div class="ai-sim-lock" id="ai-sim-lock-box">
+        <span style="font-size:24px;">🔒</span>
+        <div>
+          <div class="ai-sim-lock-text" style="font-weight:600;color:rgba(255,255,255,0.8);">Plus paketinde açılır</div>
+          <div class="ai-sim-lock-text">₺5.000 · Tek seferlik · 1 yıl erişim</div>
+        </div>
+        <button class="lock-btn" style="margin-left:auto;white-space:nowrap;" onclick="openPlusModal()">Plus'a Geç →</button>
+      </div>
+    </div>
+
     <div class="action-row">
       <button class="btn-pdf" onclick="doPrint()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -1254,6 +1289,8 @@ function showResult(){
   if(typeof saveReportToFirestore === "function"){
     saveReportToFirestore(reportData);
   }
+  // Kilitleri uygula
+  setTimeout(()=>{ if(typeof applyLocks==="function") applyLocks(); }, 100);
 }
 
 function doPrint(){window.print();}
@@ -1428,6 +1465,79 @@ renderQ();
     if(!e || e.target === document.getElementById("history-modal-overlay"))
       document.getElementById("history-modal-overlay").classList.remove("open");
   };
+
+  // ── PLUS KİLİT SİSTEMİ ──
+  const LOCKED_SECTIONS = ["card-scenarios","card-timeline","card-summary"];
+  const PDF_LOCKED = true;
+
+  function getLockHTML(isLoggedIn) {
+    if(!isLoggedIn) {
+      return `<div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">Bu bölüm Plus paketine özel</div>
+        <div class="lock-sub">Giriş yapın ve Plus'a geçerek 8'li senaryo, aksiyon takvimi ve PDF raporuna erişin.</div>
+        <button class="lock-btn" onclick="openAuthModal('register')">Ücretsiz Kayıt Ol</button>
+      </div>`;
+    } else {
+      return `<div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">Plus paketine özel içerik</div>
+        <div class="lock-sub">₺5.000 · Tek seferlik ödeme · 1 yıl erişim<br>8'li senaryo, aksiyon takvimi, AI simülasyon ve PDF raporu.</div>
+        <button class="lock-btn lock-btn-green" onclick="openPlusModal()">Plus'a Geç →</button>
+      </div>`;
+    }
+  }
+
+  window.applyLocks = function() {
+    const isLoggedIn = !!currentUser;
+    const isPlus = false; // İleride Firestore'dan kontrol edilecek
+
+    LOCKED_SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      // Önceki overlay varsa kaldır
+      const existing = el.querySelector(".lock-overlay");
+      if(existing) existing.remove();
+      el.classList.remove("locked-section");
+
+      if(!isPlus) {
+        el.classList.add("locked-section");
+        el.style.position = "relative";
+        el.insertAdjacentHTML("beforeend", getLockHTML(isLoggedIn));
+      }
+    });
+
+    // PDF butonunu kilitle
+    const pdfBtn = document.querySelector(".btn-pdf");
+    if(pdfBtn) {
+      if(!isPlus) {
+        pdfBtn.onclick = () => openPlusModal();
+        pdfBtn.style.opacity = "0.5";
+        pdfBtn.title = "Plus paketi gerekli";
+      }
+    }
+  };
+
+  window.openPlusModal = function() {
+    alert("Yakında! ödeme sistemi entegrasyonu tamamlanınca Plus paketi aktif olacak.\n\nBilgi almak için: hello@valunorth.com");
+  };
+
+  // Auth değişince kilitleri güncelle
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+    if(user){
+      document.getElementById("auth-logged-out").style.display = "none";
+      document.getElementById("auth-logged-in").style.display = "flex";
+      document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
+    } else {
+      document.getElementById("auth-logged-out").style.display = "flex";
+      document.getElementById("auth-logged-in").style.display = "none";
+    }
+    // Rapor görünüyorsa kilitleri güncelle
+    if(document.getElementById("result-area").style.display !== "none") {
+      applyLocks();
+    }
+  });
 </script>
 
 </body>
