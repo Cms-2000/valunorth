@@ -526,18 +526,17 @@ function buildBadgeSVG(score, stageName) {
 function buildBadgeBlock(score, stageName) {
   const s = Math.round(score);
   const raw = "https://valunorth.com/badge/" + s;
-  const disp = "&lt;img src=&quot;" + raw + "&quot; width=&quot;110&quot;&gt;";
   const el = document.createElement("div");
   el.className = "vn-badge-wrap";
   el.innerHTML = "<div class='vn-badge-svg'>" + buildBadgeSVG(s, stageName) + "</div>"
     + "<div class='vn-badge-info'>"
     + "<div class='vn-badge-title'>Valunorth Rozeti</div>"
-    + "<div class='vn-badge-sub'>Bu rozeti web sitenize veya LinkedIn profilinize ekleyerek bağımsız değerleme yaptırdığınızı gösterin.</div>"
-    + "<div class='vn-badge-embed' id='badge-embed-code' style='cursor:pointer;' title='Kopyalamak için tıkla'>" + disp + "</div>"
-    + "<div class='vn-badge-copied' id='badge-copied'>✓ Kopyalandı!</div>"
+    + "<div class='vn-badge-sub'>Bu rozeti web sitenize veya LinkedIn profilinize ekleyerek bağımsız değerleme yaptırdığınızı gösterin. Yatırımcılar için güven sinyali.</div>"
+    + "<button class='lock-btn' id='badge-copy-btn' style='margin-top:10px;'>Rozeti Kopyala</button>"
+    + "<div class='vn-badge-copied' id='badge-copied' style='font-size:11px;color:#0F6E56;margin-top:6px;display:none;'>✓ Kopyalandı!</div>"
     + "</div>";
-  el.querySelector("#badge-embed-code").addEventListener("click", function(){
-    navigator.clipboard.writeText("<img src='" + raw + "' width='110'>").then(function(){
+  el.querySelector("#badge-copy-btn").addEventListener("click", function(){
+    navigator.clipboard.writeText('<img src="' + raw + '" width="110">').then(function(){
       const c = document.getElementById("badge-copied");
       if(c){ c.style.display="block"; setTimeout(function(){ c.style.display="none"; }, 2000); }
     });
