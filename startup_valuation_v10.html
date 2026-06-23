@@ -301,6 +301,42 @@ body{padding-top:44px;}
 .corp-limit-bar{max-width:900px;margin:0 auto 20px;}
 .corp-limit-track{background:#eee;border-radius:99px;height:6px;margin-top:8px;}
 .corp-limit-fill{background:#534AB7;border-radius:99px;height:6px;transition:width .3s;}
+
+/* ── YENİ RAPOR TASARIMI: KOYU NAVY TEMA ── */
+#result-area{background:#F5F4EF;padding:0;border-radius:16px;overflow:hidden;border:0.5px solid #ddd;max-width:720px;margin:0 auto;}
+.pdf-header{background:#1C2535;padding:20px 28px 24px;position:relative;}
+.pdf-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(255,255,255,.07);}
+.pdf-header h1{font-size:15px;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.sub{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:0;}
+.date{font-size:11px;color:rgba(255,255,255,.25);margin-top:4px;}
+.stage-hero{background:#1C2535;padding:0 28px 24px;}
+.val-band-navy{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;margin-bottom:14px;}
+.val-box-navy{background:rgba(255,255,255,.05);border-radius:10px;padding:12px;text-align:center;}
+.val-n-lo,.val-n-hi{font-size:20px;font-weight:500;color:rgba(255,255,255,.55);}
+.val-n-mid{font-size:28px;font-weight:500;color:#5DCAA5;}
+.val-lbl{font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;letter-spacing:.04em;}
+.methods-navy{display:flex;gap:6px;flex-wrap:wrap;}
+.method-navy{background:rgba(255,255,255,.08);border-radius:99px;padding:3px 10px;font-size:10px;color:rgba(255,255,255,.45);}
+.stage-badge-navy{display:inline-flex;align-items:center;gap:5px;background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.25);border-radius:99px;padding:4px 12px;font-size:11px;color:#5DCAA5;font-weight:500;margin-bottom:14px;}
+.valunorth-score-block{display:flex;align-items:center;gap:14px;background:#fff;border-radius:12px;padding:14px 18px;margin:0 28px 12px;box-shadow:none;border:0.5px solid #eee;}
+.vn-score-num{font-size:44px;font-weight:500;color:#534AB7;line-height:1;flex-shrink:0;}
+.vn-score-right{flex:1;}
+.vn-score-label{font-size:11px;color:#555;margin-bottom:5px;}
+.vn-score-bar{background:#eee;border-radius:99px;height:5px;}
+.vn-score-fill{height:5px;border-radius:99px;background:#534AB7;}
+.vn-score-max{font-size:10px;color:#aaa;margin-left:6px;}
+.report-body{padding:0 28px 28px;background:#F5F4EF;}
+.warning{background:rgba(255,255,255,.6);border-left:3px solid #ddd;border-radius:0 8px 8px 0;padding:8px 12px;font-size:11px;color:#aaa;margin-bottom:14px;line-height:1.5;}
+
+/* ── VALUNORTH ROZETİ ── */
+.vn-badge-wrap{display:flex;align-items:center;gap:20px;background:#fff;border-radius:12px;padding:16px 20px;margin:0 28px 12px;border:0.5px solid #eee;}
+.vn-badge-svg{flex-shrink:0;}
+.vn-badge-info{flex:1;}
+.vn-badge-title{font-size:13px;font-weight:600;color:#1C2535;margin-bottom:3px;}
+.vn-badge-sub{font-size:11px;color:#888;margin-bottom:10px;line-height:1.5;}
+.vn-badge-embed{background:#F5F4EF;border-radius:6px;padding:6px 10px;font-size:10px;color:#534AB7;font-family:monospace;word-break:break-all;cursor:pointer;}
+.vn-badge-embed:hover{background:#EEEDFE;}
+.vn-badge-copied{font-size:9px;color:#0F6E56;margin-top:4px;display:none;}
 </style>
 </head>
 <body>
@@ -425,11 +461,16 @@ body{padding-top:44px;}
 
   <div id="result-area" style="display:none">
     <div class="pdf-header">
-      <h1>Startup Değerleme Raporu</h1>
+      <h1>Valunorth Değerleme Raporu</h1>
       <div class="sub" id="pdf-sub"></div>
       <div class="date" id="pdf-date"></div>
     </div>
-    <div class="card" id="card-val"></div>
+    <div class="stage-hero">
+      <div id="stage-badge-area"></div>
+      <div id="card-val"></div>
+    </div>
+    <div id="valunorth-score-area"></div>
+    <div class="report-body">
     <div class="warning">Bu değer tahmin aralığıdır. Gerçek yatırımcı müzakerelerinde pazar koşulları ve yatırımcı profili bu rakamı önemli ölçüde etkiler. Başlangıç noktası olarak kullanın.</div>
     <div class="card" id="card-charts"></div>
     <div class="card" id="card-growth"></div>
@@ -468,6 +509,42 @@ body{padding-top:44px;}
 </div>
 
 <script>
+
+// ── VALUNORTH ROZETİ ──
+function buildBadgeSVG(score, stageName) {
+  const s = Math.round(score);
+  return `<svg width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="55" cy="55" r="54" fill="#1C2535" stroke="#5DCAA5" stroke-width="1.5"/>
+    <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(93,202,165,0.2)" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="55" y="36" text-anchor="middle" font-size="8" fill="#5DCAA5" font-family="-apple-system,sans-serif" font-weight="700" letter-spacing="1.5">VALUNORTH</text>
+    <text x="55" y="66" text-anchor="middle" font-size="30" fill="#ffffff" font-family="-apple-system,sans-serif" font-weight="700">${s}</text>
+    <text x="55" y="78" text-anchor="middle" font-size="7.5" fill="rgba(255,255,255,0.35)" font-family="-apple-system,sans-serif">/100 SCORE</text>
+    <text x="55" y="93" text-anchor="middle" font-size="7" fill="#5DCAA5" font-family="-apple-system,sans-serif" font-weight="600" letter-spacing="1">${stageName.toUpperCase()} · VERIFIED</text>
+  </svg>`;
+}
+
+function buildBadgeBlock(score, stageName) {
+  const s = Math.round(score);
+  const embedCode = `<img src="https://valunorth.com/badge/${s}" alt="Valunorth Score ${s}" width="110">`;
+  return `<div class="vn-badge-wrap">
+    <div class="vn-badge-svg">${buildBadgeSVG(s, stageName)}</div>
+    <div class="vn-badge-info">
+      <div class="vn-badge-title">Valunorth Rozeti</div>
+      <div class="vn-badge-sub">Bu rozeti web sitenize, pitch deck'inize veya LinkedIn profilinize ekleyerek bağımsız bir değerleme analizi yaptırdığınızı gösterin. Yatırımcılar için güven sinyali.</div>
+      <div class="vn-badge-embed" onclick="copyBadge(this)" title="Kopyalamak için tıkla">${embedCode.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="vn-badge-copied" id="badge-copied">✓ Kopyalandı!</div>
+    </div>
+  </div>`;
+}
+
+window.copyBadge = function(el) {
+  const text = el.textContent.replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  navigator.clipboard.writeText(text).then(()=>{
+    const copied = document.getElementById('badge-copied');
+    if(copied){ copied.style.display='block'; setTimeout(()=>copied.style.display='none',2000); }
+  });
+};
+
 /* ══ SORULAR ══ */
 const Qs=[
   {cat:"Traction & Gelir",text:"Kaç tane ödeme yapan aktif müşteriniz var?",hint:"Ücretsiz kullanıcılar değil, ödeme yapanlar.",key:"cust",opts:[{l:"Henüz yok",v:0},{l:"1–10 müşteri",v:5},{l:"11–50 müşteri",v:30},{l:"51–200 müşteri",v:125},{l:"200+ müşteri",v:300}]},
@@ -662,7 +739,7 @@ function sLbl(v){return v>=70?"Güçlü":v>=40?"Geliştirilmeli":"Zayıf";}
 
 /* ══ GRAFİKLER ══ */
 function buildRadarSVG(sc){
-  const cx=130,cy=130,r=85;
+  const cx=160,cy=160,r=100;
   const labs=["Traction","Takım","Pazar","Moat","Finansal"];
   const vals=[sc.tr,sc.tm,sc.mk,sc.mo,sc.fin];
   const cols=["#534AB7","#1D9E75","#BA7517","#E24B4A","#0C447C"];
@@ -673,22 +750,18 @@ function buildRadarSVG(sc){
   const ax=angs.map(a=>{const[x2,y2]=pt(a,100,r);return`<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="#ccc" stroke-width="0.8"/>`;}).join("");
   const dps=angs.map((a,i)=>pt(a,vals[i],r));
   const poly=`<polygon points="${dps.map(p=>p.join(",")).join(" ")}" fill="#534AB7" fill-opacity="0.2" stroke="#534AB7" stroke-width="2"/>`;
-  const dots=dps.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join("");
-  // Her etiket için sabit offset — viewBox'a sığacak şekilde
-  const offsets=[
-    [0,-14,"middle"],   // Traction: üst
-    [16,-6,"start"],    // Takım: sağ üst
-    [14,10,"start"],    // Pazar: sağ alt
-    [-14,10,"end"],     // Moat: sol alt
-    [-16,-6,"end"]      // Finansal: sol üst
+  const dots=dps.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join("");
+  // Sabit etiket offsetleri - tüm etiketler görünür
+  const labelPts=[
+    [cx, cy-r-22, "middle"],          // Traction: tam üst
+    [cx+r*Math.cos(-18*Math.PI/180)+26, cy+r*Math.sin(-18*Math.PI/180)-8, "start"],  // Takım: sağ üst
+    [cx+r*Math.cos(54*Math.PI/180)+18, cy+r*Math.sin(54*Math.PI/180)+16, "start"],   // Pazar: sağ alt
+    [cx+r*Math.cos(126*Math.PI/180)-18, cy+r*Math.sin(126*Math.PI/180)+16, "end"],   // Moat: sol alt
+    [cx+r*Math.cos(198*Math.PI/180)-26, cy+r*Math.sin(198*Math.PI/180)-8, "end"]     // Finansal: sol üst
   ];
-  const lbls=angs.map((a,i)=>{
-    const[x,y]=pt(a,115,r);
-    const[ox,oy,anc]=offsets[i];
-    return`<text x="${x+ox}" y="${y+oy+4}" text-anchor="${anc}" font-size="11" fill="${cols[i]}" font-family="-apple-system,sans-serif" font-weight="600">${labs[i]}</text>`;
-  }).join("");
-  const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-14:x>cx+5?14:0,oy=y<cy-5?-12:y>cy+5?12:0;return`<text x="${x+ox}" y="${y+oy+4}" text-anchor="middle" font-size="11" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
-  return`<svg width="260" height="260" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
+  const lbls=labelPts.map(([x,y,anc],i)=>`<text x="${Math.round(x)}" y="${Math.round(y)}" text-anchor="${anc}" font-size="12" fill="${cols[i]}" font-family="-apple-system,sans-serif" font-weight="600">${labs[i]}</text>`).join("");
+  const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-16:x>cx+5?16:0,oy=y<cy-5?-14:y>cy+5?14:0;return`<text x="${Math.round(x+ox)}" y="${Math.round(y+oy)}" text-anchor="middle" font-size="12" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
+  return`<svg width="320" height="320" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
 }
 function buildBarChart(sc){
   const items=[{l:"Traction",v:sc.tr,c:"#534AB7"},{l:"Takım",v:sc.tm,c:"#1D9E75"},{l:"Pazar",v:sc.mk,c:"#BA7517"},{l:"Moat",v:sc.mo,c:"#E24B4A"},{l:"Finansal",v:sc.fin,c:"#0C447C"}];
@@ -807,10 +880,10 @@ function getScenarioPool(val,sc){
       `${mn} modelinde ${sg==="b2b"?"LinkedIn ve doğrudan satış":"Meta/Google performance reklam"} kanalına yatırım yaparak 3 ayda ${newCust3m} yeni müşteri edinmek. Mevcut ${cust} müşteriye ek olarak toplam ${cust+newCust3m} müşteri tabanına ulaşmak hedefleniyor.`,
       "+%30–50 değerleme","3 ay","Orta",
       [
-        {kalem:sg==="b2b"?"LinkedIn Sales Navigator":"Meta & Google Ads",aciklama:`Aylık ${sg==="b2b"?"abonelik + outreach":"reklam harcaması"}. 3 ay boyunca.`,cost:mktBudget*3},
-        {kalem:"İçerik & Kreatif",aciklama:"Reklam görselleri, landing page, video prodüksiyonu.",cost:18000},
-        {kalem:"CRM / Satış Araçları",aciklama:"HubSpot veya benzeri. Aylık ₺3.000 x 3 ay.",cost:9000},
-        {kalem:"Ajans / Freelance Destek",aciklama:"Kampanya yönetimi. Aylık ₺8.000–15.000. Opsiyonel.",cost:25000}
+        {kalem:sg==="b2b"?"LinkedIn Sales Navigator (Core, 3 ay)":"Meta & Google Ads",aciklama:sg==="b2b"?"$119.99/ay × 3 ay (kur 42 TL). Bireysel kullanım için yeterli.":"Hedefli reklam harcaması, 3 ay.",cost:sg==="b2b"?15100:mktBudget*3},
+        {kalem:"İçerik & Kreatif",aciklama:"Reklam görselleri, landing page, video prodüksiyonu. Freelance ajans.",cost:35000},
+        {kalem:"CRM / Satış Araçları",aciklama:"HubSpot Starter $30/ay × 3 ay. Temel pipeline yönetimi.",cost:3780},
+        {kalem:"Ajans / Freelance Satış Desteği",aciklama:"TR mid-level freelance. Aylık ₺15.000 × 3 ay. Opsiyonel.",cost:45000}
       ],
       `Tahmini CAC ₺${(cac).toLocaleString("tr")}/müşteri. ${newCust3m} yeni müşteriyle beklenen yıllık gelir etkisi: ${f((A.arpu||500)*newCust3m*12)}.`,60)});
   }
@@ -825,10 +898,10 @@ function getScenarioPool(val,sc){
       `${mn} şirketinde ${noTech?"teknik kurucunun olmaması yatırımcı iskontosunu %20–30 artırıyor":"teknik liderliği güçlendirmek ürün hızını ve değerleme çarpanını artırır"}. Hisse karşılığı (%5–15) veya maaş+hisse kombinasyonuyla deneyimli teknik profil eklemek en etkili adımlardan biri.`,
       "+%20–30 değerleme","1–3 ay (arama)","Yüksek",
       [
-        {kalem:"Aylık Brüt Maaş (6 ay)",aciklama:`Kıdemli CTO için Türkiye piyasası. Aylık ₺${Math.round(ctoSalary/1000)}K.`,cost:ctoSalary*6},
-        {kalem:"SGK & Yan Haklar",aciklama:"İşveren yükü yaklaşık %35 + sağlık sigortası.",cost:Math.round(ctoSalary*6*0.35)},
-        {kalem:"İşe Alım / Headhunter",aciklama:"Opsiyonel. Genellikle yıllık maaşın %15–20'si.",cost:Math.round(ctoSalary*1.5)},
-        {kalem:"Ekipman & Yazılım",aciklama:"Laptop, lisanslar, geliştirme araçları.",cost:15000}
+        {kalem:"Aylık Brüt Maaş (6 ay)",aciklama:"Kıdemli CTO/teknik kurucu. 2026 piyasa: ₺100K–₺150K/ay. Orta senaryo.",cost:600000},
+        {kalem:"SGK & Yan Haklar",aciklama:"İşveren yükü ~%35 + sağlık sigortası + yol yemek.",cost:210000},
+        {kalem:"İşe Alım / Headhunter",aciklama:"Opsiyonel. Yıllık maaşın %15'i. Yerinde ağla sıfıra düşürülebilir.",cost:150000},
+        {kalem:"Ekipman & Yazılım",aciklama:"MacBook Pro + JetBrains + bulut hesapları.",cost:25000}
       ],
       "Equity karşılığı (%8–12) çalışırsa nakit maliyeti sıfıra yakın olabilir. Yukarıdaki tablo tam maaşlı senaryodur.",55)});
   }
@@ -843,10 +916,10 @@ function getScenarioPool(val,sc){
       prodTitle, prodDesc,
       "+%15–25 değerleme","2–4 ay","Orta-Yüksek",
       [
-        {kalem:"Yazılım Geliştirici",aciklama:`Full-stack veya uzman geliştirici. Aylık ₺40.000–60.000 x 3 ay.`,cost:150000},
-        {kalem:"UI/UX Tasarım",aciklama:"Kullanıcı arayüzü ve deneyim tasarımı. Proje bazlı.",cost:30000},
-        {kalem:"QA & Test",aciklama:"Kalite güvence. Aylık ₺15.000 x 2 ay.",cost:30000},
-        {kalem:"Altyapı & Cloud",aciklama:"Sunucu, veritabanı, API maliyetleri. Aylık ₺6.000.",cost:18000}
+        {kalem:"Yazılım Geliştirici (3 ay)",aciklama:"TR mid-senior full-stack. 2026 ortalama ₺86K, senior ₺120–150K. Freelance ile ₺150–180K'ya düşer.",cost:260000},
+        {kalem:"UI/UX Tasarım",aciklama:"Proje bazlı. Deneyimli TR tasarımcı 2026 piyasası.",cost:50000},
+        {kalem:"QA & Test (2 ay)",aciklama:"Kalite güvence uzmanı. 2026: ₺22.000–₺35.000/ay.",cost:45000},
+        {kalem:"Altyapı & Cloud",aciklama:"AWS/GCP/Azure. Aylık ₺6.000 × 3 ay.",cost:18000}
       ],
       "Freelance veya offshore geliştiriciyle bu maliyetin %40–60'ına düşürülebilir.",40)});
   }
@@ -860,10 +933,10 @@ function getScenarioPool(val,sc){
       `${m==="deeptech"?"Teknoloji patenti":"Yazılım tescili ve marka koruması"} ile ürününüzü rakip kopyalamasına karşı korumak. Moat skorunu artıran en düşük maliyetli ve en kalıcı adım. Yatırımcılar IP varlığını değerleme priminde değerlendirir.`,
       "+%15–25 değerleme (moat artışı)","3–6 ay (yasal süreç)","Düşük",
       [
-        {kalem:`${m==="deeptech"?"Faydalı Model / Patent":"Yazılım & İş Yöntemi Tescili"}`,aciklama:"Türk Patent Enstitüsü başvurusu. Uluslararası (PCT) opsiyonel.",cost:patentCost},
-        {kalem:"Marka Tescili",aciklama:"Türkiye + AB için marka tescili. Sınıf başına ₺3.000–8.000.",cost:15000},
-        {kalem:"IP Avukatı Danışmanlığı",aciklama:"Saatlik ücret x ~10 saat.",cost:20000},
-        {kalem:"NDA & Ortaklık Sözleşmeleri",aciklama:"Standart hukuki belgeler hazırlanması.",cost:8000}
+        {kalem:`${m==="deeptech"?"Faydalı Model / Patent":"Yazılım & Marka Tescili"}`,aciklama:"TÜRKPATENT resmi harç + vekil ücreti. Avukatsız mümkün değil. PCT opsiyonel +₺125K.",cost:m==="deeptech"?200000:80000},
+        {kalem:"Marka Tescili (TR + 2 sınıf)",aciklama:"2026 resmi harç ₺17.630 + vekil hizmet bedeli. AB için +€1.500.",cost:30000},
+        {kalem:"IP Avukatı Danışmanlığı",aciklama:"2026 piyasa: ₺2.000–5.000/saat. ~10 saat strateji + başvuru.",cost:35000},
+        {kalem:"NDA, Gizlilik & Ortak Sözleşmeleri",aciklama:"Standart hukuki belgeler paketi. Startup avukatı.",cost:15000}
       ],
       "Türkiye'de patent süreci 2–4 yıl sürer; başvuru tarihi hak doğurduğundan mümkün olan en erken başvurmak kritik.",35)});
   }
@@ -877,10 +950,10 @@ function getScenarioPool(val,sc){
       `${sg==="b2b"?"Karar vericilerin":"Hedef kitlenin"} aradığı içerikleri üretmek ve organik trafik kanalını kurmak. 6–12 ay vadeli yatırım olsa da uzun vadede en düşük CAC'ı ve en sürdürülebilir büyümeyi sağlar.`,
       "+%10–20 değerleme (traction artışı)","6–12 ay","Düşük-Orta",
       [
-        {kalem:"İçerik Yazarı / Editör",aciklama:`Aylık 8–12 makale. Freelance ₺3.000–6.000/makale x 6 ay.`,cost:contentBudget*6},
-        {kalem:"SEO Araçları",aciklama:"Ahrefs veya Semrush. Aylık ₺4.000 x 6 ay.",cost:24000},
-        {kalem:"Video & Görsel İçerik",aciklama:"Demo videoları, infografik, sosyal medya içerikleri.",cost:20000},
-        {kalem:"Dağıtım & Amplifikasyon",aciklama:"İçerikleri hızlandırmak için LinkedIn/Google ads. Opsiyonel.",cost:15000}
+        {kalem:"İçerik Yazarı / Editör (6 ay)",aciklama:`Freelance. 2026: ₺5.000–8.000/makale, aylık 8–10 makale. ${sg==="b2b"?"B2B içerik daha uzun/detaylı.":"B2C daha sık, daha kısa içerik."}`,cost:sg==="b2b"?180000:108000},
+        {kalem:"SEO Araçları (Semrush/Ahrefs)",aciklama:"Semrush Pro $139/ay × 6 ay × 42 TL/$ ≈ ₺35.000.",cost:35000},
+        {kalem:"Video & Görsel İçerik",aciklama:"Demo, infografik, sosyal medya prodüksiyonu.",cost:35000},
+        {kalem:"Dağıtım & Amplifikasyon",aciklama:"LinkedIn/Google Ads ile içerik tanıtımı. Opsiyonel.",cost:20000}
       ],
       "İçerik yatırımı 6. aydan itibaren organik lead üretmeye başlar. CAC sıfıra yaklaştıkça değerleme çarpanına doğrudan katkı sağlar.",25)});
   }
@@ -889,17 +962,30 @@ function getScenarioPool(val,sc){
   // Öncelik: exit yoksa ve erken aşamaysa yüksek
   {
     const priority = exitS===0&&val.st==="seed"?75 : exitS===0?60 : 30;
+    // Versiyon A: Equity Bazlı
     pool.push({priority, card:()=>buildScenarioCard("__NUM__","#7C3AED",
-      "Danışman Kurulu Oluşturmak & Yatırımcı Ağına Girmek",
-      `2–3 deneyimli ismi hisse karşılığı (%0.25–0.5 equity) danışman olarak eklemek. İlk kez kurucu risk primini düşürür, yatırımcı ağına ve sektör bağlantılarına anında erişim sağlar. Nakit maliyeti minimumdur.`,
+      "Danışman Kurulu — Equity Modeli (Önerilen)",
+      `2–3 deneyimli ismi hisse karşılığı (%0.25–0.5 equity) danışman olarak eklemek. Nakit çıkışı minimum, yatırımcı ağına anında erişim. İlk kez kurucu için en verimli seçenek. Neden öneriyoruz: Erken aşamada nakit korurken değerleme primini yakalar; doğru danışman 1 yatırımcı bağlantısıyla tüm maliyeti fazlasıyla geri öder.`,
       "+%10–15 değerleme","1–2 ay","Düşük",
       [
-        {kalem:"Danışman Equity Değeri",aciklama:`${f(val.mid)} değerleme üzerinden %0.5 = ${f(Math.round(val.mid*0.005/10000)*10000)} değerinde hisse. Nakit çıkışı yok.`,cost:0},
-        {kalem:"Hukuki Advisor Sözleşmesi",aciklama:"Vesting schedule + advisor agreement hazırlanması.",cost:5000},
-        {kalem:"Networking & Etkinlikler",aciklama:"Startup konferansları, yatırımcı buluşmaları. Yıllık.",cost:15000},
-        {kalem:"Pitch Deck & Materyaller",aciklama:"Profesyonel sunum tasarımı ve güncelleme.",cost:8000}
+        {kalem:"Danışman Equity (%0.5)",aciklama:`${f(val.mid)} değerleme üzerinden %0.5 = ${f(Math.round(val.mid*0.005/10000)*10000)} değerinde hisse. Nakit çıkışı yok.`,cost:0},
+        {kalem:"Hukuki — Advisor Sözleşmesi",aciklama:"Vesting schedule (cliff+linear) + advisor agreement. 2026 startup avukatı.",cost:10000},
+        {kalem:"Networking & Etkinlikler",aciklama:"Startup konferansları, yatırımcı buluşmaları. Yıllık.",cost:25000},
+        {kalem:"Pitch Deck & Materyaller",aciklama:"Profesyonel sunum tasarımı ve güncelleme. Ajans.",cost:20000}
       ],
-      "Doğru danışman seçimi önemli: sektör deneyimi + aktif yatırımcı ağı + zaman ayırabilme kapasitesi üçlüsüne dikkat edin.",28)});
+      "Doğru danışman = sektör uzmanlığı + aktif yatırımcı ağı + zaman ayırabilme kapasitesi. Equity vermeden önce referans kontrolü kritik.",28)});
+    // Versiyon B: Ücretli Danışman
+    pool.push({priority:priority-5, card:()=>buildScenarioCard("__NUM__","#5B21B6",
+      "Danışman Kurulu — Ücretli Model (Bütçe Gerektiren)",
+      `Deneyimli sektör danışmanına aylık ücret + hukuki destek ile çalışmak. Equity vermek istemeyenler veya çok spesifik uzmanlık gerektiren durumlar için uygun. Nakit yükü yüksek ama sahiplik korunur.`,
+      "+%10–15 değerleme","3 ay","Orta",
+      [
+        {kalem:"Danışman Aylık Ücreti (3 ay)",aciklama:"₺100.000/ay × 3 ay. Kıdemli sektör danışmanı, sabit ücret modeli.",cost:300000},
+        {kalem:"Hukuki Danışmanlık (3 ay)",aciklama:"Startup/yatırım hukuku uzmanı. ₺25.000/ay × 3 ay.",cost:75000},
+        {kalem:"Networking & Etkinlikler",aciklama:"Startup konferansları, yatırımcı buluşmaları.",cost:25000},
+        {kalem:"Pitch Deck & Materyaller",aciklama:"Profesyonel sunum tasarımı.",cost:20000}
+      ],
+      "Equity vermeden uzman erişimi sağlar ama nakit yükü ağır. Equity modeli mümkünse önce o değerlendirilmeli.",23)});
   }
 
   // ── S7: Birim ekonomisi optimizasyonu ──
@@ -911,10 +997,10 @@ function getScenarioPool(val,sc){
       `CAC'ı düşürmek ve LTV'yi artırmak değerleme çarpanını doğrudan etkiler. LTV/CAC > 3 yatırımcıların aradığı birim ekonomisi kanıtıdır. Churn oranını %1 düşürmek LTV'yi %10–15 artırır.`,
       "+%20–35 değerleme (çarpan artışı)","3–6 ay","Orta",
       [
-        {kalem:"CRM & Satış Otomasyonu",aciklama:"HubSpot, Pipedrive. Yıllık ₺12.000–30.000.",cost:24000},
-        {kalem:"Müşteri Başarı (CS) Uzmanı",aciklama:"Churn azaltmak için CS hire. Aylık ₺25.000–40.000.",cost:120000},
-        {kalem:"Analytics & Data Stack",aciklama:"Mixpanel veya Amplitude kurulum + eğitim.",cost:15000},
-        {kalem:"A/B Test & CRO Araçları",aciklama:"Dönüşüm oranı optimizasyonu. Aylık ₺2.500.",cost:10000}
+        {kalem:"CRM & Satış Otomasyonu (yıllık)",aciklama:"HubSpot Pro ~$800/ay veya Pipedrive. 2026 gerçek maliyet.",cost:30000},
+        {kalem:"Müşteri Başarı (CS) Uzmanı (6 ay)",aciklama:"2026 piyasa: CS uzmanı ₺30.000–50.000/ay. Churn azaltmanın en hızlı yolu.",cost:180000},
+        {kalem:"Analytics Stack (Mixpanel/Amplitude)",aciklama:"Growth plan kurulum + entegrasyon + eğitim.",cost:20000},
+        {kalem:"A/B Test & CRO Araçları",aciklama:"VWO veya Optimizely. Aylık ₺2.500 × 6 ay.",cost:15000}
       ],
       `${mn} modelinde NRR %100+ olan şirketler, aynı ARR'de %30–40 daha yüksek çarpanla değerleniyor.`,50)});
   }
@@ -928,11 +1014,11 @@ function getScenarioPool(val,sc){
       `Türkiye'de kanıtlanan modeli MENA veya Doğu Avrupa'ya taşımak. "Global potansiyel" değerleme primini kazanmak ve pazar büyüklüğü skorunu artırmak hedefleniyor. İlk uluslararası müşteri veya LOI değerlemeyi pratikte artırır.`,
       "+%25–45 değerleme (pazar priemi)","6–12 ay","Yüksek",
       [
-        {kalem:"Lokalizasyon & Çeviri",aciklama:"Ürün, web sitesi ve pazarlama materyali çevirisi.",cost:25000},
-        {kalem:"Hukuki & Vergi Yapılanması",aciklama:"Hedef ülkede şirket veya yasal danışmanlık.",cost:40000},
-        {kalem:"Yerel Satış / Partner",aciklama:"Yerel temsilci veya distribütör komisyonu.",cost:60000},
-        {kalem:"Pazar Araştırması & Seyahat",aciklama:"Yerinde müşteri görüşmeleri, pazar analizi.",cost:20000},
-        {kalem:"Hedef Pazar Pazarlama",aciklama:"Dijital reklamlar + yerel etkinlik sponsorlukları.",cost:50000}
+        {kalem:"Lokalizasyon & Çeviri",aciklama:"Ürün UI, web sitesi, pazarlama materyali. Profesyonel çeviri + kültürel adaptasyon.",cost:40000},
+        {kalem:"Hukuki & Vergi Yapılanması",aciklama:"BAE (DIFC/Mainland) veya Doğu Avrupa şirket kurulumu. 2026 gerçek maliyet.",cost:80000},
+        {kalem:"Yerel Satış / Partner Komisyonu",aciklama:"MENA temsilci. İlk 6 ay sabit ücret veya komisyon modeli.",cost:90000},
+        {kalem:"Pazar Araştırması & Seyahat",aciklama:"Yerinde müşteri görüşmeleri, 3 seyahat. Uçuş+otel+toplantılar.",cost:35000},
+        {kalem:"Hedef Pazar Pazarlama",aciklama:"LinkedIn Ads (MENA) + yerel etkinlik sponsorluğu.",cost:75000}
       ],
       "Pilot önce en yakın ve en benzer pazardan (Körfez ülkeleri veya Romanya/Polonya) başlanmalı. Erken aşamada bu adım maliyet/fayda açısından genellikle öne alınmamalı.",60)});
   }
