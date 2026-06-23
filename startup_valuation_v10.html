@@ -216,7 +216,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* ── FİREBASE AUTH UI ── */
 .auth-bar{position:fixed;top:0;right:0;left:0;z-index:100;background:rgba(28,37,53,0.97);backdrop-filter:blur(8px);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
-.auth-bar-logo{font-size:14px;font-weight:700;color:#fff;}
+.auth-bar-logo{font-size:18px;font-weight:700;color:#fff;}
 .auth-bar-logo span{color:#5DCAA5;}
 .auth-btn{padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;}
 .auth-btn-login{background:transparent;color:#5DCAA5;border:1px solid #5DCAA5;}
@@ -304,12 +304,12 @@ body{padding-top:44px;}
 
 /* ── YENİ RAPOR TASARIMI: KOYU NAVY TEMA ── */
 #result-area{background:#F5F4EF;padding:0;border-radius:16px;overflow:hidden;border:0.5px solid #ddd;max-width:720px;margin:0 auto;}
-.pdf-header{background:#1C2535;padding:20px 28px 24px;position:relative;}
+.pdf-header{background:#1C2535;padding:20px 28px 32px;position:relative;}
 .pdf-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(255,255,255,.07);}
 .pdf-header h1{font-size:15px;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
 .sub{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:0;}
 .date{font-size:11px;color:rgba(255,255,255,.25);margin-top:4px;}
-.stage-hero{background:#1C2535;padding:0 28px 24px;}
+.stage-hero{background:#1C2535;padding:8px 28px 24px;}
 .val-band-navy{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:8px;margin-bottom:14px;}
 .val-box-navy{background:rgba(255,255,255,.05);border-radius:10px;padding:12px;text-align:center;}
 .val-n-lo,.val-n-hi{font-size:20px;font-weight:500;color:rgba(255,255,255,.55);}
@@ -739,7 +739,7 @@ function sLbl(v){return v>=70?"Güçlü":v>=40?"Geliştirilmeli":"Zayıf";}
 
 /* ══ GRAFİKLER ══ */
 function buildRadarSVG(sc){
-  const cx=160,cy=160,r=100;
+  const cx=175,cy=175,r=108;
   const labs=["Traction","Takım","Pazar","Moat","Finansal"];
   const vals=[sc.tr,sc.tm,sc.mk,sc.mo,sc.fin];
   const cols=["#534AB7","#1D9E75","#BA7517","#E24B4A","#0C447C"];
@@ -753,15 +753,15 @@ function buildRadarSVG(sc){
   const dots=dps.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join("");
   // Sabit etiket offsetleri - tüm etiketler görünür
   const labelPts=[
-    [cx, cy-r-22, "middle"],          // Traction: tam üst
-    [cx+r*Math.cos(-18*Math.PI/180)+26, cy+r*Math.sin(-18*Math.PI/180)-8, "start"],  // Takım: sağ üst
-    [cx+r*Math.cos(54*Math.PI/180)+18, cy+r*Math.sin(54*Math.PI/180)+16, "start"],   // Pazar: sağ alt
-    [cx+r*Math.cos(126*Math.PI/180)-18, cy+r*Math.sin(126*Math.PI/180)+16, "end"],   // Moat: sol alt
-    [cx+r*Math.cos(198*Math.PI/180)-26, cy+r*Math.sin(198*Math.PI/180)-8, "end"]     // Finansal: sol üst
+    [cx, cy-r-24, "middle"],                                                           // Traction: tam üst
+    [cx+r*Math.cos(-18*Math.PI/180)+32, cy+r*Math.sin(-18*Math.PI/180)-8, "start"],  // Takım: sağ üst
+    [cx+r*Math.cos(54*Math.PI/180)+22, cy+r*Math.sin(54*Math.PI/180)+18, "start"],   // Pazar: sağ alt
+    [cx+r*Math.cos(126*Math.PI/180)-22, cy+r*Math.sin(126*Math.PI/180)+18, "end"],   // Moat: sol alt
+    [cx+r*Math.cos(198*Math.PI/180)-32, cy+r*Math.sin(198*Math.PI/180)-8, "end"]     // Finansal: sol üst
   ];
   const lbls=labelPts.map(([x,y,anc],i)=>`<text x="${Math.round(x)}" y="${Math.round(y)}" text-anchor="${anc}" font-size="12" fill="${cols[i]}" font-family="-apple-system,sans-serif" font-weight="600">${labs[i]}</text>`).join("");
   const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-16:x>cx+5?16:0,oy=y<cy-5?-14:y>cy+5?14:0;return`<text x="${Math.round(x+ox)}" y="${Math.round(y+oy)}" text-anchor="middle" font-size="12" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
-  return`<svg width="320" height="320" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
+  return`<svg width="350" height="350" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
 }
 function buildBarChart(sc){
   const items=[{l:"Traction",v:sc.tr,c:"#534AB7"},{l:"Takım",v:sc.tm,c:"#1D9E75"},{l:"Pazar",v:sc.mk,c:"#BA7517"},{l:"Moat",v:sc.mo,c:"#E24B4A"},{l:"Finansal",v:sc.fin,c:"#0C447C"}];
@@ -1361,17 +1361,47 @@ function showResult(){
   document.getElementById("pdf-sub").textContent=`${si.l} Aşaması · ${Object.keys(wts).join(", ")}`;
   document.getElementById("pdf-date").textContent=`Rapor tarihi: ${today}`;
 
+  // Stage badge
+  document.getElementById("stage-badge-area").innerHTML=`
+    <div class="stage-badge-navy">${si.l} Aşaması</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:12px;">Çoklu metod · Ağırlıklı hesaplama · ${today}</div>`;
+
+  // Değer bandı - navy tasarım
   document.getElementById("card-val").innerHTML=`
-    <div class="section-label">Değerleme Sonucu — ${today}</div>
-    <span class="stage-pill" style="background:${si.bg};color:${si.c};">${si.l} Aşaması</span>
-    <p style="font-size:20px;font-weight:600;margin-bottom:4px;">Tahmini Değer Aralığı</p>
-    <p style="font-size:13px;color:#888;margin-bottom:1.25rem;">Girişim profilinize göre ağırlıklı çoklu metod uygulanmıştır.</p>
-    ${buildValBand(val)}
-    <div class="method-tags" style="margin-top:1rem;">${Object.entries(wts).map(([k,w])=>`<span class="mtag">${k} %${w}</span>`).join("")}</div>
-    <div style="margin-top:1rem;">
-      <div class="section-label">Ekosistem Karşılaştırması — Türkiye ${si.l} Ortalaması</div>
-      ${buildBenchmarkHTML(val,sc)}
+    <div style="font-size:11px;font-weight:600;color:#5DCAA5;letter-spacing:.08em;margin-bottom:10px;">TAHMİNİ DEĞER ARALIĞI</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:12px;">Girişim profilinize göre ağırlıklı çoklu metod uygulanmıştır.</div>
+    <div class="val-band-navy">
+      <div class="val-box-navy"><div class="val-n-lo">${f(val.lo)}</div><div class="val-lbl">ALT SINIR</div></div>
+      <div class="val-box-navy"><div class="val-n-mid">${f(val.mid)}</div><div class="val-lbl">MERKEZ DEĞER</div></div>
+      <div class="val-box-navy"><div class="val-n-hi">${f(val.hi)}</div><div class="val-lbl">ÜST SINIR</div></div>
+    </div>
+    <div class="methods-navy">${Object.entries(wts).map(([k,w])=>`<span class="method-navy">${k} %${w}</span>`).join("")}</div>`;
+
+  // Valunorth Score bloğu
+  const vnScore = Math.round((sc.tr+sc.tm+sc.mk+sc.mo+sc.fin)/5);
+  const vnLabel = vnScore>=75?"Türkiye ortalamasının çok üzerinde · Top %10":vnScore>=60?"Türkiye ortalamasının üzerinde · Top %25":vnScore>=45?"Türkiye ortalamasına yakın":"Türkiye ortalamasının altında — iyileştirme öncelikli";
+  document.getElementById("valunorth-score-area").innerHTML=`
+    <div class="valunorth-score-block">
+      <div class="vn-score-num">${vnScore}</div>
+      <div class="vn-score-right">
+        <div class="vn-score-label">${vnLabel}</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="vn-score-bar" style="flex:1;"><div class="vn-score-fill" style="width:${vnScore}%;"></div></div>
+          <span class="vn-score-max">/100</span>
+        </div>
+      </div>
     </div>`;
+
+  // Rozet bloğu
+  const badgeHTML = buildBadgeBlock(vnScore, si.l);
+  document.getElementById("valunorth-score-area").insertAdjacentHTML("afterend", badgeHTML);
+
+  // Benchmark ekosistem karşılaştırması
+  const benchmarkHTML = `<div class="card" style="margin-bottom:1rem;">
+    <div class="section-label">Ekosistem Karşılaştırması — Türkiye ${si.l} Ortalaması</div>
+    ${buildBenchmarkHTML(val,sc)}
+  </div>`;
+  document.getElementById("card-charts").insertAdjacentHTML("beforebegin", benchmarkHTML);
 
   document.getElementById("card-charts").innerHTML=`
     <div class="section-label" style="margin-bottom:1rem;">Girişim Profil Analizi — 5 Boyut</div>
@@ -1739,9 +1769,22 @@ renderQ();
     }
   }
 
-  window.applyLocks = function() {
+  window.applyLocks = async function() {
     const isLoggedIn = !!currentUser;
-    const isPlus = false; // İleride Firestore'dan kontrol edilecek
+    let isPlus = false;
+    if(currentUser) {
+      try {
+        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        const snap = await getDoc(doc(db, "users", currentUser.uid));
+        if(snap.exists()) {
+          const d = snap.data();
+          if(d.level === "plus") {
+            const expiry = d.plus_expiry ? new Date(d.plus_expiry) : null;
+            isPlus = !expiry || expiry > new Date();
+          }
+        }
+      } catch(e) { console.error("Plus kontrol hatası:", e); }
+    }
 
     LOCKED_SECTIONS.forEach(id => {
       const el = document.getElementById(id);
