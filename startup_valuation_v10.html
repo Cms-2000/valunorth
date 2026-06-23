@@ -525,21 +525,28 @@ function buildBadgeSVG(score, stageName) {
 
 function buildBadgeBlock(score, stageName) {
   const s = Math.round(score);
-  const embedCode = `&lt;img src="https://valunorth.com/badge/${s}" alt="Valunorth Score ${s}" width="110"&gt;`;
-  const embedRaw = `<img src="https://valunorth.com/badge/${s}" alt="Valunorth Score ${s}" width="110">`;
-  return `<div class="vn-badge-wrap">
-    <div class="vn-badge-svg">${buildBadgeSVG(s, stageName)}</div>
-    <div class="vn-badge-info">
-      <div class="vn-badge-title">Valunorth Rozeti</div>
-      <div class="vn-badge-sub">Bu rozeti web sitenize, pitch deck'inize veya LinkedIn profilinize ekleyerek bağımsız bir değerleme analizi yaptırdığınızı gösterin. Yatırımcılar için güven sinyali.</div>
-      <div class="vn-badge-embed" onclick="navigator.clipboard.writeText('${embedRaw}').then(()=>{document.getElementById('badge-copied').style.display='block';setTimeout(()=>document.getElementById('badge-copied').style.display='none',2000)})" title="Kopyalamak için tıkla" style="cursor:pointer;">${embedCode}</div>
-      <div class="vn-badge-copied" id="badge-copied">✓ Kopyalandı!</div>
-    </div>
-  </div>`;
+  const raw = "https://valunorth.com/badge/" + s;
+  const disp = "&lt;img src=&quot;" + raw + "&quot; width=&quot;110&quot;&gt;";
+  const el = document.createElement("div");
+  el.className = "vn-badge-wrap";
+  el.innerHTML = "<div class='vn-badge-svg'>" + buildBadgeSVG(s, stageName) + "</div>"
+    + "<div class='vn-badge-info'>"
+    + "<div class='vn-badge-title'>Valunorth Rozeti</div>"
+    + "<div class='vn-badge-sub'>Bu rozeti web sitenize veya LinkedIn profilinize ekleyerek bağımsız değerleme yaptırdığınızı gösterin.</div>"
+    + "<div class='vn-badge-embed' id='badge-embed-code' style='cursor:pointer;' title='Kopyalamak için tıkla'>" + disp + "</div>"
+    + "<div class='vn-badge-copied' id='badge-copied'>✓ Kopyalandı!</div>"
+    + "</div>";
+  el.querySelector("#badge-embed-code").addEventListener("click", function(){
+    navigator.clipboard.writeText("<img src='" + raw + "' width='110'>").then(function(){
+      const c = document.getElementById("badge-copied");
+      if(c){ c.style.display="block"; setTimeout(function(){ c.style.display="none"; }, 2000); }
+    });
+  });
+  return el;
 }
 
-window.copyBadge = function(el) {
-  const text = el.textContent.replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+window.copyBadgeCode = function() {
+  const text = window._badgeEmbedCode || '';
   navigator.clipboard.writeText(text).then(()=>{
     const copied = document.getElementById('badge-copied');
     if(copied){ copied.style.display='block'; setTimeout(()=>copied.style.display='none',2000); }
@@ -740,7 +747,7 @@ function sLbl(v){return v>=70?"Güçlü":v>=40?"Geliştirilmeli":"Zayıf";}
 
 /* ══ GRAFİKLER ══ */
 function buildRadarSVG(sc){
-  const cx=175,cy=175,r=108;
+  const cx=200,cy=200,r=110;
   const labs=["Traction","Takım","Pazar","Moat","Finansal"];
   const vals=[sc.tr,sc.tm,sc.mk,sc.mo,sc.fin];
   const cols=["#534AB7","#1D9E75","#BA7517","#E24B4A","#0C447C"];
@@ -754,15 +761,15 @@ function buildRadarSVG(sc){
   const dots=dps.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${cols[i]}" stroke="#fff" stroke-width="2"/>`).join("");
   // Sabit etiket offsetleri - tüm etiketler görünür
   const labelPts=[
-    [cx, cy-r-24, "middle"],                                                           // Traction: tam üst
-    [cx+r*Math.cos(-18*Math.PI/180)+32, cy+r*Math.sin(-18*Math.PI/180)-8, "start"],  // Takım: sağ üst
-    [cx+r*Math.cos(54*Math.PI/180)+22, cy+r*Math.sin(54*Math.PI/180)+18, "start"],   // Pazar: sağ alt
-    [cx+r*Math.cos(126*Math.PI/180)-22, cy+r*Math.sin(126*Math.PI/180)+18, "end"],   // Moat: sol alt
-    [cx+r*Math.cos(198*Math.PI/180)+8, cy+r*Math.sin(198*Math.PI/180)-8, "start"]    // Finansal: sol üst — start anchor, sağa kaydı
+    [cx, cy-r-26, "middle"],                         // Traction: tam üst
+    [cx+r*Math.cos(-18*Math.PI/180)+36, cy+r*Math.sin(-18*Math.PI/180)-6, "start"],  // Takım: sağ üst
+    [cx+r*Math.cos(54*Math.PI/180)+24, cy+r*Math.sin(54*Math.PI/180)+20, "start"],   // Pazar: sağ alt
+    [cx+r*Math.cos(126*Math.PI/180)-24, cy+r*Math.sin(126*Math.PI/180)+20, "end"],   // Moat: sol alt
+    [cx+r*Math.cos(198*Math.PI/180)-36, cy+r*Math.sin(198*Math.PI/180)-6, "end"]     // Finansal: sol üst, yeterli alan
   ];
   const lbls=labelPts.map(([x,y,anc],i)=>`<text x="${Math.round(x)}" y="${Math.round(y)}" text-anchor="${anc}" font-size="12" fill="${cols[i]}" font-family="-apple-system,sans-serif" font-weight="600">${labs[i]}</text>`).join("");
   const nums=dps.map((p,i)=>{const[x,y]=p;const ox=x<cx-5?-16:x>cx+5?16:0,oy=y<cy-5?-14:y>cy+5?14:0;return`<text x="${Math.round(x+ox)}" y="${Math.round(y+oy)}" text-anchor="middle" font-size="12" fill="${cols[i]}" font-weight="700" font-family="-apple-system,sans-serif">${vals[i]}</text>`;}).join("");
-  return`<svg width="350" height="350" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
+  return`<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">${g}${ax}${poly}${dots}${lbls}${nums}</svg>`;
 }
 function buildBarChart(sc){
   const items=[{l:"Traction",v:sc.tr,c:"#534AB7"},{l:"Takım",v:sc.tm,c:"#1D9E75"},{l:"Pazar",v:sc.mk,c:"#BA7517"},{l:"Moat",v:sc.mo,c:"#E24B4A"},{l:"Finansal",v:sc.fin,c:"#0C447C"}];
@@ -1394,8 +1401,8 @@ function showResult(){
     </div>`;
 
   // Rozet bloğu
-  const badgeHTML = buildBadgeBlock(vnScore, si.l);
-  document.getElementById("valunorth-score-area").insertAdjacentHTML("afterend", badgeHTML);
+  const badgeEl = buildBadgeBlock(vnScore, si.l);
+  document.getElementById("valunorth-score-area").insertAdjacentElement("afterend", badgeEl);
 
   // Benchmark ekosistem karşılaştırması
   const benchmarkHTML = `<div class="card" style="margin-bottom:1rem;">
