@@ -2139,6 +2139,208 @@ renderQ();
     document.getElementById("ai-sim-lock-box").style.display = "none";
     document.getElementById("ai-sim-active").style.display = "block";
   };
+
+  // ── AI YATIRIMCI SİMÜLASYONU ──
+  const ANTHROPIC_KEY = "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";
+
+  const INVESTOR_PROFILES = {
+    vc:{name:"Teknoloji VC",avatar:"🏦",style:"Analitik, veri odaklı",stages:["early","growth","scaleup"],models:["saas","ai","deeptech","fintech"]},
+    angel:{name:"Melek Yatırımcı",avatar:"👼",style:"Samimi, insan odaklı",stages:["preseed","seed","early"],models:["saas","ai","marketplace","ecommerce","service"]},
+    growth:{name:"Büyüme Yatırımcısı",avatar:"📈",style:"Sayı odaklı, metrik takıntılı",stages:["early","growth","scaleup","late"],models:["fintech","marketplace","ecommerce","saas"]}
+  };
+
+  const QUESTION_POOL = [
+    {id:"E1",cat:"ekip",q:"Sizi bu girişimi kurmaya iten asıl motivasyon neydi? Bu problemi neden siz çözmeliysiniz?",tags:["angel","preseed","seed"]},
+    {id:"E2",cat:"ekip",q:"Teknik kurucu var mı ekibinizde? Ürünü kim geliştiriyor?",tags:["vc","angel","seed","early"]},
+    {id:"E3",cat:"ekip",q:"Ekibinizin bu sektördeki deneyimi nedir? Daha önce birlikte çalıştınız mı?",tags:["angel","vc","preseed","seed"]},
+    {id:"E4",cat:"ekip",q:"Kurucular arasında hisse dağılımı nasıl? Vesting var mı?",tags:["vc","angel","growth"]},
+    {id:"E5",cat:"ekip",q:"Şu an kaç kişisiniz ve önümüzdeki 12 ayda ekibi nasıl büyütmeyi planlıyorsunuz?",tags:["vc","growth","early"]},
+    {id:"E6",cat:"ekip",q:"En kritik pozisyon açığınız hangisi ve bunu nasıl kapatacaksınız?",tags:["vc","angel","early","growth"]},
+    {id:"E7",cat:"ekip",q:"Ekip dışında danışman veya mentor desteği var mı?",tags:["angel","preseed","seed"]},
+    {id:"E8",cat:"ekip",q:"Şu ana kadar ne kadar öz kaynak harcadınız ve bu süreçte tam zamanlı mısınız?",tags:["angel","preseed","seed","early"]},
+    {id:"P1",cat:"pazar",q:"Toplam adreslenebilir pazarınız (TAM) nedir ve bu rakama nasıl ulaştınız?",tags:["vc","growth","early","scaleup"]},
+    {id:"P2",cat:"pazar",q:"En büyük rakipleriniz kimler ve sizi onlardan ayıran tek şey ne?",tags:["vc","angel","growth","early"]},
+    {id:"P3",cat:"pazar",q:"Rakipler aynı ürünü yarın piyasaya sürse ne olur?",tags:["vc","growth","scaleup"]},
+    {id:"P4",cat:"pazar",q:"Türkiye pazarı yeterince büyük mü, yoksa uluslararası büyüme planınız nedir?",tags:["vc","growth","scaleup","early"]},
+    {id:"P5",cat:"pazar",q:"Hedef müşterinizi bir cümleyle tanımlayın. Bu müşteriye nasıl ulaşıyorsunuz?",tags:["angel","growth","early","seed"]},
+    {id:"P6",cat:"pazar",q:"Pazarda daha önce başarısız olan benzer girişimler var mıydı? Neden başarısız oldular?",tags:["vc","angel","growth","early"]},
+    {id:"P7",cat:"pazar",q:"Pazar büyüme hızı nedir ve bu büyümeden nasıl pay alacaksınız?",tags:["vc","growth","scaleup"]},
+    {id:"P8",cat:"pazar",q:"Mevcut çözümler neden yetersiz ve müşteriler şu an sorunu nasıl çözüyor?",tags:["angel","seed","early"]},
+    {id:"U1",cat:"urun",q:"Ürününüzün rakiplerden koruyan teknik bir avantajı var mı?",tags:["vc","growth"]},
+    {id:"U2",cat:"urun",q:"Ürün-pazar uyumunu bulduğunuzu gösteren en güçlü sinyal nedir?",tags:["vc","growth","angel","early"]},
+    {id:"U3",cat:"urun",q:"Bir müşteri ürününüzü kullanmayı bıraksaydı ne hissederdi?",tags:["angel","vc","seed","early"]},
+    {id:"U4",cat:"urun",q:"Roadmap'ınızda önümüzdeki 6 ayda en kritik ürün gelişimi nedir?",tags:["vc","growth","early"]},
+    {id:"U5",cat:"urun",q:"Teknik borcunuz var mı? Altyapınız büyümeye hazır mı?",tags:["vc","growth"]},
+    {id:"U6",cat:"urun",q:"Kullanıcı geri bildirimini ürüne nasıl yansıtıyorsunuz?",tags:["angel","seed","early"]},
+    {id:"T1",cat:"traction",q:"Şu anki aylık tekrar eden geliriniz (MRR) nedir ve son 3 aydaki büyüme oranınız?",tags:["vc","growth","angel","early"]},
+    {id:"T2",cat:"traction",q:"İlk ödeme yapan müşterinizi nasıl buldunuz?",tags:["angel","seed","early"]},
+    {id:"T3",cat:"traction",q:"Churn oranınız nedir ve müşterilerin ayrılmasının ana nedeni nedir?",tags:["vc","growth","scaleup"]},
+    {id:"T4",cat:"traction",q:"En iyi müşteriniz kim ve neden sizinle çalışıyor?",tags:["angel","growth","early"]},
+    {id:"T5",cat:"traction",q:"Beklenti listenizde ne kadar potansiyel müşteri var?",tags:["vc","growth","angel","early"]},
+    {id:"T6",cat:"traction",q:"Referans müşteri verebilir misiniz?",tags:["vc","angel","growth","early"]},
+    {id:"T7",cat:"traction",q:"Büyüme oranınızı sürdürmek için ne gerekiyor? Bu büyüme organik mi, ücretli mi?",tags:["vc","growth","scaleup"]},
+    {id:"T8",cat:"traction",q:"Bu yatırımı alsaydınız 12 ay sonra hangi metriklerde olmanızı beklerdim?",tags:["vc","growth","angel"]},
+    {id:"B1",cat:"birim",q:"CAC'ınız nedir ve bir müşteriyi kazanmak ortalama ne kadar sürüyor?",tags:["vc","growth","scaleup"]},
+    {id:"B2",cat:"birim",q:"LTV/CAC oranınız nedir? Bu oran zamanla nasıl değişti?",tags:["vc","growth","scaleup"]},
+    {id:"B3",cat:"birim",q:"Brüt margin'iniz nedir?",tags:["vc","growth"]},
+    {id:"B4",cat:"birim",q:"Fiyatlandırma stratejinizi nasıl belirlediniz? Müşteriler fiyatı tartışıyor mu?",tags:["angel","growth","early"]},
+    {id:"B5",cat:"birim",q:"Gelir tekrar ediyor mu? Yıllık vs aylık abonelik oranınız nedir?",tags:["vc","growth"]},
+    {id:"B6",cat:"birim",q:"Break-even için kaç müşteriye ihtiyacınız var?",tags:["angel","seed","early"]},
+    {id:"B7",cat:"birim",q:"En karlı müşteri segmentiniz hangisi?",tags:["vc","growth","scaleup"]},
+    {id:"G1",cat:"buyume",q:"Bu yatırımı ne için kullanacaksınız? Spesifik harcama planı verin.",tags:["vc","angel","growth","seed"]},
+    {id:"G2",cat:"buyume",q:"Ana büyüme kanalınız nedir ve bu kanal ölçeklenebilir mi?",tags:["vc","growth","angel","early"]},
+    {id:"G3",cat:"buyume",q:"Uluslararasılaşma planınız var mı? İlk hedef pazar neresi?",tags:["vc","growth","scaleup"]},
+    {id:"G4",cat:"buyume",q:"Stratejik bir ortaklık veya kanal işbirliği var mı?",tags:["growth","angel","early"]},
+    {id:"G5",cat:"buyume",q:"5 yıl sonra bu şirketi nerede görüyorsunuz? Çıkış stratejiniz nedir?",tags:["vc","growth","scaleup"]},
+    {id:"G6",cat:"buyume",q:"Bu turdan sonraki finansman ihtiyacınız ne olacak?",tags:["vc","angel","growth"]},
+    {id:"R1",cat:"risk",q:"Bu girişimin başarısız olmasının en büyük riski nedir? Bu riski nasıl azaltıyorsunuz?",tags:["vc","angel","growth","early"]},
+    {id:"R2",cat:"risk",q:"Regülasyon riski var mı? Lisans veya yasal engel?",tags:["vc","growth"]},
+    {id:"R3",cat:"risk",q:"Büyük bir rakip bu işe girse ne yaparsınız?",tags:["vc","growth","scaleup"]},
+    {id:"R4",cat:"risk",q:"Şu ana kadar yanlış yaptığınız en büyük şey neydi ve ne öğrendiniz?",tags:["angel","seed","early","growth"]},
+    {id:"X1",cat:"strateji",q:"Gelecek 18 ayın en kritik kararı ne olacak?",tags:["vc","growth","angel"]},
+    {id:"X2",cat:"strateji",q:"Rakiplerinizden haberdar mısınız? Onları ne sıklıkla takip ediyorsunuz?",tags:["vc","growth","early"]},
+    {id:"X3",cat:"strateji",q:"Bu sektörde kazanmak için hangi kritik varlık veya beceriye sahip olmanız gerekiyor?",tags:["vc","growth","scaleup"]}
+  ];
+
+  function selectInvestorProfile(profile) {
+    const scores = {vc:0, angel:0, growth:0};
+    if(["preseed","seed"].includes(profile.stage)) scores.angel += 3;
+    else if(profile.stage === "early") { scores.angel++; scores.vc++; scores.growth++; }
+    else if(profile.stage === "growth") { scores.vc += 2; scores.growth += 2; }
+    else { scores.vc += 3; scores.growth += 3; }
+    if(["ai","deeptech","saas"].includes(profile.model)) scores.vc += 2;
+    if(["fintech","marketplace","ecommerce"].includes(profile.model)) scores.growth += 2;
+    if(profile.model === "service") scores.angel += 2;
+    const winner = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+    return INVESTOR_PROFILES[winner];
+  }
+
+  function selectNextQuestion(askedIds, invType, profile) {
+    const candidates = QUESTION_POOL.filter(q=>!askedIds.includes(q.id));
+    const scored = candidates.map(q => {
+      let s = 0;
+      if(q.tags.includes(invType)) s += 3;
+      if(q.tags.includes(profile.stage)) s += 2;
+      if(q.tags.includes(profile.model)) s += 1;
+      const lastCat = askedIds.length ? QUESTION_POOL.find(x=>x.id===askedIds[askedIds.length-1])?.cat : null;
+      if(lastCat && q.cat === lastCat) s -= 2;
+      s += Math.random() * 1.5;
+      return {q, s};
+    });
+    scored.sort((a,b)=>b.s-a.s);
+    return scored[0]?.q || candidates[0];
+  }
+
+  let _aiMessages = [], _aiCount = 0, _aiAskedIds = [], _aiInv = null;
+  const _aiMax = 10;
+
+  window.startAiSim = async function() {
+    document.getElementById("ai-start-btn").style.display = "none";
+    document.getElementById("ai-input-area").style.display = "flex";
+    _aiMessages = []; _aiCount = 0; _aiAskedIds = [];
+    const chatBox = document.getElementById("ai-chat-box");
+    chatBox.innerHTML = "";
+    chatBox.className = "ai-sim-chat";
+    _aiInv = selectInvestorProfile(window.aiStartupProfile || {stage:"seed",model:"saas"});
+    _addAiMsg("inv", _aiInv.avatar + " " + _aiInv.name + " olarak değerlendirme yapıyorum. " + _aiMax + " soru soracağım. Hazır mısınız?");
+    await _askNext();
+  };
+
+  async function _askNext() {
+    if(_aiCount >= _aiMax) { await _finishSim(); return; }
+    const invType = _aiInv === INVESTOR_PROFILES.vc ? "vc" : _aiInv === INVESTOR_PROFILES.angel ? "angel" : "growth";
+    const nextQ = selectNextQuestion(_aiAskedIds, invType, window.aiStartupProfile || {stage:"seed",model:"saas"});
+    _aiAskedIds.push(nextQ.id);
+    _showThinking();
+    try {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:150,messages:[{role:"user",content:
+          "Sen " + _aiInv.name + " rolundesin. Girişim: " + JSON.stringify(window.aiStartupProfile) +
+          ". Bu soruyu girişime ozgu kisaca kisisellestir (max 2 cumle, Turkce): " + nextQ.q
+        }]})
+      });
+      const data = await resp.json();
+      _removeThinking();
+      _addAiMsg("inv", "(" + (_aiCount+1) + "/" + _aiMax + ") " + data.content[0].text.trim());
+      _aiMessages.push({role:"assistant",content:data.content[0].text.trim()});
+      _aiCount++;
+    } catch(e) {
+      _removeThinking();
+      _addAiMsg("inv", "(" + (_aiCount+1) + "/" + _aiMax + ") " + nextQ.q);
+      _aiCount++;
+    }
+  }
+
+  window.sendAiMessage = async function() {
+    const inp = document.getElementById("ai-user-input");
+    const txt = inp.value.trim();
+    if(!txt) return;
+    inp.value = "";
+    document.getElementById("ai-send-btn").disabled = true;
+    _addAiMsg("usr", txt);
+    _aiMessages.push({role:"user",content:txt});
+    await _askNext();
+    document.getElementById("ai-send-btn").disabled = false;
+    inp.focus();
+  };
+
+  async function _finishSim() {
+    _showThinking();
+    try {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:400,messages:[{role:"user",content:
+          "Sen " + _aiInv.name + " rolundesin. Konusma: " + JSON.stringify(_aiMessages) +
+          ". 3 skor ver (0-100) ve kisa yorum yaz. Format: GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:metin"
+        }]})
+      });
+      const data = await resp.json();
+      const res = data.content[0].text;
+      _removeThinking();
+      const g = res.match(/GENEL:(\d+)/)?.[1]||"—";
+      const p = res.match(/PITCH:(\d+)/)?.[1]||"—";
+      const gu = res.match(/GUVEN:(\d+)/)?.[1]||"—";
+      const y = res.match(/YORUM:(.+)/s)?.[1]?.trim()||"";
+      document.getElementById("ai-score-genel").textContent = g;
+      document.getElementById("ai-score-pitch").textContent = p;
+      document.getElementById("ai-score-guven").textContent = gu;
+      document.getElementById("ai-scores-box").style.display = "grid";
+      document.getElementById("ai-input-area").style.display = "none";
+      if(y) _addAiMsg("inv", "Degerlendirmem: " + y);
+    } catch(e) { _removeThinking(); _addAiMsg("inv","Simulasyon tamamlandi."); }
+  }
+
+  function _addAiMsg(type, text) {
+    const box = document.getElementById("ai-chat-box");
+    const div = document.createElement("div");
+    div.className = "ai-msg ai-msg-" + type;
+    const av = _aiInv ? _aiInv.avatar : "🎭";
+    const nm = _aiInv ? _aiInv.name : "Yatirimci";
+    div.innerHTML = type==="inv"
+      ? '<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#253347;display:flex;align-items:center;justify-content:center;font-size:14px;">' + av + '</div><div><div class="ai-msg-label">' + nm + '</div><div class="ai-bubble">' + text + '</div></div>'
+      : '<div style="margin-left:auto;"><div class="ai-msg-label" style="text-align:right;">Siz</div><div class="ai-bubble">' + text + '</div></div>';
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function _showThinking() {
+    const box = document.getElementById("ai-chat-box");
+    const div = document.createElement("div");
+    div.className = "ai-msg ai-msg-inv"; div.id = "ai-thinking";
+    const av = _aiInv ? _aiInv.avatar : "🎭";
+    div.innerHTML = '<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#253347;display:flex;align-items:center;justify-content:center;font-size:14px;">' + av + '</div><div class="ai-thinking"><span></span><span></span><span></span></div>';
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function _removeThinking() {
+    const t = document.getElementById("ai-thinking");
+    if(t) t.remove();
+  }
+
 </script>
 
 <!-- Firebase Compat SDK -->
