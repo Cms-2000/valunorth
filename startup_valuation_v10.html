@@ -640,6 +640,28 @@ body{padding-top:44px;}
 </div>
 
 <script>
+// ── AUTH MODAL FALLBACK (module yüklenmeden önce çalışır) ──
+function openAuthModal(mode) {
+  mode = mode || "login";
+  const overlay = document.getElementById("auth-modal-overlay");
+  if(!overlay) return;
+  const isLogin = mode === "login";
+  document.getElementById("auth-modal-title").textContent = isLogin ? "Giriş Yap" : "Kayıt Ol";
+  document.getElementById("auth-submit-btn").textContent = isLogin ? "Giriş Yap" : "Kayıt Ol";
+  document.getElementById("auth-switch-text").innerHTML = isLogin
+    ? 'Hesabınız yok mu? <a onclick="switchAuthMode()">Kayıt Ol</a>'
+    : 'Zaten hesabınız var mı? <a onclick="switchAuthMode()">Giriş Yap</a>';
+  document.getElementById("auth-error").style.display = "none";
+  overlay.classList.add("open");
+}
+function closeAuthModal(e) {
+  const ov = document.getElementById("auth-modal-overlay");
+  if(!e || e.target === ov) ov && ov.classList.remove("open");
+}
+function switchAuthMode() {
+  const cur = document.getElementById("auth-modal-title").textContent;
+  openAuthModal(cur === "Giriş Yap" ? "register" : "login");
+}
 
 // ── VALUNORTH ROZETİ ──
 function buildBadgeSVG(score, stageName) {
