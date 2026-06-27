@@ -276,6 +276,18 @@ body.lang-tr [data-en]{display:none;}
 .idx-notif-text{font-size:13px;color:#333;}
 .idx-notif-badge{display:inline-block;background:#E1F5EE;color:#0F6E56;font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;margin-top:4px;}
 .idx-notif-empty{text-align:center;color:#aaa;padding:24px;font-size:13px;}
+
+/* ── YATIRIMCI PORTAL SECTION ── */
+.inv-portal-section{background:#1C2535;padding:80px 28px;}
+.inv-portal-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:0 auto;}
+.inv-feats{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.inv-feat-item{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.6);}
+.inv-feat-ok{color:#5DCAA5;font-size:16px;flex-shrink:0;}
+.inv-portal-mock{background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.08);border-radius:16px;padding:20px;}
+.inv-mock-header-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.inv-mock-card-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border-radius:10px;padding:12px;margin-bottom:8px;}
+.inv-mock-info{display:flex;flex-direction:column;gap:3px;}
+@media(max-width:768px){.inv-portal-inner{grid-template-columns:1fr;}.inv-portal-right{display:none;}}
 </style>
 </head>
 <body class="lang-tr">
@@ -300,6 +312,7 @@ body.lang-tr [data-en]{display:none;}
     <div class="nav-links">
       <a href="#how" class="nav-link"><span data-tr>Nasıl Çalışır</span><span data-en>How It Works</span></a>
       <a href="#analysis" class="nav-link"><span data-tr>360° Analiz</span><span data-en>360° Analysis</span></a>
+      <a href="#investors" class="nav-link"><span data-tr>Yatırımcılar</span><span data-en>Investors</span></a>
       <a href="#pricing" class="nav-link"><span data-tr>Fiyatlandırma</span><span data-en>Pricing</span></a>
       <a href="#blog" class="nav-link"><span data-tr>Blog</span><span data-en>Blog</span></a>
     </div>
@@ -362,10 +375,11 @@ body.lang-tr [data-en]{display:none;}
         <span data-en>Discover your startup's <em>real value</em> and growth roadmap</span>
       </h1>
       <div class="hero-sub-list">
-        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>20 soruda aşamanıza özel değerleme</span><span data-en>Stage-specific valuation in 20 questions</span></div>
-        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>5 boyutta 360° analiz ve ekosistem karşılaştırması</span><span data-en>5-dimension 360° analysis and ecosystem benchmark</span></div>
-        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>8 öncelikli büyüme senaryosu ve bütçesi</span><span data-en>8 prioritized growth scenarios with budgets</span></div>
-        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>AI yatırımcı simülasyonu — prova yap, hazırlan</span><span data-en>AI investor simulation — rehearse and prepare</span></div>
+        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>25 soruda</strong> aşamanıza özel değerleme — 8 iş modeli, 6 aşama</span><span data-en><strong>25 questions</strong>, stage-specific valuation — 8 business models, 6 stages</span></div>
+        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>Valunorth Score</strong> — 5 boyutta 0-100 kompozit skor ve rozet sistemi</span><span data-en><strong>Valunorth Score</strong> — 0-100 composite score across 5 dimensions with badge</span></div>
+        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>8 bütçeli senaryo</strong> — 2026 piyasa verileriyle güncel maliyetler</span><span data-en><strong>8 budgeted scenarios</strong> — updated costs with 2026 market data</span></div>
+        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>Yatırımcı Portalı</strong> — TGB, melek ve VC'ler için anonim deal-flow <span style="background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#5DCAA5;">YENİ</span></span><span data-en><strong>Investor Portal</strong> — Anonymous deal-flow for TGBs, angels and VCs <span style="background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#5DCAA5;">NEW</span></span></div>
+        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>AI yatırımcı simülasyonu — pitch sürecinizi test edin <span style="background:rgba(83,74,183,.2);border:1px solid rgba(83,74,183,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#AFA9EC;">Yakında</span></span><span data-en>AI investor simulation — test your pitch process <span style="background:rgba(83,74,183,.2);border:1px solid rgba(83,74,183,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#AFA9EC;">Soon</span></span></div>
         <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>Yatırımcıya hazır PDF raporu</span><span data-en>Investor-ready PDF report</span></div>
       </div>
       <div class="hero-btns">
@@ -433,10 +447,10 @@ body.lang-tr [data-en]{display:none;}
 <!-- STATS -->
 <div class="stats-bar">
   <div class="stats-inner">
-    <div class="stat-item"><div class="stat-num">9+</div><div class="stat-lbl"><span data-tr>Değerleme metodu</span><span data-en>Valuation methods</span></div></div>
-    <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl"><span data-tr>Boyutlu 360° analiz</span><span data-en>Dimension 360° analysis</span></div></div>
-    <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl"><span data-tr>Bütçeli büyüme senaryosu</span><span data-en>Budgeted growth scenarios</span></div></div>
-    <div class="stat-item"><div class="stat-num">AI</div><div class="stat-lbl"><span data-tr>Yatırımcı simülasyonu</span><span data-en>Investor simulation</span></div></div>
+    <div class="stat-item"><div class="stat-num">25</div><div class="stat-lbl"><span data-tr>Akıllı soru</span><span data-en>Smart questions</span></div></div>
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl"><span data-tr>İş modeli & 6 aşama</span><span data-en>Business models & 6 stages</span></div></div>
+    <div class="stat-item"><div class="stat-num">%80</div><div class="stat-lbl"><span data-tr>Bant doğruluğu</span><span data-en>Band accuracy</span></div></div>
+    <div class="stat-item"><div class="stat-num">0-100</div><div class="stat-lbl"><span data-tr>Valunorth Score</span><span data-en>Valunorth Score</span></div></div>
   </div>
 </div>
 
@@ -445,13 +459,13 @@ body.lang-tr [data-en]{display:none;}
   <div class="section-inner">
     <div class="fade-up">
       <div class="section-eyebrow"><span data-tr>Nasıl Çalışır</span><span data-en>How It Works</span></div>
-      <h2 class="section-h2"><span data-tr>4 adımda kapsamlı analiz</span><span data-en>Comprehensive analysis in 4 steps</span></h2>
-      <p class="section-sub"><span data-tr>Soru seti, değerleme motoru, 360° profil ve bütçeli senaryolar. ~7 dakikada tamamlanır.</span><span data-en>Question set, valuation engine, 360° profile and budgeted scenarios. Completed in ~7 minutes.</span></p>
+      <h2 class="section-h2"><span data-tr>5 adımda kapsamlı analiz</span><span data-en>Comprehensive analysis in 5 steps</span></h2>
+      <p class="section-sub"><span data-tr>Soru seti, değerleme motoru, Valunorth Score, bütçeli senaryolar ve rozet. ~7 dakikada tamamlanır.</span><span data-en>Question set, valuation engine, Valunorth Score, budgeted scenarios and badge. Completed in ~7 minutes.</span></p>
     </div>
     <div class="steps-grid">
       <div class="step-card fade-up">
         <div class="step-num">1</div>
-        <div class="step-title"><span data-tr>20 Akıllı Soru</span><span data-en>20 Smart Questions</span></div>
+        <div class="step-title"><span data-tr>25 Akıllı Soru</span><span data-en>25 Smart Questions</span></div>
         <div class="step-desc"><span data-tr>Traction, takım, pazar, moat ve finansal boyutları kapsayan, profilinizi gerçekten anlayan soru seti.</span><span data-en>A question set covering traction, team, market, moat and financial dimensions that truly understands your profile.</span></div>
         <span class="step-tag" style="background:#EBF5E8;color:#0F6E56;"><span data-tr>Sınıflandırma</span><span data-en>Classification</span></span>
       </div>
@@ -472,6 +486,12 @@ body.lang-tr [data-en]{display:none;}
         <div class="step-title"><span data-tr>8 Bütçeli Senaryo</span><span data-en>8 Budgeted Scenarios</span></div>
         <div class="step-desc"><span data-tr>Profilinize özel öncelikli senaryolar. Her adımın tahmini maliyeti, süresi ve değerleme üzerindeki etkisi.</span><span data-en>Profile-specific prioritized scenarios. Estimated cost, duration and valuation impact of each step.</span></div>
         <span class="step-tag" style="background:#FAEEDA;color:#633806;"><span data-tr>Yol Haritası</span><span data-en>Roadmap</span></span>
+      </div>
+      <div class="step-card fade-up">
+        <div class="step-num">5</div>
+        <div class="step-title"><span data-tr>Valunorth Score & Rozet</span><span data-en>Valunorth Score & Badge</span></div>
+        <div class="step-desc"><span data-tr>5 boyutun kompozit skoru + doğrulama rozeti. Web sitenize veya LinkedIn profilinize ekleyin.</span><span data-en>Composite score from 5 dimensions + verification badge. Add to your website or LinkedIn profile.</span></div>
+        <span class="step-tag" style="background:#EEEDFE;color:#534AB7;"><span data-tr>Rozet</span><span data-en>Badge</span></span>
       </div>
     </div>
   </div>
@@ -494,6 +514,68 @@ body.lang-tr [data-en]{display:none;}
       <div class="dim-card"><div class="dim-icon">🌍</div><div class="dim-name"><span data-tr>Pazar</span><span data-en>Market</span></div><div class="dim-bar-bg"><div class="dim-bar" style="width:75%;background:#BA7517;"></div></div><div class="dim-score">75/100</div><div class="dim-lbl" style="background:rgba(239,159,39,.2);color:#EF9F27;"><span data-tr>Güçlü</span><span data-en>Strong</span></div></div>
       <div class="dim-card"><div class="dim-icon">🛡️</div><div class="dim-name">Moat</div><div class="dim-bar-bg"><div class="dim-bar" style="width:45%;background:#E24B4A;"></div></div><div class="dim-score">45/100</div><div class="dim-lbl" style="background:rgba(239,159,39,.2);color:#EF9F27;"><span data-tr>Geliştirilmeli</span><span data-en>Improve</span></div></div>
       <div class="dim-card"><div class="dim-icon">💰</div><div class="dim-name"><span data-tr>Finansal</span><span data-en>Financial</span></div><div class="dim-bar-bg"><div class="dim-bar" style="width:55%;background:#0C447C;"></div></div><div class="dim-score">55/100</div><div class="dim-lbl" style="background:rgba(239,159,39,.2);color:#EF9F27;"><span data-tr>Geliştirilmeli</span><span data-en>Improve</span></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- YATIRIMCI PORTALI -->
+<section class="inv-portal-section" id="investors">
+  <div class="section-inner">
+    <div class="inv-portal-inner fade-up">
+      <div class="inv-portal-left">
+        <div class="section-eyebrow" style="color:#5DCAA5;"><span data-tr>Yatırımcılar İçin</span><span data-en>For Investors</span></div>
+        <h2 class="section-h2"><span data-tr>Portföyünüz için hazır<br>deal-flow altyapısı</span><span data-en>Ready deal-flow infrastructure<br>for your portfolio</span></h2>
+        <p class="section-sub" style="margin-bottom:20px;"><span data-tr>TGB, hızlandırıcı, melek yatırımcı veya VC misiniz? Valunorth'ta değerleme yaptıran girişimleri anonim olarak filtreleyin, inceleyin ve ilgi sinyali gönderin.</span><span data-en>TGB, accelerator, angel investor or VC? Filter, review and send interest signals to startups that have been valued on Valunorth anonymously.</span></p>
+        <div class="inv-feats">
+          <div class="inv-feat-item"><span class="inv-feat-ok">✓</span><span data-tr>Anonim girişim profilleri — isim ve logo gizli</span><span data-en>Anonymous startup profiles — name and logo hidden</span></div>
+          <div class="inv-feat-item"><span class="inv-feat-ok">✓</span><span data-tr>Aşama, model, Valunorth Score ve segment filtresi</span><span data-en>Stage, model, Valunorth Score and segment filters</span></div>
+          <div class="inv-feat-item"><span class="inv-feat-ok">✓</span><span data-tr>İlgileniyorum sinyali — girişimciye anonim bildirim</span><span data-en>Interest signal — anonymous notification to founder</span></div>
+          <div class="inv-feat-item"><span class="inv-feat-ok">✓</span><span data-tr>Valunorth Score ile hızlı ön eleme</span><span data-en>Quick pre-screening with Valunorth Score</span></div>
+        </div>
+        <a href="startup_valuation_v10.html" class="btn-prim" style="display:inline-block;margin-top:8px;"><span data-tr>Yatırımcı Portalına Gir →</span><span data-en>Enter Investor Portal →</span></a>
+      </div>
+      <div class="inv-portal-right fade-up">
+        <div class="inv-portal-mock">
+          <div class="inv-mock-header-bar">
+            <span style="font-size:11px;color:rgba(255,255,255,.5);">Startup Keşif Portalı</span>
+            <span style="font-size:10px;color:#5DCAA5;">124 girişim</span>
+          </div>
+          <div class="inv-mock-card-row">
+            <div class="inv-mock-info">
+              <div style="font-size:9px;color:rgba(255,255,255,.3);">#VN-2024-0847</div>
+              <div style="font-size:11px;font-weight:500;color:#5DCAA5;">Growth · SaaS B2B</div>
+              <div style="font-size:13px;font-weight:500;color:#fff;">₺340M – ₺520M</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#085041;">78</div>
+              <button style="background:#534AB7;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;">İlgileniyorum</button>
+            </div>
+          </div>
+          <div class="inv-mock-card-row">
+            <div class="inv-mock-info">
+              <div style="font-size:9px;color:rgba(255,255,255,.3);">#VN-2024-0831</div>
+              <div style="font-size:11px;font-weight:500;color:#AFA9EC;">Early Growth · AI B2B</div>
+              <div style="font-size:13px;font-weight:500;color:#fff;">₺85M – ₺140M</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#633806;">65</div>
+              <button style="background:#E1F5EE;color:#0F6E56;border:none;border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;">✓ İlgi Gönderildi</button>
+            </div>
+          </div>
+          <div class="inv-mock-card-row">
+            <div class="inv-mock-info">
+              <div style="font-size:9px;color:rgba(255,255,255,.3);">#VN-2024-0819</div>
+              <div style="font-size:11px;font-weight:500;color:#9FE1CB;">Scale-up · Fintech B2C</div>
+              <div style="font-size:13px;font-weight:500;color:#fff;">₺1.2B – ₺1.9B</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#085041;">84</div>
+              <button style="background:#534AB7;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer;">İlgileniyorum</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -523,6 +605,7 @@ body.lang-tr [data-en]{display:none;}
     <div class="sim-right fade-up">
       <div class="section-eyebrow">AI <span data-tr>Simülasyon</span><span data-en>Simulation</span></div>
       <h2 class="section-h2"><span data-tr>Yatırımcı karşısına geçmeden prova yap</span><span data-en>Rehearse before facing investors</span></h2>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(83,74,183,.1);border:1px solid rgba(83,74,183,.2);border-radius:99px;padding:4px 12px;font-size:11px;color:#534AB7;font-weight:500;margin-bottom:12px;"><span data-tr>🔒 Plus paketinde · Yakında aktif</span><span data-en>🔒 In Plus package · Coming soon</span></div>
       <p class="section-sub" style="margin-bottom:0;"><span data-tr>Girişim profilinizi analiz edip size özel 10 gerçek yatırımcı sorusu soruluyor. Cevaplarınız analiz edilerek zayıf noktalarınız ve nasıl güçlendireceğiniz gösteriliyor.</span><span data-en>Your startup profile is analyzed and 10 real investor questions specific to you are asked. Your answers are analyzed to show your weak points and how to strengthen them.</span></p>
       <div class="sim-features">
         <div class="sim-feat">
@@ -591,7 +674,7 @@ body.lang-tr [data-en]{display:none;}
             <div class="pkg-feat" style="color:#5DCAA5;font-weight:500;"><span class="pkg-feat-ok" style="color:#5DCAA5;">✓</span><span data-tr>8'li senaryo karşılaştırması</span><span data-en>8-scenario comparison</span></div>
             <div class="pkg-feat" style="color:#ddd;"><span class="pkg-feat-ok">✓</span><span data-tr>360° profil analizi & benchmark</span><span data-en>360° profile analysis & benchmark</span></div>
             <div class="pkg-feat" style="color:#ddd;"><span class="pkg-feat-ok">✓</span><span data-tr>12 aylık aksiyon takvimi & bütçe</span><span data-en>12-month action calendar & budget</span></div>
-            <div class="pkg-feat" style="color:#ddd;"><span class="pkg-feat-ok">✓</span><span data-tr>AI yatırımcı simülasyonu</span><span data-en>AI investor simulation</span></div>
+            <div class="pkg-feat" style="color:#888;"><span class="pkg-feat-ok" style="color:#888;">◷</span><span data-tr>AI yatırımcı simülasyonu <span style="font-size:10px;opacity:.6;">(Yakında)</span></span><span data-en>AI investor simulation <span style="font-size:10px;opacity:.6;">(Soon)</span></span></div>
             <div class="pkg-feat" style="color:#ddd;"><span class="pkg-feat-ok">✓</span><span data-tr>Kapsamlı PDF raporu & yatırımcı sunumu</span><span data-en>Comprehensive PDF report & investor deck</span></div>
           </div>
           <a href="startup_valuation_v10.html" class="pkg-btn" style="background:#5DCAA5;color:#04342C;"><span data-tr>Hemen Başla</span><span data-en>Get Started</span></a>
