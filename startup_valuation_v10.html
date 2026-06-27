@@ -1694,50 +1694,72 @@ function restart(){A={};cur=0;document.getElementById("result-area").style.displ
 renderQ();
 </script>
 
-<!-- FIREBASE SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-           signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
+<!-- FIREBASE SDK (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
     apiKey: "AIzaSyBl2UgqYBI3IGD2wbz_4rRkzcgvzyXnso8",
     authDomain: "valunorth-33840.firebaseapp.com",
     projectId: "valunorth-33840",
     storageBucket: "valunorth-33840.firebasestorage.app",
     messagingSenderId: "1036484384156",
     appId: "1:1036484384156:web:c54af389190328a9f3e459"
-  };
+  });
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const provider = new firebase.auth.GoogleAuthProvider();
   let currentUser = null;
-  let authMode = "login"; // login | register
+  let authMode = "login";
 
   // ── AUTH STATE ──
-  onAuthStateChanged(auth, user => {
+  auth.onAuthStateChanged(async user => {
     currentUser = user;
-    if(user){
+    if(user) {
       document.getElementById("auth-logged-out").style.display = "none";
       document.getElementById("auth-logged-in").style.display = "flex";
-      document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
+      await loadUserProfile(user.uid);
+      if(corpData && corpData.account_type === "investor") {
+        document.getElementById("auth-user-email").textContent = "Yatırımcı Hesabı";
+      } else {
+        document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
+      }
+      if(isCorpUser) {
+        document.querySelector(".container").style.display = "none";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("corp-panel").style.display = "block";
+        loadCorpPortfolio();
+      } else if(corpData && corpData.account_type === "investor") {
+        document.querySelector(".container").style.display = "none";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("investor-panel").style.display = "block";
+        document.getElementById("history-btn").style.display = "none";
+        document.getElementById("inv-interests-btn").style.display = "flex";
+        loadInvestorPortal();
+      }
+      if(document.getElementById("result-area").style.display !== "none") {
+        applyLocks();
+      }
     } else {
       document.getElementById("auth-logged-out").style.display = "flex";
       document.getElementById("auth-logged-in").style.display = "none";
+      document.getElementById("corp-panel").style.display = "none";
+      document.getElementById("investor-panel").style.display = "none";
+      document.getElementById("history-btn").style.display = "flex";
+      document.getElementById("inv-interests-btn").style.display = "none";
+      document.querySelector(".container").style.display = "block";
+      isCorpUser = false; corpData = null;
     }
   });
 
   // ── AUTH MODAL ──
-  window.openAuthModal = function(mode = "login") {
-    authMode = mode;
-    document.getElementById("auth-modal-title").textContent = mode === "login" ? "Giriş Yap" : "Kayıt Ol";
-    document.getElementById("auth-submit-btn").textContent = mode === "login" ? "Giriş Yap" : "Kayıt Ol";
-    document.getElementById("auth-switch-text").innerHTML = mode === "login"
+  window.openAuthModal = function(mode) {
+    authMode = mode || "login";
+    document.getElementById("auth-modal-title").textContent = authMode === "login" ? "Giriş Yap" : "Kayıt Ol";
+    document.getElementById("auth-submit-btn").textContent = authMode === "login" ? "Giriş Yap" : "Kayıt Ol";
+    document.getElementById("auth-switch-text").innerHTML = authMode === "login"
       ? 'Hesabınız yok mu? <a onclick="switchAuthMode()">Kayıt Ol</a>'
       : 'Zaten hesabınız var mı? <a onclick="switchAuthMode()">Giriş Yap</a>';
     document.getElementById("auth-error").style.display = "none";
@@ -1758,59 +1780,47 @@ renderQ();
     el.textContent = msg; el.style.display = "block";
   }
 
-  window._firebaseEmailSignIn = async function() {
-    return window.handleAuthSubmit();
-  };
   window.handleAuthSubmit = async function() {
     const email = document.getElementById("auth-email").value.trim();
     const password = document.getElementById("auth-password").value;
     if(!email || !password){ showError("E-posta ve şifre gerekli."); return; }
     try {
-      if(authMode === "login"){
-        await signInWithEmailAndPassword(auth, email, password);
-      } else {
-        await createUserWithEmailAndPassword(auth, email, password);
-      }
+      if(authMode === "login") await auth.signInWithEmailAndPassword(email, password);
+      else await auth.createUserWithEmailAndPassword(email, password);
       document.getElementById("auth-modal-overlay").classList.remove("open");
     } catch(err) {
       const msgs = {
-        "auth/invalid-email": "Geçersiz e-posta adresi.",
-        "auth/user-not-found": "Bu e-posta ile kayıtlı hesap bulunamadı.",
+        "auth/invalid-email": "Geçersiz e-posta.",
+        "auth/user-not-found": "Hesap bulunamadı.",
         "auth/wrong-password": "Şifre hatalı.",
         "auth/email-already-in-use": "Bu e-posta zaten kayıtlı.",
         "auth/weak-password": "Şifre en az 6 karakter olmalı.",
         "auth/invalid-credential": "E-posta veya şifre hatalı."
       };
-      showError(msgs[err.code] || "Bir hata oluştu: " + err.message);
+      showError(msgs[err.code] || "Hata: " + err.message);
     }
   };
 
   window.signInWithGoogle = async function() {
     try {
-      await signInWithPopup(auth, provider);
+      await auth.signInWithPopup(provider);
       document.getElementById("auth-modal-overlay").classList.remove("open");
     } catch(err) {
       showError("Google girişi başarısız: " + err.message);
     }
   };
-  window._firebaseGoogleSignIn = window.signInWithGoogle;
-  window._firebaseEmailSubmit = window.handleAuthSubmit;
-  // Firebase hazır - queue'yu boşalt
-  window._fbReady = true;
-  (window._fbQueue || []).forEach(fn => fn());
-  window._fbQueue = [];
 
   window.signOutUser = async function() {
-    await signOut(auth);
+    await auth.signOut();
   };
 
   // ── RAPOR KAYDETME ──
   window.saveReportToFirestore = async function(reportData) {
     if(!currentUser) return false;
     try {
-      await addDoc(collection(db, "users", currentUser.uid, "reports"), {
+      await db.collection("users").doc(currentUser.uid).collection("reports").add({
         ...reportData,
-        createdAt: serverTimestamp(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         userEmail: currentUser.email
       });
       return true;
@@ -1827,8 +1837,8 @@ renderQ();
     listEl.innerHTML = '<div class="history-empty">Yükleniyor...</div>';
     if(!currentUser){ listEl.innerHTML = '<div class="history-empty">Giriş yapın.</div>'; return; }
     try {
-      const q = query(collection(db, "users", currentUser.uid, "reports"), orderBy("createdAt","desc"));
-      const snap = await getDocs(q);
+      const snap = await db.collection("users").doc(currentUser.uid).collection("reports")
+        .orderBy("createdAt","desc").get();
       if(snap.empty){ listEl.innerHTML = '<div class="history-empty">Henüz kayıtlı değerleme yok.</div>'; return; }
       listEl.innerHTML = "";
       snap.forEach(doc => {
@@ -1836,12 +1846,9 @@ renderQ();
         const date = d.createdAt?.toDate?.()?.toLocaleDateString("tr-TR") || "—";
         const div = document.createElement("div");
         div.className = "history-item";
-        div.innerHTML = `
-          <div class="history-item-date">${date}</div>
-          <div class="history-item-stage">${d.stage || "—"} Aşaması</div>
-          <div class="history-item-val">${d.lo || "—"} – ${d.hi || "—"}</div>
-          <div style="font-size:11px;color:#aaa;margin-top:4px;">${d.model || ""} · ${d.segment || ""}</div>
-        `;
+        div.innerHTML = `<div class="history-item-date">${date}</div>
+          <div class="history-item-stage">${d.stage||"—"} Aşaması</div>
+          <div class="history-item-val">${d.lo||"—"} – ${d.hi||"—"}</div>`;
         listEl.appendChild(div);
       });
     } catch(err) {
@@ -1854,581 +1861,95 @@ renderQ();
       document.getElementById("history-modal-overlay").classList.remove("open");
   };
 
-  // ── AI YATIRIMCI SİMÜLASYONU ──
-  const ANTHROPIC_KEY = "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";
+  // ── PLUS KİLİT SİSTEMİ ──
+  const LOCKED_SECTIONS = ["card-scenarios","card-timeline","card-summary"];
 
-  // ── 3 YATIRIMCI PROFİLİ ──
-  const INVESTOR_PROFILES = {
-    vc: {
-      name: "Teknoloji VC",
-      avatar: "🏦",
-      desc: "Büyük ölçekli teknoloji yatırımcısı",
-      focus: ["ölçeklenebilirlik", "IP", "global pazar", "teknik derinlik"],
-      stages: ["early", "growth", "scaleup"],
-      models: ["saas", "ai", "deeptech", "fintech"],
-      style: "Analitik, veri odaklı, büyük tabloya bakıyor"
-    },
-    angel: {
-      name: "Melek Yatırımcı",
-      avatar: "👼",
-      desc: "Erken aşama bireysel yatırımcı",
-      focus: ["ekip", "vizyon", "ilk traction", "kurucu motivasyonu"],
-      stages: ["preseed", "seed", "early"],
-      models: ["saas", "ai", "marketplace", "ecommerce", "service"],
-      style: "Samimi, insan odaklı, hikayeye önem veriyor"
-    },
-    growth: {
-      name: "Büyüme Yatırımcısı",
-      avatar: "📈",
-      desc: "Büyüme ve gelir odaklı yatırımcı",
-      focus: ["birim ekonomisi", "CAC/LTV", "gelir kalitesi", "uluslararasılaşma"],
-      stages: ["early", "growth", "scaleup", "late"],
-      models: ["fintech", "marketplace", "ecommerce", "saas"],
-      style: "Sayı odaklı, metriklere takıntılı, operasyonel detay soruyor"
-    }
-  };
-
-  // ── 50 SORULUK HAVUZ ──
-  const QUESTION_POOL = [
-    // EKİP & KURUCU (E)
-    {id:"E1", cat:"ekip", q:"Sizi bu girişimi kurmaya iten asıl motivasyon neydi? Bu problemi neden siz çözmeliysiniz?", tags:["angel","preseed","seed"], followup:"motivasyon"},
-    {id:"E2", cat:"ekip", q:"Teknik kurucu var mı ekibinizde? Ürünü kim geliştiriyor?", tags:["vc","angel","seed","early"], followup:"teknik"},
-    {id:"E3", cat:"ekip", q:"Ekibinizin bu sektördeki deneyimi nedir? Daha önce birlikte çalıştınız mı?", tags:["angel","vc","preseed","seed"], followup:"deneyim"},
-    {id:"E4", cat:"ekip", q:"Kurucular arasında hisse dağılımı nasıl? Vesting var mı?", tags:["vc","angel","growth"], followup:"hisse"},
-    {id:"E5", cat:"ekip", q:"Şu an kaç kişisiniz ve önümüzdeki 12 ayda ekibi nasıl büyütmeyi planlıyorsunuz?", tags:["vc","growth","early"], followup:"buyume"},
-    {id:"E6", cat:"ekip", q:"En kritik pozisyon açığınız hangisi ve bunu nasıl kapatacaksınız?", tags:["vc","angel","early","growth"], followup:"eksik"},
-    {id:"E7", cat:"ekip", q:"Ekip dışında danışman veya mentor desteği var mı?", tags:["angel","preseed","seed"], followup:"mentor"},
-    {id:"E8", cat:"ekip", q:"Şu ana kadar ne kadar öz kaynak harcadınız ve bu süreçte tam zamanlı mısınız?", tags:["angel","preseed","seed","early"], followup:"ozkaynakl"},
-
-    // PAZAR & REKABET (P)
-    {id:"P1", cat:"pazar", q:"Toplam adreslenebilir pazarınız (TAM) nedir ve bu rakama nasıl ulaştınız?", tags:["vc","growth","early","scaleup"], followup:"tam"},
-    {id:"P2", cat:"pazar", q:"En büyük rakipleriniz kimler ve sizi onlardan ayıran tek şey ne?", tags:["vc","angel","growth","early"], followup:"rekabet"},
-    {id:"P3", cat:"pazar", q:"Rakipler aynı ürünü yarın piyasaya sürse ne olur?", tags:["vc","growth","scaleup"], followup:"moat"},
-    {id:"P4", cat:"pazar", q:"Türkiye pazarı yeterince büyük mü, yoksa uluslararası büyüme planınız nedir?", tags:["vc","growth","scaleup","early"], followup:"uluslararasi"},
-    {id:"P5", cat:"pazar", q:"Hedef müşterinizi bir cümleyle tanımlayın. Bu müşteriye nasıl ulaşıyorsunuz?", tags:["angel","growth","early","seed"], followup:"musteri"},
-    {id:"P6", cat:"pazar", q:"Pazarda daha önce başarısız olan benzer girişimler var mıydı? Neden başarısız oldular?", tags:["vc","angel","growth","early"], followup:"basarisiz"},
-    {id:"P7", cat:"pazar", q:"Pazar büyüme hızı nedir ve bu büyümeden nasıl pay alacaksınız?", tags:["vc","growth","scaleup"], followup:"pazar_buyume"},
-    {id:"P8", cat:"pazar", q:"Mevcut çözümler neden yetersiz ve müşteriler şu an sorunu nasıl çözüyor?", tags:["angel","seed","early"], followup:"alternatif"},
-
-    // ÜRÜN & TEKNOLOJİ (U)
-    {id:"U1", cat:"urun", q:"Ürününüzün rakiplerden koruyan teknik bir avantajı (IP, patent, özel veri) var mı?", tags:["vc","deeptech","ai","growth"], followup:"ip"},
-    {id:"U2", cat:"urun", q:"Ürün-pazar uyumunu (PMF) bulduğunuzu gösteren en güçlü sinyal nedir?", tags:["vc","growth","angel","early"], followup:"pmf"},
-    {id:"U3", cat:"urun", q:"Bir müşteri ürününüzü kullanmayı bıraksaydı ne hissederdi?", tags:["angel","vc","seed","early"], followup:"retention"},
-    {id:"U4", cat:"urun", q:"Roadmap'ınızda önümüzdeki 6 ayda en kritik ürün gelişimi nedir?", tags:["vc","growth","early"], followup:"roadmap"},
-    {id:"U5", cat:"urun", q:"Teknik borcunuz var mı? Altyapınız büyümeye hazır mı?", tags:["vc","ai","saas","growth"], followup:"teknik_bor"},
-    {id:"U6", cat:"urun", q:"Kullanıcı geri bildirimini ürüne nasıl yansıtıyorsunuz?", tags:["angel","seed","early"], followup:"geri_bildirim"},
-    {id:"U7", cat:"urun", q:"Yapay zeka veya veri kullanıyorsanız, bu size sürdürülebilir bir avantaj sağlıyor mu?", tags:["vc","ai","deeptech"], followup:"ai_avantaj"},
-    {id:"U8", cat:"urun", q:"Ürününüzü bugün hemen kullanabilecek biri 5 dakikada değer görür mü?", tags:["angel","growth","early","seed"], followup:"onboarding"},
-
-    // TRACTION & GELİR (T)
-    {id:"T1", cat:"traction", q:"Şu anki aylık tekrar eden geliriniz (MRR) nedir ve son 3 aydaki büyüme oranınız?", tags:["vc","growth","angel","early"], followup:"mrr"},
-    {id:"T2", cat:"traction", q:"İlk ödeme yapan müşterinizi nasıl buldunuz?", tags:["angel","seed","early"], followup:"ilk_musteri"},
-    {id:"T3", cat:"traction", q:"Churn oranınız nedir ve müşterilerin ayrılmasının ana nedeni nedir?", tags:["vc","growth","scaleup"], followup:"churn"},
-    {id:"T4", cat:"traction", q:"En iyi müşteriniz kim ve neden sizinle çalışıyor?", tags:["angel","growth","early"], followup:"en_iyi"},
-    {id:"T5", cat:"traction", q:"Beklenti listenizde (pipeline) ne kadar potansiyel müşteri var?", tags:["vc","growth","angel","early"], followup:"pipeline"},
-    {id:"T6", cat:"traction", q:"Referans müşteri verebilir misiniz? Beni bir müşterinizle tanıştırabilir misiniz?", tags:["vc","angel","growth","early"], followup:"referans"},
-    {id:"T7", cat:"traction", q:"Büyüme oranınızı sürdürmek için ne gerekiyor? Bu büyüme organik mi, ücretli mi?", tags:["vc","growth","scaleup"], followup:"buyume_surdurulebilir"},
-    {id:"T8", cat:"traction", q:"Bu yatırımı alsaydınız 12 ay sonra hangi metriklerde olmanızı beklerdim?", tags:["vc","growth","angel"], followup:"12ay"},
-
-    // İŞ MODELİ & BİRİM EKONOMİSİ (B)
-    {id:"B1", cat:"birim", q:"CAC'ınız nedir ve bir müşteriyi kazanmak ortalama ne kadar sürüyor?", tags:["vc","growth","scaleup"], followup:"cac"},
-    {id:"B2", cat:"birim", q:"LTV/CAC oranınız nedir? Bu oran zamanla nasıl değişti?", tags:["vc","growth","scaleup"], followup:"ltv_cac"},
-    {id:"B3", cat:"birim", q:"Brüt margin'iniz nedir? SaaS için %70+ görmeyi bekliyorum.", tags:["vc","growth","saas","fintech"], followup:"margin"},
-    {id:"B4", cat:"birim", q:"Fiyatlandırma stratejinizi nasıl belirlediniz? Müşteriler fiyatı tartışıyor mu?", tags:["angel","growth","early"], followup:"fiyat"},
-    {id:"B5", cat:"birim", q:"Gelir tekrar ediyor mu? Yıllık vs aylık abonelik oranınız nedir?", tags:["vc","growth","saas"], followup:"tekrar_gelir"},
-    {id:"B6", cat:"birim", q:"Break-even için kaç müşteriye ihtiyacınız var?", tags:["angel","seed","early"], followup:"breakeven"},
-    {id:"B7", cat:"birim", q:"En karlı müşteri segmentiniz hangisi ve neden ona odaklanmıyorsunuz?", tags:["vc","growth","scaleup"], followup:"segment"},
-    {id:"B8", cat:"birim", q:"Gelecek 18 ayda net negatif churn'e ulaşabilir misiniz?", tags:["vc","scaleup","growth"], followup:"net_neg_churn"},
-
-    // BÜYÜME STRATEJİSİ (G)
-    {id:"G1", cat:"buyume", q:"Bu yatırımı ne için kullanacaksınız? Bana spesifik harcama planı verin.", tags:["vc","angel","growth","seed"], followup:"kullanim"},
-    {id:"G2", cat:"buyume", q:"Ana büyüme kanalınız nedir ve bu kanal ölçeklenebilir mi?", tags:["vc","growth","angel","early"], followup:"kanal"},
-    {id:"G3", cat:"buyume", q:"Uluslararasılaşma planınız var mı? İlk hedef pazar neresi ve neden?", tags:["vc","growth","scaleup"], followup:"uluslararasi_plan"},
-    {id:"G4", cat:"buyume", q:"Stratejik bir ortaklık veya kanal işbirliği var mı?", tags:["growth","angel","early"], followup:"ortaklik"},
-    {id:"G5", cat:"buyume", q:"5 yıl sonra bu şirketi nerede görüyorsunuz? Çıkış stratejiniz nedir?", tags:["vc","growth","scaleup"], followup:"cikis"},
-    {id:"G6", cat:"buyume", q:"Bu turdan sonraki finansman ihtiyacınız ne olacak ve hangi milestone'da?", tags:["vc","angel","growth"], followup:"sonraki_tur"},
-
-    // RİSK & SAVUNMA (R)
-    {id:"R1", cat:"risk", q:"Bu girişimin başarısız olmasının en büyük riski nedir? Bu riski nasıl azaltıyorsunuz?", tags:["vc","angel","growth","early"], followup:"risk"},
-    {id:"R2", cat:"risk", q:"Regülasyon riski var mı? Lisans, izin veya yasal engel?", tags:["vc","fintech","deeptech","growth"], followup:"regulasyon"},
-    {id:"R3", cat:"risk", q:"Büyük bir rakip (Google, Amazon, yerel dev) bu işe girse ne yaparsınız?", tags:["vc","growth","scaleup"], followup:"buyuk_rakip"},
-    {id:"R4", cat:"risk", q:"Şu ana kadar yanlış yaptığınız en büyük şey neydi ve ne öğrendiniz?", tags:["angel","seed","early","growth"], followup:"yanlis"}
-  ];
-
-  // ── YATİRIMCI SEÇİMİ ──
-  function selectInvestorProfile(profile) {
-    const { stage, model } = profile;
-    const scores = {vc:0, angel:0, growth:0};
-
-    // Aşama puanı
-    if(["preseed","seed"].includes(stage)) scores.angel += 3;
-    else if(["early"].includes(stage)) { scores.angel += 1; scores.vc += 1; scores.growth += 1; }
-    else if(["growth"].includes(stage)) { scores.vc += 2; scores.growth += 2; }
-    else if(["scaleup","late"].includes(stage)) { scores.vc += 3; scores.growth += 3; }
-
-    // Model puanı
-    if(["ai","deeptech","saas"].includes(model)) scores.vc += 2;
-    if(["fintech","marketplace","ecommerce"].includes(model)) scores.growth += 2;
-    if(["service"].includes(model)) scores.angel += 2;
-
-    const winner = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
-    return INVESTOR_PROFILES[winner];
-  }
-
-  // ── DİNAMİK SORU SEÇİMİ ──
-  function selectNextQuestion(askedIds, investorProfile, profile, lastAnswerContext) {
-    const inv = investorProfile;
-    const candidates = QUESTION_POOL.filter(q => !askedIds.includes(q.id));
-
-    // Skor: yatırımcı tipi + aşama/model uyumu + last answer context
-    const scored = candidates.map(q => {
-      let score = 0;
-      if(q.tags.includes(inv === INVESTOR_PROFILES.vc ? "vc" : inv === INVESTOR_PROFILES.angel ? "angel" : "growth")) score += 3;
-      if(q.tags.includes(profile.stage)) score += 2;
-      if(q.tags.includes(profile.model)) score += 2;
-      // Önceki cevap bağlamı
-      if(lastAnswerContext && q.followup && lastAnswerContext.includes(q.followup)) score += 4;
-      // Kategori rotasyonu - aynı kategoriden üst üste gelmesin
-      if(askedIds.length > 0) {
-        const lastCat = QUESTION_POOL.find(x=>x.id===askedIds[askedIds.length-1])?.cat;
-        if(q.cat === lastCat) score -= 2;
-      }
-      // Biraz rastgelelik ekle
-      score += Math.random() * 1.5;
-      return {q, score};
-    });
-
-    scored.sort((a,b) => b.score-a.score);
-    return scored[0]?.q || candidates[0];
-  }
-
-  // ── SİMÜLASYON STATE ──
-  let aiMessages = [];
-  let aiQuestionCount = 0;
-  const aiMaxQuestions = 10;
-  let aiStartupProfile = null;
-  let aiInvestorProfile = null;
-  let aiAskedIds = [];
-  let aiLastContext = "";
-
-  window.initAiSim = function(profile) {
-    aiStartupProfile = profile;
-    document.getElementById("ai-sim-lock-box").style.display = "none";
-    document.getElementById("ai-sim-active").style.display = "block";
-  };
-
-  window.startAiSim = async function() {
-    document.getElementById("ai-start-btn").style.display = "none";
-    document.getElementById("ai-input-area").style.display = "flex";
-    aiMessages = [];
-    aiQuestionCount = 0;
-    aiAskedIds = [];
-    aiLastContext = "";
-
-    const chatBox = document.getElementById("ai-chat-box");
-    chatBox.innerHTML = "";
-    chatBox.className = "ai-sim-chat";
-
-    // Yatırımcı seç
-    aiInvestorProfile = selectInvestorProfile(aiStartupProfile);
-
-    // Giriş mesajı
-    const intro = aiInvestorProfile.avatar + " " + aiInvestorProfile.name + " olarak değerlendirme yapıyorum. " +
-      aiInvestorProfile.desc + ".
-
-" + aiMaxQuestions + " soru soracağım. " +
-      "Cevaplarınız gerçek zamanlı analiz edilecek ve sonunda pitch hazırlığınız puanlanacak. Başlayalım!";
-    addAiMessage("inv", intro);
-
-    await askNextAiQuestion();
-  };
-
-  async function askNextAiQuestion() {
-    if(aiQuestionCount >= aiMaxQuestions) {
-      await finishAiSim();
-      return;
-    }
-
-    // Dinamik soru seç
-    const nextQ = selectNextQuestion(aiAskedIds, aiInvestorProfile, aiStartupProfile, aiLastContext);
-    aiAskedIds.push(nextQ.id);
-
-    // Claude ile soruyu kişiselleştir
-    showThinking();
-    try {
-      const personalizePrompt = `Sen ${aiInvestorProfile.name} rolündesin. ${aiInvestorProfile.style}.
-Girişim: aşama=${aiStartupProfile.stage}, model=${aiStartupProfile.model}, değerleme=${aiStartupProfile.valuation}
-Skor: Traction=${aiStartupProfile.scores.traction}/100, Takım=${aiStartupProfile.scores.takim}/100, Pazar=${aiStartupProfile.scores.pazar}/100
-
-Temel soru: "${nextQ.q}"
-
-Bu soruyu bu girişime ve yatırımcı karakterine özgü şekilde kişiselleştir. Maksimum 2 cümle, Türkçe.
-Sadece soruyu yaz, başka bir şey ekleme.`;
-
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": ANTHROPIC_KEY,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true"
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 150,
-          messages: [{role:"user", content: personalizePrompt}]
-        })
-      });
-      const data = await resp.json();
-      const personalizedQ = data.content[0].text.trim();
-      removeThinking();
-      addAiMessage("inv", `(${aiQuestionCount+1}/${aiMaxQuestions}) ` + personalizedQ);
-      aiMessages.push({role:"assistant", content: personalizedQ});
-      aiQuestionCount++;
-    } catch(e) {
-      removeThinking();
-      addAiMessage("inv", `(${aiQuestionCount+1}/${aiMaxQuestions}) ` + nextQ.q);
-      aiQuestionCount++;
-    }
-  }
-
-  window.sendAiMessage = async function() {
-    const input = document.getElementById("ai-user-input");
-    const userText = input.value.trim();
-    if(!userText) return;
-    input.value = "";
-    document.getElementById("ai-send-btn").disabled = true;
-
-    addAiMessage("usr", userText);
-    aiMessages.push({role:"user", content: userText});
-
-    // Cevabı analiz et - sonraki soru için context çıkar
-    try {
-      const contextResp = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": ANTHROPIC_KEY,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true"
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 60,
-          messages: [{role:"user", content:
-            `Bu cevabın en zayıf noktasını 1-3 kelimeyle etiketle (Türkçe, küçük harf): "${userText}"
-Sadece etiketleri yaz, örn: "cac mrr churn" veya "ekip deneyim" veya "pazar buyukluk"`
-          }]
-        })
-      });
-      const ctxData = await contextResp.json();
-      aiLastContext = ctxData.content[0].text.toLowerCase();
-    } catch(e) { aiLastContext = ""; }
-
-    await askNextAiQuestion();
-    document.getElementById("ai-send-btn").disabled = false;
-    input.focus();
-  };
-
-  async function finishAiSim() {
-    showThinking();
-    const scorePrompt = `Sen ${aiInvestorProfile.name} rolündesin. ${aiInvestorProfile.style}.
-Girişim profili: ${JSON.stringify(aiStartupProfile)}
-Tüm konuşma: ${JSON.stringify(aiMessages)}
-
-10 sorunun cevaplarını değerlendirerek şu 3 skoru ver (0-100):
-1. Genel Skor: Yatırım çekiciliği
-2. Pitch Etkinliği: Cevapların netliği ve ikna ediciliği
-3. Güven Skoru: Kurucunun güvenilirliği
-
-Sonra 3-4 cümlelik değerlendirme yaz: güçlü yönler, zayıf yönler ve tavsiye.
-
-Format (sadece bunu yaz):
-GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:metin`;
-
-    try {
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": ANTHROPIC_KEY,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true"
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 500,
-          messages: [{role:"user", content: scorePrompt}]
-        })
-      });
-      const data = await resp.json();
-      const result = data.content[0].text;
-      removeThinking();
-
-      const gM = result.match(/GENEL:(\d+)/);
-      const pM = result.match(/PITCH:(\d+)/);
-      const guM = result.match(/GUVEN:(\d+)/);
-      const yM = result.match(/YORUM:(.+)/s);
-
-      document.getElementById("ai-score-genel").textContent = gM ? gM[1] : "—";
-      document.getElementById("ai-score-pitch").textContent = pM ? pM[1] : "—";
-      document.getElementById("ai-score-guven").textContent = guM ? guM[1] : "—";
-      document.getElementById("ai-scores-box").style.display = "grid";
-      document.getElementById("ai-input-area").style.display = "none";
-
-      if(yM) addAiMessage("inv", "📊 " + yM[1].trim());
-    } catch(e) {
-      removeThinking();
-      addAiMessage("inv", "Değerlendirme tamamlandı. Teşekkürler!");
-    }
-  }
-
-  function addAiMessage(type, text) {
-    const chatBox = document.getElementById("ai-chat-box");
-    const div = document.createElement("div");
-    div.className = "ai-msg ai-msg-" + type;
-    const inv = aiInvestorProfile || INVESTOR_PROFILES.vc;
-    div.innerHTML = type === "inv"
-      ? `<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#253347;display:flex;align-items:center;justify-content:center;font-size:14px;">${inv.avatar}</div><div><div class="ai-msg-label">${inv.name}</div><div class="ai-bubble">${text.replace(/\n/g,"<br>")}</div></div>`
-      : `<div style="margin-left:auto;"><div class="ai-msg-label" style="text-align:right;">Siz</div><div class="ai-bubble">${text}</div></div>`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  function showThinking() {
-    const chatBox = document.getElementById("ai-chat-box");
-    const div = document.createElement("div");
-    div.className = "ai-msg ai-msg-inv";
-    div.id = "ai-thinking";
-    const inv = aiInvestorProfile || INVESTOR_PROFILES.vc;
-    div.innerHTML = `<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#253347;display:flex;align-items:center;justify-content:center;font-size:14px;">${inv.avatar}</div><div class="ai-thinking"><span></span><span></span><span></span></div>`;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  function removeThinking() {
-    const t = document.getElementById("ai-thinking");
-    if(t) t.remove();
-  }
-
-
-  // ── YATIRIMCI PORTALI ──
-  let invAllReports = [];
-  let invFilters = { stage: 'all', model: 'all', score: 0, seg: 'all' };
-  let invInterests = new Set();
-
-  const stageColors = {
-    preseed:{bg:"#F1EFE8",c:"#5F5E5A",lbl:"Pre-Seed"},
-    seed:{bg:"#FAEEDA",c:"#633806",lbl:"Seed"},
-    early:{bg:"#EEEDFE",c:"#3C3489",lbl:"Early Growth"},
-    growth:{bg:"#E1F5EE",c:"#0F6E56",lbl:"Growth"},
-    scaleup:{bg:"#E6F1FB",c:"#0C447C",lbl:"Scale-up"},
-    late:{bg:"#FCEBEB",c:"#791F1F",lbl:"Late Stage"}
-  };
-
-  const scoreColor = s => s>=75?{bg:"#E1F5EE",c:"#085041"}:s>=60?{bg:"#EEEDFE",c:"#3C3489"}:s>=45?{bg:"#FAEEDA",c:"#633806"}:{bg:"#FCEBEB",c:"#791F1F"};
-
-  async function loadInvestorPortal() {
-    const { collection, getDocs, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    try {
-      // Tüm kullanıcıların raporlarını çek - public olanlar
-      // Şimdilik: tüm raporları anonim göster (ileride public:true filtresi eklenecek)
-      const usersSnap = await getDocs(collection(db, "users"));
-      invAllReports = [];
-      let weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
-
-      for(const userDoc of usersSnap.docs) {
-        if(userDoc.data().account_type === "investor") continue; // yatırımcı raporlarını gösterme
-        const rSnap = await getDocs(collection(db, "users", userDoc.id, "reports"));
-        rSnap.forEach(r => {
-          const d = r.data();
-          const vn = Math.round(((d.answers?.diff||3)*10+(d.answers?.moat||3)*10+(d.answers?.team||3)*10+(d.answers?.exp||3)*10+(d.answers?.margin||3)*10)/5);
-          invAllReports.push({
-            id: "VN-" + r.id.substring(0,8).toUpperCase(),
-            uid: userDoc.id,
-            rid: r.id,
-            stage: d.stage || "seed",
-            model: d.model || "saas",
-            seg: d.answers?.seg || "b2b",
-            lo: d.lo || "—",
-            mid: d.mid || "—",
-            hi: d.hi || "—",
-            growth: d.answers?.growth || 0,
-            cust: d.answers?.cust || 0,
-            team: d.answers?.team || 0,
-            score: d.answers ? Math.round((sc=>sc)({tr:15,tm:d.answers.team*20,mk:d.answers.mkt*20,mo:d.answers.moat*20,fin:d.answers.margin*20})) : 50,
-            vnScore: vn,
-            market_scope: d.answers?.market_scope || 1,
-            createdAt: d.createdAt?.toDate?.() || new Date(0)
-          });
-        });
-      }
-
-      // İstatistikler
-      const weekNew = invAllReports.filter(r=>r.createdAt>weekAgo).length;
-      const growthPlus = invAllReports.filter(r=>["growth","scaleup","late"].includes(r.stage)).length;
-      document.getElementById("inv-total").textContent = invAllReports.length;
-      document.getElementById("inv-week").textContent = weekNew;
-      document.getElementById("inv-growth").textContent = growthPlus;
-      document.getElementById("inv-interested").textContent = invInterests.size;
-
-      renderInvGrid();
-    } catch(e) { console.error("Yatırımcı portalı yüklenemedi:", e); }
-  }
-
-  window.filterInv = function(type, val, el) {
-    invFilters[type] = val;
-    el.closest(".inv-filters").querySelectorAll(".inv-filter-pill").forEach(p=>p.classList.remove("active"));
-    el.classList.add("active");
-    renderInvGrid();
-  };
-
-  window.renderInvGrid = function() {
-    const modelF = document.getElementById("inv-model-filter")?.value || "all";
-    const scoreF = parseInt(document.getElementById("inv-score-filter")?.value || "0");
-    const segF = document.getElementById("inv-seg-filter")?.value || "all";
-
-    const filtered = invAllReports.filter(r => {
-      if(invFilters.stage !== "all" && r.stage !== invFilters.stage) return false;
-      if(modelF !== "all" && r.model !== modelF) return false;
-      if(scoreF > 0 && r.vnScore < scoreF) return false;
-      if(segF !== "all" && r.seg !== segF) return false;
-      return true;
-    });
-
-    const grid = document.getElementById("inv-grid");
-    if(!grid) return;
-    if(filtered.length === 0) { grid.innerHTML = '<div class="inv-empty">Filtrelerinize uygun girişim bulunamadı.</div>'; return; }
-
-    grid.innerHTML = filtered.slice(0,12).map(r => {
-      const si = stageColors[r.stage] || stageColors.seed;
-      const sc = scoreColor(r.vnScore);
-      const isInterested = invInterests.has(r.rid);
-      const scopeLabels = {1:"Türkiye",2:"TR+Bölge",3:"TR+Avrupa",4:"Global"};
-      return `<div class="inv-card">
-        <div class="inv-card-top">
-          <div>
-            <div class="inv-card-id">#${r.id}</div>
-            <span class="inv-stage-pill" style="background:${si.bg};color:${si.c};">${si.lbl}</span>
-          </div>
-          <div class="inv-score" style="background:${sc.bg};color:${sc.c};">${r.vnScore}</div>
-        </div>
-        <div class="inv-val">${r.lo} – ${r.hi}</div>
-        <div class="inv-val-sub">Merkez değer: ${r.mid}</div>
-        <div class="inv-tags">
-          <span class="inv-tag" style="background:#EEEDFE;color:#3C3489;">${r.model?.toUpperCase()}</span>
-          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${r.seg?.toUpperCase()}</span>
-          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${scopeLabels[r.market_scope]||"Türkiye"}</span>
-        </div>
-        <div class="inv-metrics">
-          <div class="inv-metric"><div class="inv-metric-n">%${r.growth}</div><div class="inv-metric-l">Büyüme</div></div>
-          <div class="inv-metric"><div class="inv-metric-n">${r.cust}+</div><div class="inv-metric-l">Müşteri</div></div>
-          <div class="inv-metric"><div class="inv-metric-n">${r.team}/5</div><div class="inv-metric-l">Ekip</div></div>
-        </div>
-        <button class="inv-interest-btn${isInterested?" sent":""}" onclick="sendInterest('${r.uid}','${r.rid}',this)">
-          ${isInterested?"✓ İlgi Gönderildi":"İlgileniyorum"}
-        </button>
-        <div class="inv-anon-note">Girişimci kimliği gizlidir · ${isInterested?"Bildirim gönderildi":"Bildirim gönderilir"}</div>
+  function getLockHTML(isLoggedIn) {
+    if(!isLoggedIn) {
+      return `<div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">Bu bölüm Plus paketine özel</div>
+        <div class="lock-sub">Giriş yapın ve Plus'a geçerek tüm içeriğe erişin.</div>
+        <button class="lock-btn" onclick="openAuthModal('register')">Ücretsiz Kayıt Ol</button>
       </div>`;
-    }).join("");
+    }
+    return `<div class="lock-overlay">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">Plus paketine özel içerik</div>
+      <div class="lock-sub">₺5.000 · Tek seferlik · 1 yıl erişim</div>
+      <button class="lock-btn lock-btn-green" onclick="openPlusModal()">Plus'a Geç →</button>
+    </div>`;
+  }
+
+  window.applyLocks = async function() {
+    const isLoggedIn = !!currentUser;
+    let isPlus = false;
+    if(currentUser) {
+      try {
+        const snap = await db.collection("users").doc(currentUser.uid).get();
+        if(snap.exists) {
+          const d = snap.data();
+          if(d.level === "plus") {
+            const expiry = d.plus_expiry ? new Date(d.plus_expiry) : null;
+            isPlus = !expiry || expiry > new Date();
+          }
+        }
+      } catch(e) { console.error("Plus kontrol:", e); }
+    }
+
+    LOCKED_SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      const existing = el.querySelector(".lock-overlay");
+      if(existing) existing.remove();
+      el.classList.remove("locked-section");
+      if(!isPlus) {
+        el.classList.add("locked-section");
+        el.style.position = "relative";
+        el.insertAdjacentHTML("beforeend", getLockHTML(isLoggedIn));
+      }
+    });
+
+    const pdfBtn = document.querySelector(".btn-pdf");
+    if(pdfBtn && !isPlus) {
+      pdfBtn.onclick = () => openPlusModal();
+      pdfBtn.style.opacity = "0.5";
+    }
+
+    if(isPlus && window.aiStartupProfile && typeof initAiSim === "function") {
+      initAiSim(window.aiStartupProfile);
+    }
   };
 
-  window.sendInterest = async function(uid, rid, btn) {
-    if(!currentUser || invInterests.has(rid)) return;
-    try {
-      const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-      await setDoc(doc(db, "users", uid, "interests", currentUser.uid), {
-        investorUid: currentUser.uid,
-        reportId: rid,
-        createdAt: serverTimestamp()
-      });
-      invInterests.add(rid);
-      btn.textContent = "✓ İlgi Gönderildi";
-      btn.classList.add("sent");
-      btn.nextElementSibling.textContent = "Girişimci kimliği gizlidir · Bildirim gönderildi";
-      document.getElementById("inv-interested").textContent = invInterests.size;
-    } catch(e) { console.error("İlgi gönderilemedi:", e); }
+  window.openPlusModal = function() {
+    alert("Yakinda! Odeme sistemi tamamlaninca Plus paketi aktif olacak. Bilgi: hello@valunorth.com");
   };
 
-
-  // ── KURUMSAL PANEL ──
-  let corpData = null; // {account_type, enterprise_limit, enterprise_active}
+  // ── KULLANICI PROFİLİ ──
+  let corpData = null;
   let isCorpUser = false;
 
   async function loadUserProfile(uid) {
     try {
-      const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-      const docRef = doc(db, "users", uid);
-      const snap = await getDoc(docRef);
-      if(snap.exists()) {
+      const snap = await db.collection("users").doc(uid).get();
+      if(snap.exists) {
         corpData = snap.data();
         isCorpUser = corpData.account_type === "enterprise" && corpData.enterprise_active === true;
-        // investor_active kontrolü
         if(corpData.account_type === "investor" && !corpData.investor_active) {
-          corpData.account_type = null; // aktif değilse yoksay
+          corpData.account_type = null;
         }
       }
-    } catch(e) { console.error("Profil yüklenemedi:", e); }
+    } catch(e) { console.error("Profil:", e); }
   }
 
-  async function loadCorpPortfolio() {
-    const { collection, getDocs, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    const limit = corpData?.enterprise_limit || 50;
-    try {
-      const q = query(collection(db, "users", currentUser.uid, "reports"), orderBy("createdAt","desc"));
-      const snap = await getDocs(q);
-      const total = snap.size;
-
-      // Stats güncelle
-      document.getElementById("corp-total").textContent = total;
-      document.getElementById("corp-limit-val").textContent = limit === 999 ? "∞" : limit;
-      document.getElementById("corp-remaining").textContent = limit === 999 ? "∞" : Math.max(0, limit - total);
-      document.getElementById("corp-usage-text").textContent = limit === 999 ? total + " / ∞" : total + " / " + limit;
-      document.getElementById("corp-limit-fill").style.width = limit === 999 ? "10%" : Math.min(100, (total/limit*100)) + "%";
-
-      const tbody = document.getElementById("corp-table-body");
-      if(snap.empty) {
-        tbody.innerHTML = '<tr><td colspan="5" class="corp-empty">Henüz portföyde girişim yok.<br>Yukarıdaki butona tıklayarak ilk değerlemeyi ekleyin.</td></tr>';
-        return;
-      }
-
-      const stageColors = {
-        preseed:"#EEEDFE", seed:"#E1F5EE", early:"#E6F1FB",
-        growth:"#FAEEDA", scaleup:"#F1EFE8", late:"#FCEBEB"
-      };
-      const stageNames = {
-        preseed:"Pre-Seed", seed:"Seed", early:"Early Growth",
-        growth:"Growth", scaleup:"Scale-up", late:"Late Stage"
-      };
-
-      tbody.innerHTML = "";
-      snap.forEach(doc => {
-        const d = doc.data();
-        const date = d.createdAt?.toDate?.()?.toLocaleDateString("tr-TR") || "—";
-        const stage = d.stage || "—";
-        const stageName = stageNames[stage] || stage;
-        const stageColor = stageColors[stage] || "#eee";
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><div style="font-weight:600;color:#1C2535;">${d.answers?.model?.toUpperCase() || "Girişim"}</div><div style="font-size:11px;color:#aaa;">${date}</div></td>
-          <td><span class="corp-stage-badge" style="background:${stageColor};color:#333;">${stageName}</span></td>
-          <td style="text-transform:capitalize;">${d.model || "—"}</td>
-          <td style="color:#888;">${d.lo || "—"} – ${d.hi || "—"}</td>
-          <td style="font-weight:700;color:#534AB7;">${d.mid || "—"}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } catch(e) { console.error("Portföy yüklenemedi:", e); }
-  }
-
+  // ── KURUMSAL PANEL ──
   window.startCorpValuation = function() {
     const limit = corpData?.enterprise_limit || 50;
     const total = parseInt(document.getElementById("corp-total").textContent) || 0;
     if(limit !== 999 && total >= limit) {
-      alert("Paket limitinize ulaştınız (" + limit + " girişim). Üst pakete geçmek için hello@valunorth.com ile iletişime geçin.");
+      alert("Paket limitinize ulaştınız. Üst pakete geçmek için hello@valunorth.com ile iletişime geçin.");
       return;
     }
-    // Normal değerleme akışına geç
     document.getElementById("corp-panel").style.display = "none";
     document.getElementById("corp-return-btn").style.display = "flex";
     document.querySelector(".container").style.display = "block";
@@ -2443,48 +1964,9 @@ GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:metin`;
     window.scrollTo(0,0);
   };
 
-  window.showInvInterests = function() {
-    const interested = invAllReports.filter(r => invInterests.has(r.rid));
-    const grid = document.getElementById("inv-grid");
-    if(!grid) return;
-    if(interested.length === 0) {
-      alert("Henüz ilgilendiğiniz bir girişim yok.");
-      return;
-    }
-    // Filtreleri sıfırla ve sadece ilgilenilenleri göster
-    invFilters.stage = "all";
-    grid.innerHTML = interested.map(r => {
-      const stageColors2 = {preseed:{bg:"#F1EFE8",c:"#5F5E5A",lbl:"Pre-Seed"},seed:{bg:"#FAEEDA",c:"#633806",lbl:"Seed"},early:{bg:"#EEEDFE",c:"#3C3489",lbl:"Early Growth"},growth:{bg:"#E1F5EE",c:"#0F6E56",lbl:"Growth"},scaleup:{bg:"#E6F1FB",c:"#0C447C",lbl:"Scale-up"},late:{bg:"#FCEBEB",c:"#791F1F",lbl:"Late Stage"}};
-      const si = stageColors2[r.stage] || stageColors2.seed;
-      const sc = r.vnScore>=75?{bg:"#E1F5EE",c:"#085041"}:r.vnScore>=60?{bg:"#EEEDFE",c:"#3C3489"}:r.vnScore>=45?{bg:"#FAEEDA",c:"#633806"}:{bg:"#FCEBEB",c:"#791F1F"};
-      return `<div class="inv-card">
-        <div class="inv-card-top">
-          <div><div class="inv-card-id">#${r.id}</div>
-          <span class="inv-stage-pill" style="background:${si.bg};color:${si.c};">${si.lbl}</span></div>
-          <div class="inv-score" style="background:${sc.bg};color:${sc.c};">${r.vnScore}</div>
-        </div>
-        <div class="inv-val">${r.lo} – ${r.hi}</div>
-        <div class="inv-val-sub">Merkez değer: ${r.mid}</div>
-        <div class="inv-tags">
-          <span class="inv-tag" style="background:#EEEDFE;color:#3C3489;">${r.model?.toUpperCase()}</span>
-          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${r.seg?.toUpperCase()}</span>
-        </div>
-        <div class="inv-metrics">
-          <div class="inv-metric"><div class="inv-metric-n">%${r.growth}</div><div class="inv-metric-l">Büyüme</div></div>
-          <div class="inv-metric"><div class="inv-metric-n">${r.cust}+</div><div class="inv-metric-l">Müşteri</div></div>
-          <div class="inv-metric"><div class="inv-metric-n">${r.team}/5</div><div class="inv-metric-l">Ekip</div></div>
-        </div>
-        <button class="inv-interest-btn sent">✓ İlgilenildi</button>
-        <div class="inv-anon-note">Girişimci bildirim aldı</div>
-      </div>`;
-    }).join("");
-    window.scrollTo(0, document.getElementById("inv-grid").offsetTop - 100);
-  };
-
   window.returnToPanel = function() {
-    if(isCorpUser) {
-      returnToCorpPanel();
-    } else if(corpData && corpData.account_type === "investor") {
+    if(isCorpUser) returnToCorpPanel();
+    else if(corpData && corpData.account_type === "investor") {
       document.getElementById("investor-panel").style.display = "block";
       document.getElementById("corp-return-btn").style.display = "none";
       document.querySelector(".container").style.display = "none";
@@ -2493,125 +1975,175 @@ GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:metin`;
     }
   };
 
-  // ── PLUS KİLİT SİSTEMİ ──
-  const LOCKED_SECTIONS = ["card-scenarios","card-timeline","card-summary"];
-  const PDF_LOCKED = true;
+  async function loadCorpPortfolio() {
+    const limit = corpData?.enterprise_limit || 50;
+    try {
+      const snap = await db.collection("users").doc(currentUser.uid).collection("reports")
+        .orderBy("createdAt","desc").get();
+      const total = snap.size;
+      document.getElementById("corp-total").textContent = total;
+      document.getElementById("corp-limit-val").textContent = limit === 999 ? "∞" : limit;
+      document.getElementById("corp-remaining").textContent = limit === 999 ? "∞" : Math.max(0, limit-total);
+      document.getElementById("corp-usage-text").textContent = limit === 999 ? total+" / ∞" : total+" / "+limit;
+      document.getElementById("corp-limit-fill").style.width = limit === 999 ? "10%" : Math.min(100,(total/limit*100))+"%";
 
-  function getLockHTML(isLoggedIn) {
-    if(!isLoggedIn) {
-      return `<div class="lock-overlay">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-title">Bu bölüm Plus paketine özel</div>
-        <div class="lock-sub">Giriş yapın ve Plus'a geçerek 8'li senaryo, aksiyon takvimi ve PDF raporuna erişin.</div>
-        <button class="lock-btn" onclick="openAuthModal('register')">Ücretsiz Kayıt Ol</button>
-      </div>`;
-    } else {
-      return `<div class="lock-overlay">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-title">Plus paketine özel içerik</div>
-        <div class="lock-sub">₺5.000 · Tek seferlik ödeme · 1 yıl erişim<br>8'li senaryo, aksiyon takvimi, AI simülasyon ve PDF raporu.</div>
-        <button class="lock-btn lock-btn-green" onclick="openPlusModal()">Plus'a Geç →</button>
-      </div>`;
-    }
+      const tbody = document.getElementById("corp-table-body");
+      if(snap.empty) {
+        tbody.innerHTML = '<tr><td colspan="5" class="corp-empty">Henüz portföyde girişim yok.</td></tr>';
+        return;
+      }
+      const stageNames = {preseed:"Pre-Seed",seed:"Seed",early:"Early Growth",growth:"Growth",scaleup:"Scale-up",late:"Late Stage"};
+      const stageColors = {preseed:"#EEEDFE",seed:"#E1F5EE",early:"#E6F1FB",growth:"#FAEEDA",scaleup:"#F1EFE8",late:"#FCEBEB"};
+      tbody.innerHTML = "";
+      snap.forEach(doc => {
+        const d = doc.data();
+        const date = d.createdAt?.toDate?.()?.toLocaleDateString("tr-TR") || "—";
+        const stage = d.stage || "seed";
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><div style="font-weight:600;">${d.answers?.model?.toUpperCase()||"Girişim"}</div><div style="font-size:11px;color:#aaa;">${date}</div></td>
+          <td><span class="corp-stage-badge" style="background:${stageColors[stage]||"#eee"};color:#333;">${stageNames[stage]||stage}</span></td>
+          <td style="text-transform:capitalize;">${d.model||"—"}</td>
+          <td style="color:#888;">${d.lo||"—"} – ${d.hi||"—"}</td>
+          <td style="font-weight:700;color:#534AB7;">${d.mid||"—"}</td>`;
+        tbody.appendChild(tr);
+      });
+    } catch(e) { console.error("Portföy:", e); }
   }
 
-  window.applyLocks = async function() {
-    const isLoggedIn = !!currentUser;
-    let isPlus = false;
-    if(currentUser) {
-      try {
-        const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        const snap = await getDoc(doc(db, "users", currentUser.uid));
-        if(snap.exists()) {
-          const d = snap.data();
-          if(d.level === "plus") {
-            const expiry = d.plus_expiry ? new Date(d.plus_expiry) : null;
-            isPlus = !expiry || expiry > new Date();
-          }
-        }
-      } catch(e) { console.error("Plus kontrol hatası:", e); }
-    }
+  // ── YATIRIMCI PORTALİ ──
+  let invAllReports = [];
+  let invFilters = {stage:"all"};
+  let invInterests = new Set();
 
-    LOCKED_SECTIONS.forEach(id => {
-      const el = document.getElementById(id);
-      if(!el) return;
-      // Önceki overlay varsa kaldır
-      const existing = el.querySelector(".lock-overlay");
-      if(existing) existing.remove();
-      el.classList.remove("locked-section");
-
-      if(!isPlus) {
-        el.classList.add("locked-section");
-        el.style.position = "relative";
-        el.insertAdjacentHTML("beforeend", getLockHTML(isLoggedIn));
+  async function loadInvestorPortal() {
+    try {
+      const usersSnap = await db.collection("users").get();
+      invAllReports = [];
+      const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
+      for(const userDoc of usersSnap.docs) {
+        if(userDoc.data().account_type === "investor") continue;
+        const rSnap = await db.collection("users").doc(userDoc.id).collection("reports").get();
+        rSnap.forEach(r => {
+          const d = r.data();
+          const vn = Math.round(((d.answers?.diff||3)*10+(d.answers?.moat||3)*10+(d.answers?.team||3)*10+(d.answers?.exp||3)*10+(d.answers?.margin||3)*10)/5);
+          invAllReports.push({
+            id:"VN-"+r.id.substring(0,8).toUpperCase(),
+            uid:userDoc.id, rid:r.id,
+            stage:d.stage||"seed", model:d.model||"saas", seg:d.answers?.seg||"b2b",
+            lo:d.lo||"—", mid:d.mid||"—", hi:d.hi||"—",
+            growth:d.answers?.growth||0, cust:d.answers?.cust||0, team:d.answers?.team||0,
+            vnScore:vn, market_scope:d.answers?.market_scope||1,
+            createdAt:d.createdAt?.toDate?.()||new Date(0)
+          });
+        });
       }
+      const weekNew = invAllReports.filter(r=>r.createdAt>weekAgo).length;
+      const growthPlus = invAllReports.filter(r=>["growth","scaleup","late"].includes(r.stage)).length;
+      document.getElementById("inv-total").textContent = invAllReports.length;
+      document.getElementById("inv-week").textContent = weekNew;
+      document.getElementById("inv-growth").textContent = growthPlus;
+      document.getElementById("inv-interested").textContent = invInterests.size;
+      renderInvGrid();
+    } catch(e) { console.error("Investor portal:", e); }
+  }
+
+  window.filterInv = function(type, val, el) {
+    invFilters[type] = val;
+    el.closest(".inv-filters").querySelectorAll(".inv-filter-pill").forEach(p=>p.classList.remove("active"));
+    el.classList.add("active");
+    renderInvGrid();
+  };
+
+  window.renderInvGrid = function() {
+    const modelF = document.getElementById("inv-model-filter")?.value||"all";
+    const scoreF = parseInt(document.getElementById("inv-score-filter")?.value||"0");
+    const segF = document.getElementById("inv-seg-filter")?.value||"all";
+    const filtered = invAllReports.filter(r => {
+      if(invFilters.stage!=="all" && r.stage!==invFilters.stage) return false;
+      if(modelF!=="all" && r.model!==modelF) return false;
+      if(scoreF>0 && r.vnScore<scoreF) return false;
+      if(segF!=="all" && r.seg!==segF) return false;
+      return true;
     });
-
-    // PDF butonunu kilitle
-    const pdfBtn = document.querySelector(".btn-pdf");
-    if(pdfBtn) {
-      if(!isPlus) {
-        pdfBtn.onclick = () => openPlusModal();
-        pdfBtn.style.opacity = "0.5";
-        pdfBtn.title = "Plus paketi gerekli";
-      }
-    }
-
-    // AI Simülasyonu - Plus ise aktifleştir
-    if(isPlus && aiStartupProfile && typeof initAiSim === "function") {
-      initAiSim(aiStartupProfile);
-    }
+    const grid = document.getElementById("inv-grid");
+    if(!grid) return;
+    if(!filtered.length){ grid.innerHTML='<div class="inv-empty">Filtrelerinize uygun girişim bulunamadı.</div>'; return; }
+    const stageColors = {preseed:{bg:"#F1EFE8",c:"#5F5E5A",lbl:"Pre-Seed"},seed:{bg:"#FAEEDA",c:"#633806",lbl:"Seed"},early:{bg:"#EEEDFE",c:"#3C3489",lbl:"Early Growth"},growth:{bg:"#E1F5EE",c:"#0F6E56",lbl:"Growth"},scaleup:{bg:"#E6F1FB",c:"#0C447C",lbl:"Scale-up"},late:{bg:"#FCEBEB",c:"#791F1F",lbl:"Late Stage"}};
+    const scoreColor = s => s>=75?{bg:"#E1F5EE",c:"#085041"}:s>=60?{bg:"#EEEDFE",c:"#3C3489"}:s>=45?{bg:"#FAEEDA",c:"#633806"}:{bg:"#FCEBEB",c:"#791F1F"};
+    const scopeLabels = {1:"Türkiye",2:"TR+Bölge",3:"TR+Avrupa",4:"Global"};
+    grid.innerHTML = filtered.slice(0,12).map(r => {
+      const si = stageColors[r.stage]||stageColors.seed;
+      const sc = scoreColor(r.vnScore);
+      const interested = invInterests.has(r.rid);
+      return `<div class="inv-card">
+        <div class="inv-card-top"><div><div class="inv-card-id">#${r.id}</div>
+          <span class="inv-stage-pill" style="background:${si.bg};color:${si.c};">${si.lbl}</span></div>
+          <div class="inv-score" style="background:${sc.bg};color:${sc.c};">${r.vnScore}</div></div>
+        <div class="inv-val">${r.lo} – ${r.hi}</div>
+        <div class="inv-val-sub">Merkez: ${r.mid}</div>
+        <div class="inv-tags">
+          <span class="inv-tag" style="background:#EEEDFE;color:#3C3489;">${r.model?.toUpperCase()}</span>
+          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${r.seg?.toUpperCase()}</span>
+          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${scopeLabels[r.market_scope]||"Türkiye"}</span>
+        </div>
+        <div class="inv-metrics">
+          <div class="inv-metric"><div class="inv-metric-n">%${r.growth}</div><div class="inv-metric-l">Büyüme</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.cust}+</div><div class="inv-metric-l">Müşteri</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.team}/5</div><div class="inv-metric-l">Ekip</div></div>
+        </div>
+        <button class="inv-interest-btn${interested?" sent":""}" onclick="sendInterest('${r.uid}','${r.rid}',this)">
+          ${interested?"✓ İlgi Gönderildi":"İlgileniyorum"}
+        </button>
+        <div class="inv-anon-note">Girişimci kimliği gizlidir</div>
+      </div>`;
+    }).join("");
   };
 
-  window.openPlusModal = function() {
-    alert("Yakında! ödeme sistemi entegrasyonu tamamlanınca Plus paketi aktif olacak.\n\nBilgi almak için: hello@valunorth.com");
+  window.sendInterest = async function(uid, rid, btn) {
+    if(!currentUser || invInterests.has(rid)) return;
+    try {
+      await db.collection("users").doc(uid).collection("interests").doc(currentUser.uid).set({
+        investorUid: currentUser.uid, reportId: rid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      invInterests.add(rid);
+      btn.textContent = "✓ İlgi Gönderildi";
+      btn.classList.add("sent");
+      document.getElementById("inv-interested").textContent = invInterests.size;
+    } catch(e) { console.error("İlgi:", e); }
   };
 
-  // Auth değişince kilitleri güncelle
-  onAuthStateChanged(auth, async user => {
-    currentUser = user;
-    if(user){
-      document.getElementById("auth-logged-out").style.display = "none";
-      document.getElementById("auth-logged-in").style.display = "flex";
-      await loadUserProfile(user.uid);
-      // İsim gösterimi
-      if(corpData && corpData.account_type === "investor") {
-        document.getElementById("auth-user-email").textContent = "Yatırımcı Hesabı";
-      } else if(isCorpUser) {
-        document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
-      } else {
-        document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
-      }
-      // Panel yönlendirme
-      if(isCorpUser) {
-        document.querySelector(".container").style.display = "none";
-        document.getElementById("result-area").style.display = "none";
-        document.getElementById("corp-panel").style.display = "block";
-        loadCorpPortfolio();
-      } else if(corpData && corpData.account_type === "investor") {
-        document.querySelector(".container").style.display = "none";
-        document.getElementById("result-area").style.display = "none";
-        document.getElementById("investor-panel").style.display = "block";
-        document.getElementById("history-btn").style.display = "none";
-        document.getElementById("inv-interests-btn").style.display = "flex";
-        loadInvestorPortal();
-      }
-    } else {
-      document.getElementById("auth-logged-out").style.display = "flex";
-      document.getElementById("auth-logged-in").style.display = "none";
-      document.getElementById("corp-panel").style.display = "none";
-      document.getElementById("investor-panel").style.display = "none";
-      document.querySelector(".container").style.display = "block";
-      document.getElementById("history-btn").style.display = "flex";
-      document.getElementById("inv-interests-btn").style.display = "none";
-      isCorpUser = false; corpData = null;
-    }
-    // Rapor görünüyorsa kilitleri güncelle
-    if(document.getElementById("result-area").style.display !== "none") {
-      applyLocks();
-    }
-  });
+  window.showInvInterests = function() {
+    const interested = invAllReports.filter(r=>invInterests.has(r.rid));
+    const grid = document.getElementById("inv-grid");
+    if(!interested.length){ alert("Henüz ilgilendiğiniz bir girişim yok."); return; }
+    const stageColors2 = {preseed:{bg:"#F1EFE8",c:"#5F5E5A",lbl:"Pre-Seed"},seed:{bg:"#FAEEDA",c:"#633806",lbl:"Seed"},early:{bg:"#EEEDFE",c:"#3C3489",lbl:"Early Growth"},growth:{bg:"#E1F5EE",c:"#0F6E56",lbl:"Growth"},scaleup:{bg:"#E6F1FB",c:"#0C447C",lbl:"Scale-up"},late:{bg:"#FCEBEB",c:"#791F1F",lbl:"Late Stage"}};
+    grid.innerHTML = interested.map(r => {
+      const si = stageColors2[r.stage]||stageColors2.seed;
+      return `<div class="inv-card">
+        <div class="inv-card-top"><div><div class="inv-card-id">#${r.id}</div>
+          <span class="inv-stage-pill" style="background:${si.bg};color:${si.c};">${si.lbl}</span></div></div>
+        <div class="inv-val">${r.lo} – ${r.hi}</div>
+        <div class="inv-metrics">
+          <div class="inv-metric"><div class="inv-metric-n">%${r.growth}</div><div class="inv-metric-l">Büyüme</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.cust}+</div><div class="inv-metric-l">Müşteri</div></div>
+        </div>
+        <button class="inv-interest-btn sent">✓ İlgilenildi</button>
+      </div>`;
+    }).join("");
+  };
+
+  // AI SİMÜLASYON - initAiSim burada tanımlandı
+  window.initAiSim = function(profile) {
+    window.aiStartupProfile = profile;
+    document.getElementById("ai-sim-lock-box").style.display = "none";
+    document.getElementById("ai-sim-active").style.display = "block";
+  };
 </script>
 
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </body>
 </html>
