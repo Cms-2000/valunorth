@@ -1890,8 +1890,7 @@ renderQ();
         if(snap.exists) {
           const d = snap.data();
           if(d.level === "plus") {
-            const expiry = d.plus_expiry ? new Date(d.plus_expiry) : null;
-            isPlus = !expiry || expiry > new Date();
+            isPlus = true; // Expiry kontrolü iyzico entegrasyonunda yapılacak
           }
         }
       } catch(e) { console.error("Plus kontrol:", e); }
