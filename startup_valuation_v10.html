@@ -337,6 +337,46 @@ body{padding-top:44px;}
 .vn-badge-embed{background:#F5F4EF;border-radius:6px;padding:6px 10px;font-size:10px;color:#534AB7;font-family:monospace;word-break:break-all;cursor:pointer;}
 .vn-badge-embed:hover{background:#EEEDFE;}
 .vn-badge-copied{font-size:9px;color:#0F6E56;margin-top:4px;display:none;}
+
+/* ── YATIRIMCI PORTALI ── */
+.investor-panel{display:none;min-height:100vh;background:#F5F4EF;padding:0;}
+.inv-header{background:#1C2535;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.inv-logo{font-size:15px;font-weight:500;color:#fff;}
+.inv-logo span{color:#5DCAA5;}
+.inv-badge{background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.25);border-radius:99px;padding:3px 12px;font-size:11px;color:#5DCAA5;}
+.inv-hero{background:#1C2535;padding:16px 24px 24px;border-bottom:1px solid rgba(255,255,255,.07);}
+.inv-hero h2{font-size:20px;font-weight:500;color:#fff;margin-bottom:4px;}
+.inv-hero p{font-size:12px;color:rgba(255,255,255,.4);}
+.inv-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#eee;border-bottom:0.5px solid #eee;}
+.inv-stat{background:#fff;padding:12px 16px;text-align:center;}
+.inv-stat-n{font-size:20px;font-weight:500;color:#534AB7;}
+.inv-stat-l{font-size:10px;color:#888;margin-top:2px;}
+.inv-filters{background:#fff;border-bottom:0.5px solid #eee;padding:12px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.inv-filter-label{font-size:11px;color:#888;}
+.inv-filter-pill{padding:5px 12px;border:0.5px solid #ddd;border-radius:99px;font-size:11px;color:#555;cursor:pointer;background:#fff;}
+.inv-filter-pill.active{background:#EEEDFE;border-color:#534AB7;color:#534AB7;font-weight:500;}
+.inv-filter-select{padding:5px 10px;border:0.5px solid #ddd;border-radius:8px;font-size:11px;color:#555;background:#fff;}
+.inv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px 24px;}
+.inv-card{background:#fff;border-radius:12px;border:0.5px solid #eee;padding:14px;cursor:pointer;transition:border-color .2s;}
+.inv-card:hover{border-color:#534AB7;}
+.inv-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.inv-stage-pill{padding:3px 10px;border-radius:99px;font-size:10px;font-weight:500;}
+.inv-score{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;}
+.inv-card-id{font-size:10px;color:#bbb;margin-bottom:4px;}
+.inv-val{font-size:18px;font-weight:500;color:#1C2535;margin-bottom:2px;}
+.inv-val-sub{font-size:10px;color:#aaa;margin-bottom:8px;}
+.inv-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.inv-tag{padding:2px 8px;border-radius:99px;font-size:10px;}
+.inv-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.inv-metric{background:#f9f9f9;border-radius:6px;padding:5px 6px;text-align:center;}
+.inv-metric-n{font-size:12px;font-weight:500;color:#534AB7;}
+.inv-metric-l{font-size:9px;color:#aaa;margin-top:1px;}
+.inv-interest-btn{width:100%;padding:8px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;}
+.inv-interest-btn:hover{background:#3C3489;}
+.inv-interest-btn.sent{background:#E1F5EE;color:#0F6E56;cursor:default;}
+.inv-anon-note{font-size:9px;color:#aaa;text-align:center;margin-top:5px;}
+.inv-empty{text-align:center;padding:48px;color:#aaa;font-size:14px;grid-column:1/-1;}
+.inv-return-btn{display:none;}
 </style>
 </head>
 <body>
@@ -350,7 +390,7 @@ body{padding-top:44px;}
   </div>
   <div id="auth-logged-in" class="auth-user" style="display:none;">
     <span class="auth-user-name" id="auth-user-email"></span>
-    <button class="auth-btn auth-btn-login" id="corp-return-btn" onclick="returnToCorpPanel()" style="font-size:11px;display:none;">🏢 Panele Dön</button>
+    <button class="auth-btn auth-btn-login" id="corp-return-btn" onclick="returnToPanel()" style="font-size:11px;display:none;">🏢 Panele Dön</button>
     <button class="auth-btn auth-btn-login" onclick="openHistory()" style="font-size:11px;" id="history-btn">📋 Geçmişim</button>
     <button class="auth-btn auth-btn-logout" onclick="signOutUser()">Çıkış</button>
   </div>
@@ -385,6 +425,56 @@ body{padding-top:44px;}
   </div>
 </div>
 
+
+
+<!-- YATIRIMCI PORTALI -->
+<div class="investor-panel" id="investor-panel">
+  <div class="inv-header">
+    <div class="inv-logo">Valu<span>north</span> — Yatırımcı Portalı</div>
+    <div class="inv-badge">Kayıtlı Erişim</div>
+  </div>
+  <div class="inv-hero">
+    <h2>Startup Keşif Portalı</h2>
+    <p>Valunorth üzerinde değerleme yaptıran girişimleri filtrele, incele ve ilgi sinyali gönder. Tüm profiller anonimdir.</p>
+  </div>
+  <div class="inv-stats">
+    <div class="inv-stat"><div class="inv-stat-n" id="inv-total">0</div><div class="inv-stat-l">Toplam Girişim</div></div>
+    <div class="inv-stat"><div class="inv-stat-n" id="inv-week">0</div><div class="inv-stat-l">Bu Hafta Yeni</div></div>
+    <div class="inv-stat"><div class="inv-stat-n" id="inv-growth">0</div><div class="inv-stat-l">Growth+ Aşama</div></div>
+    <div class="inv-stat"><div class="inv-stat-n" id="inv-interested">0</div><div class="inv-stat-l">İlgilendiğim</div></div>
+  </div>
+  <div class="inv-filters">
+    <span class="inv-filter-label">Aşama:</span>
+    <span class="inv-filter-pill active" onclick="filterInv('stage','all',this)">Tümü</span>
+    <span class="inv-filter-pill" onclick="filterInv('stage','seed',this)">Seed</span>
+    <span class="inv-filter-pill" onclick="filterInv('stage','early',this)">Early Growth</span>
+    <span class="inv-filter-pill" onclick="filterInv('stage','growth',this)">Growth</span>
+    <span class="inv-filter-pill" onclick="filterInv('stage','scaleup',this)">Scale-up</span>
+    <select class="inv-filter-select" id="inv-model-filter" onchange="renderInvGrid()">
+      <option value="all">Model: Tümü</option>
+      <option value="saas">SaaS</option>
+      <option value="ai">AI</option>
+      <option value="fintech">Fintech</option>
+      <option value="marketplace">Marketplace</option>
+      <option value="deeptech">Deeptech</option>
+      <option value="ecommerce">E-ticaret</option>
+    </select>
+    <select class="inv-filter-select" id="inv-score-filter" onchange="renderInvGrid()">
+      <option value="0">Skor: Tümü</option>
+      <option value="60">60+</option>
+      <option value="70">70+</option>
+      <option value="80">80+</option>
+    </select>
+    <select class="inv-filter-select" id="inv-seg-filter" onchange="renderInvGrid()">
+      <option value="all">Segment: Tümü</option>
+      <option value="b2b">B2B</option>
+      <option value="b2c">B2C</option>
+    </select>
+  </div>
+  <div class="inv-grid" id="inv-grid">
+    <div class="inv-empty">Yükleniyor...</div>
+  </div>
+</div>
 
 <!-- KURUMSAL PORTFÖY PANELİ -->
 <div class="corp-panel" id="corp-panel">
@@ -1666,6 +1756,145 @@ renderQ();
       document.getElementById("history-modal-overlay").classList.remove("open");
   };
 
+  // ── YATIRIMCI PORTALI ──
+  let invAllReports = [];
+  let invFilters = { stage: 'all', model: 'all', score: 0, seg: 'all' };
+  let invInterests = new Set();
+
+  const stageColors = {
+    preseed:{bg:"#F1EFE8",c:"#5F5E5A",lbl:"Pre-Seed"},
+    seed:{bg:"#FAEEDA",c:"#633806",lbl:"Seed"},
+    early:{bg:"#EEEDFE",c:"#3C3489",lbl:"Early Growth"},
+    growth:{bg:"#E1F5EE",c:"#0F6E56",lbl:"Growth"},
+    scaleup:{bg:"#E6F1FB",c:"#0C447C",lbl:"Scale-up"},
+    late:{bg:"#FCEBEB",c:"#791F1F",lbl:"Late Stage"}
+  };
+
+  const scoreColor = s => s>=75?{bg:"#E1F5EE",c:"#085041"}:s>=60?{bg:"#EEEDFE",c:"#3C3489"}:s>=45?{bg:"#FAEEDA",c:"#633806"}:{bg:"#FCEBEB",c:"#791F1F"};
+
+  async function loadInvestorPortal() {
+    const { collection, getDocs, query, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    try {
+      // Tüm kullanıcıların raporlarını çek - public olanlar
+      // Şimdilik: tüm raporları anonim göster (ileride public:true filtresi eklenecek)
+      const usersSnap = await getDocs(collection(db, "users"));
+      invAllReports = [];
+      let weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
+
+      for(const userDoc of usersSnap.docs) {
+        if(userDoc.data().account_type === "investor") continue; // yatırımcı raporlarını gösterme
+        const rSnap = await getDocs(collection(db, "users", userDoc.id, "reports"));
+        rSnap.forEach(r => {
+          const d = r.data();
+          const vn = Math.round(((d.answers?.diff||3)*10+(d.answers?.moat||3)*10+(d.answers?.team||3)*10+(d.answers?.exp||3)*10+(d.answers?.margin||3)*10)/5);
+          invAllReports.push({
+            id: "VN-" + r.id.substring(0,8).toUpperCase(),
+            uid: userDoc.id,
+            rid: r.id,
+            stage: d.stage || "seed",
+            model: d.model || "saas",
+            seg: d.answers?.seg || "b2b",
+            lo: d.lo || "—",
+            mid: d.mid || "—",
+            hi: d.hi || "—",
+            growth: d.answers?.growth || 0,
+            cust: d.answers?.cust || 0,
+            team: d.answers?.team || 0,
+            score: d.answers ? Math.round((sc=>sc)({tr:15,tm:d.answers.team*20,mk:d.answers.mkt*20,mo:d.answers.moat*20,fin:d.answers.margin*20})) : 50,
+            vnScore: vn,
+            market_scope: d.answers?.market_scope || 1,
+            createdAt: d.createdAt?.toDate?.() || new Date(0)
+          });
+        });
+      }
+
+      // İstatistikler
+      const weekNew = invAllReports.filter(r=>r.createdAt>weekAgo).length;
+      const growthPlus = invAllReports.filter(r=>["growth","scaleup","late"].includes(r.stage)).length;
+      document.getElementById("inv-total").textContent = invAllReports.length;
+      document.getElementById("inv-week").textContent = weekNew;
+      document.getElementById("inv-growth").textContent = growthPlus;
+      document.getElementById("inv-interested").textContent = invInterests.size;
+
+      renderInvGrid();
+    } catch(e) { console.error("Yatırımcı portalı yüklenemedi:", e); }
+  }
+
+  window.filterInv = function(type, val, el) {
+    invFilters[type] = val;
+    el.closest(".inv-filters").querySelectorAll(".inv-filter-pill").forEach(p=>p.classList.remove("active"));
+    el.classList.add("active");
+    renderInvGrid();
+  };
+
+  window.renderInvGrid = function() {
+    const modelF = document.getElementById("inv-model-filter")?.value || "all";
+    const scoreF = parseInt(document.getElementById("inv-score-filter")?.value || "0");
+    const segF = document.getElementById("inv-seg-filter")?.value || "all";
+
+    const filtered = invAllReports.filter(r => {
+      if(invFilters.stage !== "all" && r.stage !== invFilters.stage) return false;
+      if(modelF !== "all" && r.model !== modelF) return false;
+      if(scoreF > 0 && r.vnScore < scoreF) return false;
+      if(segF !== "all" && r.seg !== segF) return false;
+      return true;
+    });
+
+    const grid = document.getElementById("inv-grid");
+    if(!grid) return;
+    if(filtered.length === 0) { grid.innerHTML = '<div class="inv-empty">Filtrelerinize uygun girişim bulunamadı.</div>'; return; }
+
+    grid.innerHTML = filtered.slice(0,12).map(r => {
+      const si = stageColors[r.stage] || stageColors.seed;
+      const sc = scoreColor(r.vnScore);
+      const isInterested = invInterests.has(r.rid);
+      const scopeLabels = {1:"Türkiye",2:"TR+Bölge",3:"TR+Avrupa",4:"Global"};
+      return `<div class="inv-card">
+        <div class="inv-card-top">
+          <div>
+            <div class="inv-card-id">#${r.id}</div>
+            <span class="inv-stage-pill" style="background:${si.bg};color:${si.c};">${si.lbl}</span>
+          </div>
+          <div class="inv-score" style="background:${sc.bg};color:${sc.c};">${r.vnScore}</div>
+        </div>
+        <div class="inv-val">${r.lo} – ${r.hi}</div>
+        <div class="inv-val-sub">Merkez değer: ${r.mid}</div>
+        <div class="inv-tags">
+          <span class="inv-tag" style="background:#EEEDFE;color:#3C3489;">${r.model?.toUpperCase()}</span>
+          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${r.seg?.toUpperCase()}</span>
+          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${scopeLabels[r.market_scope]||"Türkiye"}</span>
+        </div>
+        <div class="inv-metrics">
+          <div class="inv-metric"><div class="inv-metric-n">%${r.growth}</div><div class="inv-metric-l">Büyüme</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.cust}+</div><div class="inv-metric-l">Müşteri</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.team}/5</div><div class="inv-metric-l">Ekip</div></div>
+        </div>
+        <button class="inv-interest-btn${isInterested?" sent":""}" onclick="sendInterest('${r.uid}','${r.rid}',this)">
+          ${isInterested?"✓ İlgi Gönderildi":"İlgileniyorum"}
+        </button>
+        <div class="inv-anon-note">Girişimci kimliği gizlidir · ${isInterested?"Bildirim gönderildi":"Bildirim gönderilir"}</div>
+      </div>`;
+    }).join("");
+  };
+
+  window.sendInterest = async function(uid, rid, btn) {
+    if(!currentUser || invInterests.has(rid)) return;
+    try {
+      const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      await setDoc(doc(db, "users", uid, "interests", currentUser.uid), {
+        investorUid: currentUser.uid,
+        reportId: rid,
+        createdAt: serverTimestamp()
+      });
+      invInterests.add(rid);
+      btn.textContent = "✓ İlgi Gönderildi";
+      btn.classList.add("sent");
+      btn.nextElementSibling.textContent = "Girişimci kimliği gizlidir · Bildirim gönderildi";
+      document.getElementById("inv-interested").textContent = invInterests.size;
+    } catch(e) { console.error("İlgi gönderilemedi:", e); }
+  };
+
+
   // ── KURUMSAL PANEL ──
   let corpData = null; // {account_type, enterprise_limit, enterprise_active}
   let isCorpUser = false;
@@ -1678,6 +1907,10 @@ renderQ();
       if(snap.exists()) {
         corpData = snap.data();
         isCorpUser = corpData.account_type === "enterprise" && corpData.enterprise_active === true;
+        // investor_active kontrolü
+        if(corpData.account_type === "investor" && !corpData.investor_active) {
+          corpData.account_type = null; // aktif değilse yoksay
+        }
       }
     } catch(e) { console.error("Profil yüklenemedi:", e); }
   }
@@ -1752,6 +1985,18 @@ renderQ();
     document.querySelector(".container").style.display = "none";
     loadCorpPortfolio();
     window.scrollTo(0,0);
+  };
+
+  window.returnToPanel = function() {
+    if(isCorpUser) {
+      returnToCorpPanel();
+    } else if(corpData && corpData.account_type === "investor") {
+      document.getElementById("investor-panel").style.display = "block";
+      document.getElementById("corp-return-btn").style.display = "none";
+      document.querySelector(".container").style.display = "none";
+      document.getElementById("result-area").style.display = "none";
+      window.scrollTo(0,0);
+    }
   };
 
   // ── PLUS KİLİT SİSTEMİ ──
@@ -1829,19 +2074,32 @@ renderQ();
     if(user){
       document.getElementById("auth-logged-out").style.display = "none";
       document.getElementById("auth-logged-in").style.display = "flex";
-      document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
-      // Kurumsal kontrolü
       await loadUserProfile(user.uid);
+      // İsim gösterimi
+      if(corpData && corpData.account_type === "investor") {
+        document.getElementById("auth-user-email").textContent = "Yatırımcı Hesabı";
+      } else if(isCorpUser) {
+        document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
+      } else {
+        document.getElementById("auth-user-email").textContent = user.displayName || user.email.split("@")[0];
+      }
+      // Panel yönlendirme
       if(isCorpUser) {
         document.querySelector(".container").style.display = "none";
         document.getElementById("result-area").style.display = "none";
         document.getElementById("corp-panel").style.display = "block";
         loadCorpPortfolio();
+      } else if(corpData && corpData.account_type === "investor") {
+        document.querySelector(".container").style.display = "none";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("investor-panel").style.display = "block";
+        loadInvestorPortal();
       }
     } else {
       document.getElementById("auth-logged-out").style.display = "flex";
       document.getElementById("auth-logged-in").style.display = "none";
       document.getElementById("corp-panel").style.display = "none";
+      document.getElementById("investor-panel").style.display = "none";
       document.querySelector(".container").style.display = "block";
       isCorpUser = false; corpData = null;
     }
