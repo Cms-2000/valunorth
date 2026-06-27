@@ -377,6 +377,31 @@ body{padding-top:44px;}
 .inv-anon-note{font-size:9px;color:#aaa;text-align:center;margin-top:5px;}
 .inv-empty{text-align:center;padding:48px;color:#aaa;font-size:14px;grid-column:1/-1;}
 .inv-return-btn{display:none;}
+
+/* ── AI SİMÜLASYON AKTİF ── */
+.ai-sim-active{padding:0;}
+.ai-sim-chat{display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;padding:16px;margin-bottom:12px;}
+.ai-msg{display:flex;gap:10px;align-items:flex-start;}
+.ai-msg-inv .ai-bubble{background:#253347;color:#fff;border-radius:0 12px 12px 12px;}
+.ai-msg-usr .ai-bubble{background:#534AB7;color:#fff;border-radius:12px 0 12px 12px;margin-left:auto;}
+.ai-bubble{padding:10px 14px;font-size:13px;line-height:1.6;max-width:80%;}
+.ai-msg-label{font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;}
+.ai-input-row{display:flex;gap:8px;padding:0 16px 16px;}
+.ai-input{flex:1;padding:10px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:13px;font-family:inherit;}
+.ai-input::placeholder{color:rgba(255,255,255,.3);}
+.ai-input:focus{outline:none;border-color:#5DCAA5;}
+.ai-send-btn{padding:10px 18px;background:#5DCAA5;color:#04342C;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.ai-send-btn:disabled{opacity:.5;cursor:default;}
+.ai-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;background:rgba(255,255,255,.04);margin:0 16px 16px;border-radius:10px;}
+.ai-score-box{text-align:center;}
+.ai-score-n{font-size:22px;font-weight:600;color:#5DCAA5;}
+.ai-score-l{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;}
+.ai-start-btn{width:calc(100% - 32px);margin:0 16px 16px;padding:12px;background:#5DCAA5;color:#04342C;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.ai-thinking{display:flex;gap:4px;padding:10px 14px;}
+.ai-thinking span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);animation:thinking .8s infinite;}
+.ai-thinking span:nth-child(2){animation-delay:.15s;}
+.ai-thinking span:nth-child(3){animation-delay:.3s;}
+@keyframes thinking{0%,80%,100%{transform:scale(.6)}40%{transform:scale(1)}}
 </style>
 </head>
 <body>
@@ -573,7 +598,8 @@ body{padding-top:44px;}
     <div class="ai-sim-card" id="card-ai-sim">
       <div class="ai-sim-badge">✨ Plus Özelliği</div>
       <div class="ai-sim-title">AI Yatırımcı Simülasyonu</div>
-      <div class="ai-sim-sub">Profilinize özel bir yatırımcı gibi sorular alın. Pitch sürecinizi test edin, zayıf noktalarınızı keşfedin ve yatırımcı karşısına hazırlıklı çıkın.</div>
+      <div class="ai-sim-sub">Profilinize özel yatırımcı soruları alın. Pitch sürecinizi test edin, zayıf noktalarınızı keşfedin.</div>
+      <!-- Kilitli görünüm (Plus değil) -->
       <div class="ai-sim-lock" id="ai-sim-lock-box">
         <span style="font-size:24px;">🔒</span>
         <div>
@@ -581,6 +607,20 @@ body{padding-top:44px;}
           <div class="ai-sim-lock-text">₺5.000 · Tek seferlik · 1 yıl erişim</div>
         </div>
         <button class="lock-btn" style="margin-left:auto;white-space:nowrap;" onclick="openPlusModal()">Plus'a Geç →</button>
+      </div>
+      <!-- Aktif simülasyon (Plus kullanıcı) -->
+      <div id="ai-sim-active" style="display:none;" class="ai-sim-active">
+        <div class="ai-chat" id="ai-chat-box"></div>
+        <div class="ai-scores" id="ai-scores-box" style="display:none;">
+          <div class="ai-score-box"><div class="ai-score-n" id="ai-score-genel">—</div><div class="ai-score-l">Genel Skor</div></div>
+          <div class="ai-score-box"><div class="ai-score-n" id="ai-score-pitch">—</div><div class="ai-score-l">Pitch Etkinliği</div></div>
+          <div class="ai-score-box"><div class="ai-score-n" id="ai-score-guven">—</div><div class="ai-score-l">Güven Skoru</div></div>
+        </div>
+        <div id="ai-input-area" style="display:none;" class="ai-input-row">
+          <input class="ai-input" id="ai-user-input" placeholder="Cevabınızı yazın..." onkeypress="if(event.key==='Enter')sendAiMessage()">
+          <button class="ai-send-btn" id="ai-send-btn" onclick="sendAiMessage()">Gönder</button>
+        </div>
+        <button class="ai-start-btn" id="ai-start-btn" onclick="startAiSim()">🎯 Simülasyonu Başlat</button>
       </div>
     </div>
 
@@ -1580,6 +1620,19 @@ function showResult(){
   if(typeof saveReportToFirestore === "function"){
     saveReportToFirestore(reportData);
   }
+  // AI simülasyon için profil set et
+  if(typeof window !== "undefined") {
+    window.aiStartupProfile = {
+      stage: val.st,
+      model: A.model,
+      segment: A.seg,
+      scores: {traction: sc.tr, takim: sc.tm, pazar: sc.mk, moat: sc.mo, finansal: sc.fin},
+      valuation: f(val.mid),
+      growth: A.growth,
+      customers: A.cust,
+      revenue3m: A.rev3m
+    };
+  }
   // Kilitleri uygula
   setTimeout(()=>{ if(typeof applyLocks==="function") applyLocks(); }, 100);
 }
@@ -1756,6 +1809,364 @@ renderQ();
     if(!e || e.target === document.getElementById("history-modal-overlay"))
       document.getElementById("history-modal-overlay").classList.remove("open");
   };
+
+  // ── AI YATIRIMCI SİMÜLASYONU ──
+  const ANTHROPIC_KEY = "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";
+
+  // ── 3 YATIRIMCI PROFİLİ ──
+  const INVESTOR_PROFILES = {
+    vc: {
+      name: "Teknoloji VC",
+      avatar: "🏦",
+      desc: "Büyük ölçekli teknoloji yatırımcısı",
+      focus: ["ölçeklenebilirlik", "IP", "global pazar", "teknik derinlik"],
+      stages: ["early", "growth", "scaleup"],
+      models: ["saas", "ai", "deeptech", "fintech"],
+      style: "Analitik, veri odaklı, büyük tabloya bakıyor"
+    },
+    angel: {
+      name: "Melek Yatırımcı",
+      avatar: "👼",
+      desc: "Erken aşama bireysel yatırımcı",
+      focus: ["ekip", "vizyon", "ilk traction", "kurucu motivasyonu"],
+      stages: ["preseed", "seed", "early"],
+      models: ["saas", "ai", "marketplace", "ecommerce", "service"],
+      style: "Samimi, insan odaklı, hikayeye önem veriyor"
+    },
+    growth: {
+      name: "Büyüme Yatırımcısı",
+      avatar: "📈",
+      desc: "Büyüme ve gelir odaklı yatırımcı",
+      focus: ["birim ekonomisi", "CAC/LTV", "gelir kalitesi", "uluslararasılaşma"],
+      stages: ["early", "growth", "scaleup", "late"],
+      models: ["fintech", "marketplace", "ecommerce", "saas"],
+      style: "Sayı odaklı, metriklere takıntılı, operasyonel detay soruyor"
+    }
+  };
+
+  // ── 50 SORULUK HAVUZ ──
+  const QUESTION_POOL = [
+    // EKİP & KURUCU (E)
+    {id:"E1", cat:"ekip", q:"Sizi bu girişimi kurmaya iten asıl motivasyon neydi? Bu problemi neden siz çözmeliysiniz?", tags:["angel","preseed","seed"], followup:"motivasyon"},
+    {id:"E2", cat:"ekip", q:"Teknik kurucu var mı ekibinizde? Ürünü kim geliştiriyor?", tags:["vc","angel","seed","early"], followup:"teknik"},
+    {id:"E3", cat:"ekip", q:"Ekibinizin bu sektördeki deneyimi nedir? Daha önce birlikte çalıştınız mı?", tags:["angel","vc","preseed","seed"], followup:"deneyim"},
+    {id:"E4", cat:"ekip", q:"Kurucular arasında hisse dağılımı nasıl? Vesting var mı?", tags:["vc","angel","growth"], followup:"hisse"},
+    {id:"E5", cat:"ekip", q:"Şu an kaç kişisiniz ve önümüzdeki 12 ayda ekibi nasıl büyütmeyi planlıyorsunuz?", tags:["vc","growth","early"], followup:"buyume"},
+    {id:"E6", cat:"ekip", q:"En kritik pozisyon açığınız hangisi ve bunu nasıl kapatacaksınız?", tags:["vc","angel","early","growth"], followup:"eksik"},
+    {id:"E7", cat:"ekip", q:"Ekip dışında danışman veya mentor desteği var mı?", tags:["angel","preseed","seed"], followup:"mentor"},
+    {id:"E8", cat:"ekip", q:"Şu ana kadar ne kadar öz kaynak harcadınız ve bu süreçte tam zamanlı mısınız?", tags:["angel","preseed","seed","early"], followup:"ozkaynakl"},
+
+    // PAZAR & REKABET (P)
+    {id:"P1", cat:"pazar", q:"Toplam adreslenebilir pazarınız (TAM) nedir ve bu rakama nasıl ulaştınız?", tags:["vc","growth","early","scaleup"], followup:"tam"},
+    {id:"P2", cat:"pazar", q:"En büyük rakipleriniz kimler ve sizi onlardan ayıran tek şey ne?", tags:["vc","angel","growth","early"], followup:"rekabet"},
+    {id:"P3", cat:"pazar", q:"Rakipler aynı ürünü yarın piyasaya sürse ne olur?", tags:["vc","growth","scaleup"], followup:"moat"},
+    {id:"P4", cat:"pazar", q:"Türkiye pazarı yeterince büyük mü, yoksa uluslararası büyüme planınız nedir?", tags:["vc","growth","scaleup","early"], followup:"uluslararasi"},
+    {id:"P5", cat:"pazar", q:"Hedef müşterinizi bir cümleyle tanımlayın. Bu müşteriye nasıl ulaşıyorsunuz?", tags:["angel","growth","early","seed"], followup:"musteri"},
+    {id:"P6", cat:"pazar", q:"Pazarda daha önce başarısız olan benzer girişimler var mıydı? Neden başarısız oldular?", tags:["vc","angel","growth","early"], followup:"basarisiz"},
+    {id:"P7", cat:"pazar", q:"Pazar büyüme hızı nedir ve bu büyümeden nasıl pay alacaksınız?", tags:["vc","growth","scaleup"], followup:"pazar_buyume"},
+    {id:"P8", cat:"pazar", q:"Mevcut çözümler neden yetersiz ve müşteriler şu an sorunu nasıl çözüyor?", tags:["angel","seed","early"], followup:"alternatif"},
+
+    // ÜRÜN & TEKNOLOJİ (U)
+    {id:"U1", cat:"urun", q:"Ürününüzün rakiplerden koruyan teknik bir avantajı (IP, patent, özel veri) var mı?", tags:["vc","deeptech","ai","growth"], followup:"ip"},
+    {id:"U2", cat:"urun", q:"Ürün-pazar uyumunu (PMF) bulduğunuzu gösteren en güçlü sinyal nedir?", tags:["vc","growth","angel","early"], followup:"pmf"},
+    {id:"U3", cat:"urun", q:"Bir müşteri ürününüzü kullanmayı bıraksaydı ne hissederdi?", tags:["angel","vc","seed","early"], followup:"retention"},
+    {id:"U4", cat:"urun", q:"Roadmap'ınızda önümüzdeki 6 ayda en kritik ürün gelişimi nedir?", tags:["vc","growth","early"], followup:"roadmap"},
+    {id:"U5", cat:"urun", q:"Teknik borcunuz var mı? Altyapınız büyümeye hazır mı?", tags:["vc","ai","saas","growth"], followup:"teknik_bor"},
+    {id:"U6", cat:"urun", q:"Kullanıcı geri bildirimini ürüne nasıl yansıtıyorsunuz?", tags:["angel","seed","early"], followup:"geri_bildirim"},
+    {id:"U7", cat:"urun", q:"Yapay zeka veya veri kullanıyorsanız, bu size sürdürülebilir bir avantaj sağlıyor mu?", tags:["vc","ai","deeptech"], followup:"ai_avantaj"},
+    {id:"U8", cat:"urun", q:"Ürününüzü bugün hemen kullanabilecek biri 5 dakikada değer görür mü?", tags:["angel","growth","early","seed"], followup:"onboarding"},
+
+    // TRACTION & GELİR (T)
+    {id:"T1", cat:"traction", q:"Şu anki aylık tekrar eden geliriniz (MRR) nedir ve son 3 aydaki büyüme oranınız?", tags:["vc","growth","angel","early"], followup:"mrr"},
+    {id:"T2", cat:"traction", q:"İlk ödeme yapan müşterinizi nasıl buldunuz?", tags:["angel","seed","early"], followup:"ilk_musteri"},
+    {id:"T3", cat:"traction", q:"Churn oranınız nedir ve müşterilerin ayrılmasının ana nedeni nedir?", tags:["vc","growth","scaleup"], followup:"churn"},
+    {id:"T4", cat:"traction", q:"En iyi müşteriniz kim ve neden sizinle çalışıyor?", tags:["angel","growth","early"], followup:"en_iyi"},
+    {id:"T5", cat:"traction", q:"Beklenti listenizde (pipeline) ne kadar potansiyel müşteri var?", tags:["vc","growth","angel","early"], followup:"pipeline"},
+    {id:"T6", cat:"traction", q:"Referans müşteri verebilir misiniz? Beni bir müşterinizle tanıştırabilir misiniz?", tags:["vc","angel","growth","early"], followup:"referans"},
+    {id:"T7", cat:"traction", q:"Büyüme oranınızı sürdürmek için ne gerekiyor? Bu büyüme organik mi, ücretli mi?", tags:["vc","growth","scaleup"], followup:"buyume_surdurulebilir"},
+    {id:"T8", cat:"traction", q:"Bu yatırımı alsaydınız 12 ay sonra hangi metriklerde olmanızı beklerdim?", tags:["vc","growth","angel"], followup:"12ay"},
+
+    // İŞ MODELİ & BİRİM EKONOMİSİ (B)
+    {id:"B1", cat:"birim", q:"CAC'ınız nedir ve bir müşteriyi kazanmak ortalama ne kadar sürüyor?", tags:["vc","growth","scaleup"], followup:"cac"},
+    {id:"B2", cat:"birim", q:"LTV/CAC oranınız nedir? Bu oran zamanla nasıl değişti?", tags:["vc","growth","scaleup"], followup:"ltv_cac"},
+    {id:"B3", cat:"birim", q:"Brüt margin'iniz nedir? SaaS için %70+ görmeyi bekliyorum.", tags:["vc","growth","saas","fintech"], followup:"margin"},
+    {id:"B4", cat:"birim", q:"Fiyatlandırma stratejinizi nasıl belirlediniz? Müşteriler fiyatı tartışıyor mu?", tags:["angel","growth","early"], followup:"fiyat"},
+    {id:"B5", cat:"birim", q:"Gelir tekrar ediyor mu? Yıllık vs aylık abonelik oranınız nedir?", tags:["vc","growth","saas"], followup:"tekrar_gelir"},
+    {id:"B6", cat:"birim", q:"Break-even için kaç müşteriye ihtiyacınız var?", tags:["angel","seed","early"], followup:"breakeven"},
+    {id:"B7", cat:"birim", q:"En karlı müşteri segmentiniz hangisi ve neden ona odaklanmıyorsunuz?", tags:["vc","growth","scaleup"], followup:"segment"},
+    {id:"B8", cat:"birim", q:"Gelecek 18 ayda net negatif churn'e ulaşabilir misiniz?", tags:["vc","scaleup","growth"], followup:"net_neg_churn"},
+
+    // BÜYÜME STRATEJİSİ (G)
+    {id:"G1", cat:"buyume", q:"Bu yatırımı ne için kullanacaksınız? Bana spesifik harcama planı verin.", tags:["vc","angel","growth","seed"], followup:"kullanim"},
+    {id:"G2", cat:"buyume", q:"Ana büyüme kanalınız nedir ve bu kanal ölçeklenebilir mi?", tags:["vc","growth","angel","early"], followup:"kanal"},
+    {id:"G3", cat:"buyume", q:"Uluslararasılaşma planınız var mı? İlk hedef pazar neresi ve neden?", tags:["vc","growth","scaleup"], followup:"uluslararasi_plan"},
+    {id:"G4", cat:"buyume", q:"Stratejik bir ortaklık veya kanal işbirliği var mı?", tags:["growth","angel","early"], followup:"ortaklik"},
+    {id:"G5", cat:"buyume", q:"5 yıl sonra bu şirketi nerede görüyorsunuz? Çıkış stratejiniz nedir?", tags:["vc","growth","scaleup"], followup:"cikis"},
+    {id:"G6", cat:"buyume", q:"Bu turdan sonraki finansman ihtiyacınız ne olacak ve hangi milestone'da?", tags:["vc","angel","growth"], followup:"sonraki_tur"},
+
+    // RİSK & SAVUNMA (R)
+    {id:"R1", cat:"risk", q:"Bu girişimin başarısız olmasının en büyük riski nedir? Bu riski nasıl azaltıyorsunuz?", tags:["vc","angel","growth","early"], followup:"risk"},
+    {id:"R2", cat:"risk", q:"Regülasyon riski var mı? Lisans, izin veya yasal engel?", tags:["vc","fintech","deeptech","growth"], followup:"regulasyon"},
+    {id:"R3", cat:"risk", q:"Büyük bir rakip (Google, Amazon, yerel dev) bu işe girse ne yaparsınız?", tags:["vc","growth","scaleup"], followup:"buyuk_rakip"},
+    {id:"R4", cat:"risk", q:"Şu ana kadar yanlış yaptığınız en büyük şey neydi ve ne öğrendiniz?", tags:["angel","seed","early","growth"], followup:"yanlis"}
+  ];
+
+  // ── YATİRIMCI SEÇİMİ ──
+  function selectInvestorProfile(profile) {
+    const { stage, model } = profile;
+    const scores = {vc:0, angel:0, growth:0};
+
+    // Aşama puanı
+    if(["preseed","seed"].includes(stage)) scores.angel += 3;
+    else if(["early"].includes(stage)) { scores.angel += 1; scores.vc += 1; scores.growth += 1; }
+    else if(["growth"].includes(stage)) { scores.vc += 2; scores.growth += 2; }
+    else if(["scaleup","late"].includes(stage)) { scores.vc += 3; scores.growth += 3; }
+
+    // Model puanı
+    if(["ai","deeptech","saas"].includes(model)) scores.vc += 2;
+    if(["fintech","marketplace","ecommerce"].includes(model)) scores.growth += 2;
+    if(["service"].includes(model)) scores.angel += 2;
+
+    const winner = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+    return INVESTOR_PROFILES[winner];
+  }
+
+  // ── DİNAMİK SORU SEÇİMİ ──
+  function selectNextQuestion(askedIds, investorProfile, profile, lastAnswerContext) {
+    const inv = investorProfile;
+    const candidates = QUESTION_POOL.filter(q => !askedIds.includes(q.id));
+
+    // Skor: yatırımcı tipi + aşama/model uyumu + last answer context
+    const scored = candidates.map(q => {
+      let score = 0;
+      if(q.tags.includes(inv === INVESTOR_PROFILES.vc ? "vc" : inv === INVESTOR_PROFILES.angel ? "angel" : "growth")) score += 3;
+      if(q.tags.includes(profile.stage)) score += 2;
+      if(q.tags.includes(profile.model)) score += 2;
+      // Önceki cevap bağlamı
+      if(lastAnswerContext && q.followup && lastAnswerContext.includes(q.followup)) score += 4;
+      // Kategori rotasyonu - aynı kategoriden üst üste gelmesin
+      if(askedIds.length > 0) {
+        const lastCat = QUESTION_POOL.find(x=>x.id===askedIds[askedIds.length-1])?.cat;
+        if(q.cat === lastCat) score -= 2;
+      }
+      // Biraz rastgelelik ekle
+      score += Math.random() * 1.5;
+      return {q, score};
+    });
+
+    scored.sort((a,b) => b.score-a.score);
+    return scored[0]?.q || candidates[0];
+  }
+
+  // ── SİMÜLASYON STATE ──
+  let aiMessages = [];
+  let aiQuestionCount = 0;
+  const aiMaxQuestions = 10;
+  let aiStartupProfile = null;
+  let aiInvestorProfile = null;
+  let aiAskedIds = [];
+  let aiLastContext = "";
+
+  window.initAiSim = function(profile) {
+    aiStartupProfile = profile;
+    document.getElementById("ai-sim-lock-box").style.display = "none";
+    document.getElementById("ai-sim-active").style.display = "block";
+  };
+
+  window.startAiSim = async function() {
+    document.getElementById("ai-start-btn").style.display = "none";
+    document.getElementById("ai-input-area").style.display = "flex";
+    aiMessages = [];
+    aiQuestionCount = 0;
+    aiAskedIds = [];
+    aiLastContext = "";
+
+    const chatBox = document.getElementById("ai-chat-box");
+    chatBox.innerHTML = "";
+    chatBox.className = "ai-sim-chat";
+
+    // Yatırımcı seç
+    aiInvestorProfile = selectInvestorProfile(aiStartupProfile);
+
+    // Giriş mesajı
+    const intro = aiInvestorProfile.avatar + " " + aiInvestorProfile.name + " olarak değerlendirme yapıyorum. " +
+      aiInvestorProfile.desc + ".
+
+" + aiMaxQuestions + " soru soracağım. " +
+      "Cevaplarınız gerçek zamanlı analiz edilecek ve sonunda pitch hazırlığınız puanlanacak. Başlayalım!";
+    addAiMessage("inv", intro);
+
+    await askNextAiQuestion();
+  };
+
+  async function askNextAiQuestion() {
+    if(aiQuestionCount >= aiMaxQuestions) {
+      await finishAiSim();
+      return;
+    }
+
+    // Dinamik soru seç
+    const nextQ = selectNextQuestion(aiAskedIds, aiInvestorProfile, aiStartupProfile, aiLastContext);
+    aiAskedIds.push(nextQ.id);
+
+    // Claude ile soruyu kişiselleştir
+    showThinking();
+    try {
+      const personalizePrompt = `Sen ${aiInvestorProfile.name} rolündesin. ${aiInvestorProfile.style}.
+Girişim: aşama=${aiStartupProfile.stage}, model=${aiStartupProfile.model}, değerleme=${aiStartupProfile.valuation}
+Skor: Traction=${aiStartupProfile.scores.traction}/100, Takım=${aiStartupProfile.scores.takim}/100, Pazar=${aiStartupProfile.scores.pazar}/100
+
+Temel soru: "${nextQ.q}"
+
+Bu soruyu bu girişime ve yatırımcı karakterine özgü şekilde kişiselleştir. Maksimum 2 cümle, Türkçe.
+Sadece soruyu yaz, başka bir şey ekleme.`;
+
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 150,
+          messages: [{role:"user", content: personalizePrompt}]
+        })
+      });
+      const data = await resp.json();
+      const personalizedQ = data.content[0].text.trim();
+      removeThinking();
+      addAiMessage("inv", `(${aiQuestionCount+1}/${aiMaxQuestions}) ` + personalizedQ);
+      aiMessages.push({role:"assistant", content: personalizedQ});
+      aiQuestionCount++;
+    } catch(e) {
+      removeThinking();
+      addAiMessage("inv", `(${aiQuestionCount+1}/${aiMaxQuestions}) ` + nextQ.q);
+      aiQuestionCount++;
+    }
+  }
+
+  window.sendAiMessage = async function() {
+    const input = document.getElementById("ai-user-input");
+    const userText = input.value.trim();
+    if(!userText) return;
+    input.value = "";
+    document.getElementById("ai-send-btn").disabled = true;
+
+    addAiMessage("usr", userText);
+    aiMessages.push({role:"user", content: userText});
+
+    // Cevabı analiz et - sonraki soru için context çıkar
+    try {
+      const contextResp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 60,
+          messages: [{role:"user", content:
+            `Bu cevabın en zayıf noktasını 1-3 kelimeyle etiketle (Türkçe, küçük harf): "${userText}"
+Sadece etiketleri yaz, örn: "cac mrr churn" veya "ekip deneyim" veya "pazar buyukluk"`
+          }]
+        })
+      });
+      const ctxData = await contextResp.json();
+      aiLastContext = ctxData.content[0].text.toLowerCase();
+    } catch(e) { aiLastContext = ""; }
+
+    await askNextAiQuestion();
+    document.getElementById("ai-send-btn").disabled = false;
+    input.focus();
+  };
+
+  async function finishAiSim() {
+    showThinking();
+    const scorePrompt = `Sen ${aiInvestorProfile.name} rolündesin. ${aiInvestorProfile.style}.
+Girişim profili: ${JSON.stringify(aiStartupProfile)}
+Tüm konuşma: ${JSON.stringify(aiMessages)}
+
+10 sorunun cevaplarını değerlendirerek şu 3 skoru ver (0-100):
+1. Genel Skor: Yatırım çekiciliği
+2. Pitch Etkinliği: Cevapların netliği ve ikna ediciliği
+3. Güven Skoru: Kurucunun güvenilirliği
+
+Sonra 3-4 cümlelik değerlendirme yaz: güçlü yönler, zayıf yönler ve tavsiye.
+
+Format (sadece bunu yaz):
+GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:metin`;
+
+    try {
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 500,
+          messages: [{role:"user", content: scorePrompt}]
+        })
+      });
+      const data = await resp.json();
+      const result = data.content[0].text;
+      removeThinking();
+
+      const gM = result.match(/GENEL:(\d+)/);
+      const pM = result.match(/PITCH:(\d+)/);
+      const guM = result.match(/GUVEN:(\d+)/);
+      const yM = result.match(/YORUM:(.+)/s);
+
+      document.getElementById("ai-score-genel").textContent = gM ? gM[1] : "—";
+      document.getElementById("ai-score-pitch").textContent = pM ? pM[1] : "—";
+      document.getElementById("ai-score-guven").textContent = guM ? guM[1] : "—";
+      document.getElementById("ai-scores-box").style.display = "grid";
+      document.getElementById("ai-input-area").style.display = "none";
+
+      if(yM) addAiMessage("inv", "📊 " + yM[1].trim());
+    } catch(e) {
+      removeThinking();
+      addAiMessage("inv", "Değerlendirme tamamlandı. Teşekkürler!");
+    }
+  }
+
+  function addAiMessage(type, text) {
+    const chatBox = document.getElementById("ai-chat-box");
+    const div = document.createElement("div");
+    div.className = "ai-msg ai-msg-" + type;
+    const inv = aiInvestorProfile || INVESTOR_PROFILES.vc;
+    div.innerHTML = type === "inv"
+      ? `<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#253347;display:flex;align-items:center;justify-content:center;font-size:14px;">${inv.avatar}</div><div><div class="ai-msg-label">${inv.name}</div><div class="ai-bubble">${text.replace(/\n/g,"<br>")}</div></div>`
+      : `<div style="margin-left:auto;"><div class="ai-msg-label" style="text-align:right;">Siz</div><div class="ai-bubble">${text}</div></div>`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function showThinking() {
+    const chatBox = document.getElementById("ai-chat-box");
+    const div = document.createElement("div");
+    div.className = "ai-msg ai-msg-inv";
+    div.id = "ai-thinking";
+    const inv = aiInvestorProfile || INVESTOR_PROFILES.vc;
+    div.innerHTML = `<div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:#253347;display:flex;align-items:center;justify-content:center;font-size:14px;">${inv.avatar}</div><div class="ai-thinking"><span></span><span></span><span></span></div>`;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function removeThinking() {
+    const t = document.getElementById("ai-thinking");
+    if(t) t.remove();
+  }
+
 
   // ── YATIRIMCI PORTALI ──
   let invAllReports = [];
@@ -2100,6 +2511,11 @@ renderQ();
         pdfBtn.style.opacity = "0.5";
         pdfBtn.title = "Plus paketi gerekli";
       }
+    }
+
+    // AI Simülasyonu - Plus ise aktifleştir
+    if(isPlus && aiStartupProfile && typeof initAiSim === "function") {
+      initAiSim(aiStartupProfile);
     }
   };
 
