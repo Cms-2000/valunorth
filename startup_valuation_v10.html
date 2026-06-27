@@ -392,6 +392,7 @@ body{padding-top:44px;}
     <span class="auth-user-name" id="auth-user-email"></span>
     <button class="auth-btn auth-btn-login" id="corp-return-btn" onclick="returnToPanel()" style="font-size:11px;display:none;">🏢 Panele Dön</button>
     <button class="auth-btn auth-btn-login" onclick="openHistory()" style="font-size:11px;" id="history-btn">📋 Geçmişim</button>
+    <button class="auth-btn auth-btn-login" onclick="showInvInterests()" style="font-size:11px;display:none;" id="inv-interests-btn">⭐ İlgilerim</button>
     <button class="auth-btn auth-btn-logout" onclick="signOutUser()">Çıkış</button>
   </div>
 </div>
@@ -1987,6 +1988,44 @@ renderQ();
     window.scrollTo(0,0);
   };
 
+  window.showInvInterests = function() {
+    const interested = invAllReports.filter(r => invInterests.has(r.rid));
+    const grid = document.getElementById("inv-grid");
+    if(!grid) return;
+    if(interested.length === 0) {
+      alert("Henüz ilgilendiğiniz bir girişim yok.");
+      return;
+    }
+    // Filtreleri sıfırla ve sadece ilgilenilenleri göster
+    invFilters.stage = "all";
+    grid.innerHTML = interested.map(r => {
+      const stageColors2 = {preseed:{bg:"#F1EFE8",c:"#5F5E5A",lbl:"Pre-Seed"},seed:{bg:"#FAEEDA",c:"#633806",lbl:"Seed"},early:{bg:"#EEEDFE",c:"#3C3489",lbl:"Early Growth"},growth:{bg:"#E1F5EE",c:"#0F6E56",lbl:"Growth"},scaleup:{bg:"#E6F1FB",c:"#0C447C",lbl:"Scale-up"},late:{bg:"#FCEBEB",c:"#791F1F",lbl:"Late Stage"}};
+      const si = stageColors2[r.stage] || stageColors2.seed;
+      const sc = r.vnScore>=75?{bg:"#E1F5EE",c:"#085041"}:r.vnScore>=60?{bg:"#EEEDFE",c:"#3C3489"}:r.vnScore>=45?{bg:"#FAEEDA",c:"#633806"}:{bg:"#FCEBEB",c:"#791F1F"};
+      return `<div class="inv-card">
+        <div class="inv-card-top">
+          <div><div class="inv-card-id">#${r.id}</div>
+          <span class="inv-stage-pill" style="background:${si.bg};color:${si.c};">${si.lbl}</span></div>
+          <div class="inv-score" style="background:${sc.bg};color:${sc.c};">${r.vnScore}</div>
+        </div>
+        <div class="inv-val">${r.lo} – ${r.hi}</div>
+        <div class="inv-val-sub">Merkez değer: ${r.mid}</div>
+        <div class="inv-tags">
+          <span class="inv-tag" style="background:#EEEDFE;color:#3C3489;">${r.model?.toUpperCase()}</span>
+          <span class="inv-tag" style="background:#F1EFE8;color:#5F5E5A;">${r.seg?.toUpperCase()}</span>
+        </div>
+        <div class="inv-metrics">
+          <div class="inv-metric"><div class="inv-metric-n">%${r.growth}</div><div class="inv-metric-l">Büyüme</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.cust}+</div><div class="inv-metric-l">Müşteri</div></div>
+          <div class="inv-metric"><div class="inv-metric-n">${r.team}/5</div><div class="inv-metric-l">Ekip</div></div>
+        </div>
+        <button class="inv-interest-btn sent">✓ İlgilenildi</button>
+        <div class="inv-anon-note">Girişimci bildirim aldı</div>
+      </div>`;
+    }).join("");
+    window.scrollTo(0, document.getElementById("inv-grid").offsetTop - 100);
+  };
+
   window.returnToPanel = function() {
     if(isCorpUser) {
       returnToCorpPanel();
@@ -2093,6 +2132,8 @@ renderQ();
         document.querySelector(".container").style.display = "none";
         document.getElementById("result-area").style.display = "none";
         document.getElementById("investor-panel").style.display = "block";
+        document.getElementById("history-btn").style.display = "none";
+        document.getElementById("inv-interests-btn").style.display = "flex";
         loadInvestorPortal();
       }
     } else {
@@ -2101,6 +2142,8 @@ renderQ();
       document.getElementById("corp-panel").style.display = "none";
       document.getElementById("investor-panel").style.display = "none";
       document.querySelector(".container").style.display = "block";
+      document.getElementById("history-btn").style.display = "flex";
+      document.getElementById("inv-interests-btn").style.display = "none";
       isCorpUser = false; corpData = null;
     }
     // Rapor görünüyorsa kilitleri güncelle
