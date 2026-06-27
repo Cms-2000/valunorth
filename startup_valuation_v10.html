@@ -662,6 +662,19 @@ function switchAuthMode() {
   const cur = document.getElementById("auth-modal-title").textContent;
   openAuthModal(cur === "Giriş Yap" ? "register" : "login");
 }
+// Firebase fonksiyonları için promise queue
+window._fbReady = false;
+window._fbQueue = [];
+function _whenFbReady(fn) {
+  if(window._fbReady) fn();
+  else window._fbQueue.push(fn);
+}
+function signInWithGoogle() {
+  _whenFbReady(function() { window._firebaseGoogleSignIn && window._firebaseGoogleSignIn(); });
+}
+function handleAuthSubmit() {
+  _whenFbReady(function() { window._firebaseEmailSubmit && window._firebaseEmailSubmit(); });
+}
 
 // ── VALUNORTH ROZETİ ──
 function buildBadgeSVG(score, stageName) {
@@ -1745,6 +1758,9 @@ renderQ();
     el.textContent = msg; el.style.display = "block";
   }
 
+  window._firebaseEmailSignIn = async function() {
+    return window.handleAuthSubmit();
+  };
   window.handleAuthSubmit = async function() {
     const email = document.getElementById("auth-email").value.trim();
     const password = document.getElementById("auth-password").value;
@@ -1777,6 +1793,12 @@ renderQ();
       showError("Google girişi başarısız: " + err.message);
     }
   };
+  window._firebaseGoogleSignIn = window.signInWithGoogle;
+  window._firebaseEmailSubmit = window.handleAuthSubmit;
+  // Firebase hazır - queue'yu boşalt
+  window._fbReady = true;
+  (window._fbQueue || []).forEach(fn => fn());
+  window._fbQueue = [];
 
   window.signOutUser = async function() {
     await signOut(auth);
