@@ -278,7 +278,7 @@ body.lang-tr [data-en]{display:none;}
 .idx-notif-empty{text-align:center;color:#aaa;padding:24px;font-size:13px;}
 
 /* ── YATIRIMCI PORTAL SECTION ── */
-.inv-portal-section{background:#1C2535;padding:80px 28px;}
+.inv-portal-section{background:#1C2535;padding:48px 28px;}
 .inv-portal-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:0 auto;}
 .inv-feats{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
 .inv-feat-item{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.6);}
@@ -288,6 +288,31 @@ body.lang-tr [data-en]{display:none;}
 .inv-mock-card-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border-radius:10px;padding:12px;margin-bottom:8px;}
 .inv-mock-info{display:flex;flex-direction:column;gap:3px;}
 @media(max-width:768px){.inv-portal-inner{grid-template-columns:1fr;}.inv-portal-right{display:none;}}
+
+/* ── FAQ ── */
+.faq-section{background:#fff;padding:80px 28px;}
+.faq-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:1100px;margin:0 auto;}
+.faq-item{border:0.5px solid #eee;border-radius:12px;overflow:hidden;}
+.faq-q{padding:14px 16px;font-size:13px;font-weight:500;color:#1C2535;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;transition:background .2s;}
+.faq-q:hover{background:#F5F4EF;}
+.faq-arrow{color:#534AB7;font-size:16px;flex-shrink:0;transition:transform .2s;}
+.faq-q.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{display:none;padding:0 16px 14px;font-size:12px;color:#666;line-height:1.7;border-top:0.5px solid #f0f0f0;}
+.faq-a.open{display:block;}
+@media(max-width:768px){.faq-grid{grid-template-columns:1fr;}}
+
+/* ── METODLAR MODAL ── */
+.methods-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;}
+.methods-modal-overlay.open{display:flex;}
+.methods-modal{background:#fff;border-radius:16px;padding:28px;width:720px;max-width:100%;position:relative;}
+.methods-modal h2{font-size:20px;font-weight:700;color:#1C2535;margin-bottom:6px;}
+.methods-close{position:absolute;top:12px;right:16px;font-size:22px;cursor:pointer;color:#aaa;background:none;border:none;}
+.methods-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
+.method-card{background:#F5F4EF;border-radius:10px;padding:12px;}
+.method-name{font-size:12px;font-weight:700;color:#1C2535;margin-bottom:5px;}
+.method-desc{font-size:11px;color:#666;line-height:1.5;margin-bottom:8px;}
+.method-stage{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500;}
+@media(max-width:600px){.methods-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body class="lang-tr">
@@ -368,7 +393,7 @@ body.lang-tr [data-en]{display:none;}
       <div class="hero-badge">
         <div class="hero-badge-dot"></div>
         <span data-tr>Türkiye'nin ilk 360° değerleme motoru</span>
-        <span data-en>Turkey's first 360° valuation engine</span>
+        <span data-en>Turkey's First 360° Valuation Engine</span>
       </div>
       <h1 class="hero-h1">
         <span data-tr>Girişiminizin <em>gerçek değerini</em> ve yol haritasını keşfedin</span>
@@ -376,7 +401,7 @@ body.lang-tr [data-en]{display:none;}
       </h1>
       <div class="hero-sub-list">
         <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>25 soruda</strong> aşamanıza özel değerleme — 8 iş modeli, 6 aşama</span><span data-en><strong>25 questions</strong>, stage-specific valuation — 8 business models, 6 stages</span></div>
-        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>Valunorth Score</strong> — 5 boyutta 0-100 kompozit skor ve rozet sistemi</span><span data-en><strong>Valunorth Score</strong> — 0-100 composite score across 5 dimensions with badge</span></div>
+        <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>Valunorth Score</strong> — 5 boyutta 0-100 Valunorth Girişim Skoru ve rozet sistemi</span><span data-en><strong>Valunorth Score</strong> — 0-100 Valunorth Startup Score across 5 dimensions with badge</span></div>
         <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>8 bütçeli senaryo</strong> — 2026 piyasa verileriyle güncel maliyetler</span><span data-en><strong>8 budgeted scenarios</strong> — updated costs with 2026 market data</span></div>
         <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr><strong>Yatırımcı Portalı</strong> — TGB, melek ve VC'ler için anonim deal-flow <span style="background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#5DCAA5;">YENİ</span></span><span data-en><strong>Investor Portal</strong> — Anonymous deal-flow for TGBs, angels and VCs <span style="background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#5DCAA5;">NEW</span></span></div>
         <div class="hero-sub-item"><div class="hero-sub-item-dot"></div><span data-tr>AI yatırımcı simülasyonu — pitch sürecinizi test edin <span style="background:rgba(83,74,183,.2);border:1px solid rgba(83,74,183,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#AFA9EC;">Yakında</span></span><span data-en>AI investor simulation — test your pitch process <span style="background:rgba(83,74,183,.2);border:1px solid rgba(83,74,183,.3);border-radius:99px;padding:1px 7px;font-size:10px;color:#AFA9EC;">Soon</span></span></div>
@@ -447,10 +472,12 @@ body.lang-tr [data-en]{display:none;}
 <!-- STATS -->
 <div class="stats-bar">
   <div class="stats-inner">
-    <div class="stat-item"><div class="stat-num">25</div><div class="stat-lbl"><span data-tr>Akıllı soru</span><span data-en>Smart questions</span></div></div>
-    <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl"><span data-tr>İş modeli & 6 aşama</span><span data-en>Business models & 6 stages</span></div></div>
-    <div class="stat-item"><div class="stat-num">%80</div><div class="stat-lbl"><span data-tr>Bant doğruluğu</span><span data-en>Band accuracy</span></div></div>
-    <div class="stat-item"><div class="stat-num">0-100</div><div class="stat-lbl"><span data-tr>Valunorth Score</span><span data-en>Valunorth Score</span></div></div>
+    <div class="stat-item"><div class="stat-num">25</div><div class="stat-lbl"><span data-tr>Akıllı Soru</span><span data-en>Smart Questions</span></div></div>
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl"><span data-tr>İş Modeli</span><span data-en>Business Models</span></div></div>
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl"><span data-tr>Değerleme Aşaması</span><span data-en>Valuation Stages</span></div></div>
+    <div class="stat-item"><div class="stat-num">9+</div><div class="stat-lbl"><span data-tr>Değerleme Metodu</span><span data-en>Valuation Methods</span></div></div>
+    <div class="stat-item"><div class="stat-num">%80</div><div class="stat-lbl"><span data-tr>Bant Doğruluğu</span><span data-en>Band Accuracy</span></div></div>
+    <div class="stat-item"><div class="stat-num">0-100</div><div class="stat-lbl"><span data-tr>Girişim Skoru</span><span data-en>Startup Score</span></div></div>
   </div>
 </div>
 
@@ -459,7 +486,7 @@ body.lang-tr [data-en]{display:none;}
   <div class="section-inner">
     <div class="fade-up">
       <div class="section-eyebrow"><span data-tr>Nasıl Çalışır</span><span data-en>How It Works</span></div>
-      <h2 class="section-h2"><span data-tr>5 adımda kapsamlı analiz</span><span data-en>Comprehensive analysis in 5 steps</span></h2>
+      <h2 class="section-h2"><span data-tr>5 Adımda kapsamlı analiz</span><span data-en>Comprehensive Analysis in 5 Steps</span></h2>
       <p class="section-sub"><span data-tr>Soru seti, değerleme motoru, Valunorth Score, bütçeli senaryolar ve rozet. ~7 dakikada tamamlanır.</span><span data-en>Question set, valuation engine, Valunorth Score, budgeted scenarios and badge. Completed in ~7 minutes.</span></p>
     </div>
     <div class="steps-grid">
@@ -490,7 +517,7 @@ body.lang-tr [data-en]{display:none;}
       <div class="step-card fade-up">
         <div class="step-num">5</div>
         <div class="step-title"><span data-tr>Valunorth Score & Rozet</span><span data-en>Valunorth Score & Badge</span></div>
-        <div class="step-desc"><span data-tr>5 boyutun kompozit skoru + doğrulama rozeti. Web sitenize veya LinkedIn profilinize ekleyin.</span><span data-en>Composite score from 5 dimensions + verification badge. Add to your website or LinkedIn profile.</span></div>
+        <div class="step-desc"><span data-tr>5 boyutun Valunorth Girişim Skoruu + doğrulama rozeti. Web sitenize veya LinkedIn profilinize ekleyin.</span><span data-en>Composite score from 5 dimensions + verification badge. Add to your website or LinkedIn profile.</span></div>
         <span class="step-tag" style="background:#EEEDFE;color:#534AB7;"><span data-tr>Rozet</span><span data-en>Badge</span></span>
       </div>
     </div>
@@ -533,7 +560,8 @@ body.lang-tr [data-en]{display:none;}
           <div class="inv-feat-item"><span class="inv-feat-ok">✓</span><span data-tr>İlgileniyorum sinyali — girişimciye anonim bildirim</span><span data-en>Interest signal — anonymous notification to founder</span></div>
           <div class="inv-feat-item"><span class="inv-feat-ok">✓</span><span data-tr>Valunorth Score ile hızlı ön eleme</span><span data-en>Quick pre-screening with Valunorth Score</span></div>
         </div>
-        <a href="startup_valuation_v10.html" class="btn-prim" style="display:inline-block;margin-top:8px;"><span data-tr>Yatırımcı Portalına Gir →</span><span data-en>Enter Investor Portal →</span></a>
+        <a href="startup_valuation_v10.html" class="btn-prim" style="display:inline-block;margin-top:8px;" id="inv-portal-link"><span data-tr>Yatırımcı Portalına Gir →</span><span data-en>Enter Investor Portal →</span></a>
+        <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:8px;"><span data-tr>Giriş yaparak yatırımcı hesabınıza erişin</span><span data-en>Sign in to access your investor account</span></p>
       </div>
       <div class="inv-portal-right fade-up">
         <div class="inv-portal-mock">
@@ -885,6 +913,144 @@ body.lang-tr [data-en]{display:none;}
 </section>
 
 <!-- FOOTER -->
+
+<!-- FAQ BÖLÜMÜ -->
+<section class="faq-section" id="faq">
+  <div class="section-inner">
+    <div class="fade-up" style="text-align:center;margin-bottom:40px;">
+      <div class="section-eyebrow"><span data-tr>Sık Sorulan Sorular</span><span data-en>FAQ</span></div>
+      <h2 class="section-h2"><span data-tr>Aklınızdaki Soruların Cevapları</span><span data-en>Answers to Your Questions</span></h2>
+    </div>
+    <div class="faq-grid fade-up">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Valunorth değerlemesi nasıl çalışır?</span><span data-en>How does Valunorth valuation work?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>25 sorudan oluşan akıllı bir anket dolduruluyor. Sistem, girişiminizin iş modeline, aşamasına ve profiline göre 9+ değerleme metodunu ağırlıklı olarak birleştiriyor ve alt-orta-üst bant şeklinde bir değerleme aralığı sunuyor.</span><span data-en>A smart 25-question survey is completed. The system combines 9+ valuation methods with weighted importance based on your startup's business model, stage and profile, presenting a low-mid-high band valuation range.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Sonuçlar ne kadar güvenilir?</span><span data-en>How reliable are the results?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Sistem, 15 gerçek Türkiye vakası ve 15 sentetik profil üzerinde kalibre edilmiş; bant doğruluğu yaklaşık %80'dir. Sonuçlar yatırımcı müzakerelerinde kesin bir rakam değil, gerçekçi bir başlangıç noktası olarak kullanılmalıdır.</span><span data-en>The system is calibrated on 15 real Turkish cases and 15 synthetic profiles, with approximately 80% band accuracy. Results should be used as a realistic starting point in investor negotiations, not as a definitive figure.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Ücretsiz versiyon ile Plus arasındaki fark nedir?</span><span data-en>What's the difference between Free and Plus?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Ücretsiz versiyonda aşama tespiti ve değer bandı görünür. Plus paketinde (₺5.000, 1 yıl) 8'li senaryo karşılaştırması, 12 aylık aksiyon takvimi, bütçe planlaması, Valunorth Girişim Skoru, rozet ve PDF raporu yer alır.</span><span data-en>The free version shows stage detection and value band. The Plus package (₺5,000, 1 year) includes 8-scenario comparison, 12-month action calendar, budget planning, Valunorth Startup Score, badge and PDF report.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Valunorth Girişim Skoru nedir?</span><span data-en>What is the Valunorth Startup Score?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Traction, Takım, Pazar, Moat ve Finansal boyutlarının ağırlıklı ortalamasından oluşan 0-100 arası bir skor. Girişiminizin güçlü ve zayıf yönlerini tek bir sayıyla özetler ve Türkiye ekosistem ortalamasıyla karşılaştırılır.</span><span data-en>A 0-100 score based on the weighted average of Traction, Team, Market, Moat and Financial dimensions. It summarizes your startup's strengths and weaknesses in a single number, compared against the Turkish ecosystem average.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Hangi iş modelleri destekleniyor?</span><span data-en>Which business models are supported?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>SaaS, Fintech, Marketplace, Deeptech, E-ticaret, Hizmet/Danışmanlık, AI ve Savunma & Uzay olmak üzere 8 farklı iş modeli destekleniyor. Her model için ayrı çarpanlar ve ağırlıklandırma uygulanıyor.</span><span data-en>8 different business models are supported: SaaS, Fintech, Marketplace, Deeptech, E-commerce, Service/Consulting, AI and Defense & Space. Separate multipliers and weighting are applied for each model.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Verilerim güvende mi?</span><span data-en>Is my data secure?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Tüm veriler Google Firebase (Frankfurt, Almanya sunucuları) üzerinde saklanır ve GDPR uyumludur. Hesap oluşturmadan yapılan değerlemeler yerel olarak çalışır ve sunucuya kaydedilmez. Yatırımcı portalında tüm girişim profilleri anonimdir.</span><span data-en>All data is stored on Google Firebase (Frankfurt, Germany servers) and is GDPR compliant. Valuations done without creating an account run locally and are not saved to the server. All startup profiles in the investor portal are anonymous.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Yatırımcı Portalı nasıl çalışır?</span><span data-en>How does the Investor Portal work?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Değerleme yaptıran girişimler, anonim profil olarak Yatırımcı Portalı'nda listelenir. Yatırımcılar aşama, iş modeli, skor ve segment gibi filtrelerle girişimleri tarar; "İlgileniyorum" butonuna basarak girişimciye anonim bildirim gönderir.</span><span data-en>Startups that complete a valuation are listed as anonymous profiles in the Investor Portal. Investors filter startups by stage, business model, score and segment; by pressing "I'm Interested" they send an anonymous notification to the founder.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Değerleme ne kadar sürer?</span><span data-en>How long does the valuation take?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>25 soruyu yanıtlamak ortalama 5-7 dakika sürer. Sorular girişiminizin mevcut durumunu, ekibini, pazar büyüklüğünü ve finansal verilerini kapsar. Değerleme sonuçları anında hesaplanır.</span><span data-en>Answering 25 questions takes an average of 5-7 minutes. Questions cover your startup's current situation, team, market size and financial data. Valuation results are calculated instantly.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Rozeti nereye ekleyebilirim?</span><span data-en>Where can I add the badge?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Valunorth Girişim Skoru rozetini web sitenize, pitch deck'inize, LinkedIn profilinize veya yatırımcı sunumlarınıza ekleyebilirsiniz. "Rozeti Kopyala" butonuna basıldığında embed kodu panoya kopyalanır.</span><span data-en>You can add the Valunorth Startup Score badge to your website, pitch deck, LinkedIn profile or investor presentations. Pressing "Copy Badge" copies the embed code to your clipboard.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Kurumsal paket kimlere uygun?</span><span data-en>Who is the enterprise package for?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>TGB'ler, kuluçka ve hızlandırıcı programları, melek yatırımcı ağları ve VC fonları için tasarlanmıştır. Portföylerindeki girişimleri değerleme, karşılaştırma ve takip etmek isteyen kurumsal yapılar için portföy paneli sunar.</span><span data-en>Designed for TGBs, incubator and accelerator programs, angel investor networks and VC funds. Offers a portfolio panel for institutional structures that want to value, compare and track startups in their portfolio.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Plus paketini nasıl satın alabilirim?</span><span data-en>How can I purchase the Plus package?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Plus paketi için ödeme sistemi yakında aktif olacak. Şu an için hello@valunorth.com adresine yazarak bilgi alabilir ve erken erişim kaydı yaptırabilirsiniz.</span><span data-en>The payment system for the Plus package will be active soon. For now, you can write to hello@valunorth.com for information and register for early access.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Hangi aşamalar destekleniyor?</span><span data-en>Which stages are supported?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Pre-seed, Seed, Early Growth, Growth, Scale-up ve Late Stage olmak üzere 6 aşama destekleniyor. Sistem, girişiminizi bu aşamalardan birine otomatik olarak sınıflandırır ve aşamaya özgü metodoloji uygular.</span><span data-en>6 stages are supported: Pre-seed, Seed, Early Growth, Growth, Scale-up and Late Stage. The system automatically classifies your startup into one of these stages and applies stage-specific methodology.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Yatırımcılar değerlememizi görebilir mi?</span><span data-en>Can investors see our valuation?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Yalnızca siz tercih ettiğinizde. Değerlemeniz varsayılan olarak özeldir. Yatırımcı portalında listelenmek istiyorsanız rapor tamamlandığında bu seçeneği aktifleştirebilirsiniz. Listeleme tamamen anonimdir.</span><span data-en>Only when you choose to. Your valuation is private by default. If you want to be listed in the investor portal, you can activate this option when the report is completed. Listing is completely anonymous.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Değerleme sonuçlarını yasal belge olarak kullanabilir miyim?</span><span data-en>Can I use valuation results as a legal document?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Hayır. Valunorth çıktıları yatırımcı görüşmelerine hazırlık ve stratejik planlama amacıyla tasarlanmıştır; hukuki veya resmi finansal belge niteliği taşımaz. Resmi işlemler için sertifikalı bir değerleme uzmanına danışmanız gerekir.</span><span data-en>No. Valunorth outputs are designed for investor meeting preparation and strategic planning; they do not have legal or official financial document status. For official transactions, you need to consult a certified valuation expert.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>1 yıllık erişim süresi dolunca ne olur?</span><span data-en>What happens when the 1-year access period expires?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Plus içerikler (senaryolar, PDF, aksiyon takvimi) kilitlenir, ücretsiz içerikler (aşama ve değer bandı) görünür kalmaya devam eder. Yeni bir dönem için Plus paketi yeniden satın alınabilir.</span><span data-en>Plus content (scenarios, PDF, action calendar) is locked, free content (stage and value band) remains visible. The Plus package can be repurchased for a new period.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>AI yatırımcı simülasyonu nasıl çalışır?</span><span data-en>How does AI investor simulation work?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Girişim profiliniz analiz edilir ve iş modelinize, skorlarınıza ve zayıf noktalarınıza göre dinamik sorular üretilir. Cevaplarınız değerlendirilerek pitch etkinliği, güven skoru ve genel hazırlık düzeyi hesaplanır. Bu özellik yakında Plus paketine eklenecek.</span><span data-en>Your startup profile is analyzed and dynamic questions are generated based on your business model, scores and weak points. Your answers are evaluated to calculate pitch effectiveness, confidence score and overall readiness. This feature will be added to the Plus package soon.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Kaç kez değerleme yapabilirim?</span><span data-en>How many valuations can I do?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Ücretsiz planda sınırsız temel değerleme yapabilirsiniz. Her değerleme ayrı bir rapor olarak kaydedilir ve "Geçmişim" bölümünden erişilebilir. Değerlemeler zaman içinde girişiminizin büyümesini izlemek için faydalıdır.</span><span data-en>You can do unlimited basic valuations on the free plan. Each valuation is saved as a separate report and accessible from the "My History" section. Valuations are useful for tracking your startup's growth over time.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Kurumsal paket için nasıl başvurabilirim?</span><span data-en>How can I apply for the enterprise package?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>hello@valunorth.com adresine yazın veya fiyatlandırma bölümündeki "Görüşme Ayarla" butonunu kullanın. Kurumsal paketler yıllık abonelik modeliyle sunulmakta olup 50, 100 ve sınırsız girişim seçenekleri mevcuttur.</span><span data-en>Write to hello@valunorth.com or use the "Book a Call" button in the pricing section. Enterprise packages are offered on an annual subscription model with 50, 100 and unlimited startup options.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Değerleme metodlarının ağırlıkları nasıl belirleniyor?</span><span data-en>How are the weights of valuation methods determined?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Her iş modeli ve aşama kombinasyonu için farklı ağırlıklar tanımlanmıştır. Örneğin Pre-seed aşamasında Berkus ve Scorecard daha ağır basarken, Growth aşamasında Comparables ve DCF öne çıkar. Sistem bu ağırlıkları otomatik olarak ayarlar.</span><span data-en>Different weights are defined for each business model and stage combination. For example, at Pre-seed stage Berkus and Scorecard carry more weight, while at Growth stage Comparables and DCF come to the fore. The system adjusts these weights automatically.</span></div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-tr>Türkiye dışındaki girişimler için de kullanılabilir mi?</span><span data-en>Can it be used for startups outside Turkey?</span><span class="faq-arrow">▾</span></div>
+        <div class="faq-a"><span data-tr>Şu an sistem Türkiye ekosistemi verileriyle kalibre edilmiştir ve TL bazında çalışmaktadır. Türkiye'de kurulu veya Türkiye pazarını hedefleyen girişimler için en doğru sonuçları verir. Uluslararası versiyon yol haritasında yer almaktadır.</span><span data-en>Currently the system is calibrated with Turkish ecosystem data and operates in TL. It gives the most accurate results for startups established in Turkey or targeting the Turkish market. An international version is on the roadmap.</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DEĞERLEMEi METODLARI MODAL -->
+<div class="methods-modal-overlay" id="methods-modal-overlay" onclick="closeMethodsModal(event)">
+  <div class="methods-modal">
+    <button class="methods-close" onclick="closeMethodsModal()">×</button>
+    <h2><span data-tr>Değerleme Metodları</span><span data-en>Valuation Methods</span></h2>
+    <p style="font-size:13px;color:#888;margin-bottom:20px;"><span data-tr>Valunorth, girişimin aşamasına ve iş modeline göre aşağıdaki 9+ metoddan 3-5'ini akıllı ağırlıklandırma modeliyle seçer ve birleştirir.</span><span data-en>Valunorth selects and combines 3-5 of the following 9+ methods using an intelligent weighting model based on the startup's stage and business model.</span></div>
+    <div class="methods-grid">
+      <div class="method-card"><div class="method-name">Berkus</div><div class="method-desc"><span data-tr>Pre-seed/Seed için ideal. Fikir, prototip, takım ve pazar boyutlarını 5 kategoride puanlar. Gelir verisi olmayan erken aşama girişimler için standart yöntem.</span><span data-en>Ideal for Pre-seed/Seed. Scores idea, prototype, team and market in 5 categories. Standard method for early-stage startups without revenue data.</span></div><span class="method-stage" style="background:#FAEEDA;color:#633806;">Pre-seed · Seed</span></div>
+      <div class="method-card"><div class="method-name">Scorecard</div><div class="method-desc"><span data-tr>Benzer girişimlerle karşılaştırmalı puanlama. Takım, pazar, ürün ve rekabet gibi faktörleri bölgesel medyanlara göre ağırlıklandırır.</span><span data-en>Comparative scoring with similar startups. Weights factors like team, market, product and competition against regional medians.</span></div><span class="method-stage" style="background:#FAEEDA;color:#633806;">Seed · Early Growth</span></div>
+      <div class="method-card"><div class="method-name">Risk Factor Summation</div><div class="method-desc"><span data-tr>12 risk faktörünü (yönetim, siyasi, üretim, satış, finansman vb.) baz değerleme üzerine ekler veya çıkarır. Erken aşama risk tespiti için güçlü.</span><span data-en>Adds or subtracts 12 risk factors (management, political, production, sales, financing, etc.) from a base valuation. Strong for early-stage risk identification.</span></div><span class="method-stage" style="background:#FAEEDA;color:#633806;">Seed · Early Growth</span></div>
+      <div class="method-card"><div class="method-name">Comparable Transactions</div><div class="method-desc"><span data-tr>Benzer sektör ve aşamadaki gerçek yatırım turlarından elde edilen çarpanları kullanır. Türkiye ekosistem verileriyle kalibre edilmiştir.</span><span data-en>Uses multiples from real investment rounds in similar sectors and stages. Calibrated with Turkish ecosystem data.</span></div><span class="method-stage" style="background:#EEEDFE;color:#3C3489;">Growth · Scale-up</span></div>
+      <div class="method-card"><div class="method-name">Revenue Multiple</div><div class="method-desc"><span data-tr>Yıllık gelirin iş modeline özgü çarpanıyla değerlenmesi. SaaS için 8-13x, Fintech için 9-11x, Hizmet için 2-3x gibi sektöre göre değişir.</span><span data-en>Annual revenue valued by a business model-specific multiplier. Varies by sector: 8-13x for SaaS, 9-11x for Fintech, 2-3x for Service.</span></div><span class="method-stage" style="background:#EEEDFE;color:#3C3489;">Early Growth · Growth</span></div>
+      <div class="method-card"><div class="method-name">VC Method</div><div class="method-desc"><span data-tr>Yatırımcının beklenen getiri oranına (10-30x) göre geriye doğru hesaplama. Öngörülen çıkış değeri ve dilüsyon üzerinden pre-money değerleme üretir.</span><span data-en>Backward calculation based on investor's expected return rate (10-30x). Generates pre-money valuation from projected exit value and dilution.</span></div><span class="method-stage" style="background:#EEEDFE;color:#3C3489;">Growth · Scale-up</span></div>
+      <div class="method-card"><div class="method-name">DCF (İndirgenmiş Nakit Akışı)</div><div class="method-desc"><span data-tr>Gelecekteki nakit akışlarının bugünkü değere indirgenmesi. Güvenilir gelir projeksiyonu olan olgun girişimler için uygundur.</span><span data-en>Discounting future cash flows to present value. Suitable for mature startups with reliable revenue projections.</span></div><span class="method-stage" style="background:#E6F1FB;color:#0C447C;">Scale-up · Late Stage</span></div>
+      <div class="method-card"><div class="method-name">Market Size (TAM/SAM)</div><div class="method-desc"><span data-tr>Toplam adreslenebilir pazar ve gerçekçi erişim oranından değerleme potansiyeli hesaplanır. Özellikle potansiyel değer bileşeninde kullanılır.</span><span data-en>Valuation potential is calculated from total addressable market and realistic reach rate. Particularly used in the potential value component.</span></div><span class="method-stage" style="background:#F1EFE8;color:#5F5E5A;">Tüm Aşamalar</span></div>
+      <div class="method-card"><div class="method-name">Traction-Based</div><div class="method-desc"><span data-tr>Müşteri sayısı, büyüme oranı ve aylık tekrar eden gelir (MRR) gibi kanıtlanmış traction metriklerine dayalı değerleme. Ürün-pazar uyumunu ölçer.</span><span data-en>Valuation based on proven traction metrics like customer count, growth rate and monthly recurring revenue (MRR). Measures product-market fit.</span></div><span class="method-stage" style="background:#E1F5EE;color:#0F6E56;">Early Growth · Growth</span></div>
+    </div>
+    <div style="background:#F5F4EF;border-radius:10px;padding:14px;margin-top:16px;">
+      <div style="font-size:12px;font-weight:600;color:#1C2535;margin-bottom:6px;"><span data-tr>Akıllı Ağırlıklandırma Modeli</span><span data-en>Intelligent Weighting Model</span></div>
+      <div style="font-size:12px;color:#666;line-height:1.6;"><span data-tr>Valunorth, her değerleme için girişimin aşamasını ve iş modelini analiz ederek en uygun 3-5 metodu seçer ve bunları ağırlıklı olarak birleştirir. Örneğin bir Seed aşaması AI/SaaS girişimi için Berkus (%25), Scorecard (%30), Risk Factor (%20), Revenue Multiple (%15) ve Market Size (%10) ağırlıkları otomatik uygulanabilir. Bu ağırlıklar, Türkiye ekosistemindeki gerçek vaka verileriyle kalibre edilmiştir.</span><span data-en>For each valuation, Valunorth analyzes the startup's stage and business model to select the most appropriate 3-5 methods and combines them with weighting. For example, for a Seed-stage AI/SaaS startup, weights like Berkus (25%), Scorecard (30%), Risk Factor (20%), Revenue Multiple (15%) and Market Size (10%) can be automatically applied. These weights are calibrated with real case data from the Turkish ecosystem.</span></div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
@@ -898,19 +1064,18 @@ body.lang-tr [data-en]{display:none;}
       <div>
         <div class="footer-col-title"><span data-tr>Ürün</span><span data-en>Product</span></div>
         <div class="footer-links">
-          <a href="startup_valuation_v10.html" class="footer-link"><span data-tr>Değerleme Aracı</span><span data-en>Valuation Tool</span></a>
+          <a href="startup_valuation_v10.html" class="footer-link"><span data-tr>Ücretsiz Değerleme</span><span data-en>Free Valuation</span></a>
           <a href="#how" class="footer-link"><span data-tr>Nasıl Çalışır</span><span data-en>How It Works</span></a>
           <a href="#pricing" class="footer-link"><span data-tr>Fiyatlandırma</span><span data-en>Pricing</span></a>
-          <a href="#" class="footer-link"><span data-tr>Örnek Rapor</span><span data-en>Sample Report</span></a>
+          <a href="#investors" class="footer-link"><span data-tr>Yatırımcı Portalı</span><span data-en>Investor Portal</span></a>
         </div>
       </div>
       <div>
         <div class="footer-col-title"><span data-tr>Kaynaklar</span><span data-en>Resources</span></div>
         <div class="footer-links">
           <a href="#blog" class="footer-link">Blog</a>
-          <a href="#" class="footer-link"><span data-tr>Değerleme Metodları</span><span data-en>Valuation Methods</span></a>
-          <a href="#" class="footer-link"><span data-tr>Ekosistem Verileri</span><span data-en>Ecosystem Data</span></a>
-          <a href="#" class="footer-link">FAQ</a>
+          <a href="#" class="footer-link" onclick="openMethodsModal();return false;"><span data-tr>Değerleme Metodları</span><span data-en>Valuation Methods</span></a>
+          <a href="#faq" class="footer-link"><span data-tr>Sık Sorulan Sorular</span><span data-en>FAQ</span></a>
         </div>
       </div>
       <div>
@@ -935,6 +1100,23 @@ body.lang-tr [data-en]{display:none;}
 </footer>
 
 <script>
+
+function toggleFaq(el) {
+  el.classList.toggle('open');
+  const ans = el.nextElementSibling;
+  ans.classList.toggle('open');
+}
+function openMethodsModal() {
+  document.getElementById('methods-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMethodsModal(e) {
+  if(!e || e.target === document.getElementById('methods-modal-overlay')) {
+    document.getElementById('methods-modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
 function setLang(l){
   document.body.className='lang-'+l;
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
