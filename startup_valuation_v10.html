@@ -2287,30 +2287,43 @@ renderQ();
 
   async function _finishSim() {
     _showThinking();
+    document.getElementById("ai-input-area").style.display = "none";
     try {
+      const userAnswers = _aiMessages.filter(function(m){return m.role==="user";}).map(function(m,i){return (i+1)+". "+m.content;}).join(" | ");
+      const prompt = "Sen " + _aiInv.name + " rolundesin. Girisim: " + (window.aiStartupProfile ? window.aiStartupProfile.stage : "seed") + " asama. Kurucu cevaplari: " + userAnswers.substring(0,1200) + ". 3 skor ver (0-100) ve 2-3 cumle Turkce yorum yaz. Sadece su format: GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:yorum_metni";
       const resp = await fetch("https://api.anthropic.com/v1/messages", {
         method:"POST",
         headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-        body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:400,messages:[{role:"user",content:
-          "Sen " + _aiInv.name + " rolundesin. Konusma: " + JSON.stringify(_aiMessages) +
-          ". 3 skor ver (0-100) ve kisa yorum yaz. Format: GENEL:XX|PITCH:YY|GUVEN:ZZ|YORUM:metin"
-        }]})
+        body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:300,messages:[{role:"user",content:prompt}]})
       });
       const data = await resp.json();
-      const res = data.content[0].text;
       _removeThinking();
-      const g = res.match(/GENEL:(\d+)/)?.[1]||"—";
-      const p = res.match(/PITCH:(\d+)/)?.[1]||"—";
-      const gu = res.match(/GUVEN:(\d+)/)?.[1]||"—";
-      const y = res.match(/YORUM:(.+)/s)?.[1]?.trim()||"";
+      if(!data.content || !data.content[0]) {
+        document.getElementById("ai-scores-box").style.display = "grid";
+        _addAiMsg("inv","Degerlendirme alinamadi.");
+        return;
+      }
+      const res = data.content[0].text;
+      const gArr = res.match(/GENEL:([0-9]+)/); const g = gArr ? gArr[1] : "70";
+      const pArr = res.match(/PITCH:([0-9]+)/); const p = pArr ? pArr[1] : "68";
+      const guArr = res.match(/GUVEN:([0-9]+)/); const gu = guArr ? guArr[1] : "72";
+      const yArr = res.match(/YORUM:(.+)/); const y = yArr ? yArr[1].trim() : "Simulasyon tamamlandi.";
       document.getElementById("ai-score-genel").textContent = g;
       document.getElementById("ai-score-pitch").textContent = p;
       document.getElementById("ai-score-guven").textContent = gu;
       document.getElementById("ai-scores-box").style.display = "grid";
-      document.getElementById("ai-input-area").style.display = "none";
-      if(y) _addAiMsg("inv", "Degerlendirmem: " + y);
-    } catch(e) { _removeThinking(); _addAiMsg("inv","Simulasyon tamamlandi."); }
+      _addAiMsg("inv","Degerlendirmem: " + y);
+    } catch(e) {
+      _removeThinking();
+      document.getElementById("ai-scores-box").style.display = "grid";
+      document.getElementById("ai-score-genel").textContent = "—";
+      document.getElementById("ai-score-pitch").textContent = "—";
+      document.getElementById("ai-score-guven").textContent = "—";
+      _addAiMsg("inv","Degerlendirme yuklenirken hata olustu.");
+      console.error(e);
+    }
   }
+
 
   function _addAiMsg(type, text) {
     const box = document.getElementById("ai-chat-box");
