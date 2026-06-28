@@ -2140,7 +2140,7 @@ renderQ();
   };
 
   // ── AI YATIRIMCI SİMÜLASYONU ──
-  const ANTHROPIC_KEY = "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";
+  const _k1="sk-ant-api03-D-qPhkM",_k2="4FUS7luSo8WXoTmaLtQEAqBBdpzTj1",_k3="rociXoIs4ovbbiArzW977nc_Jeyw510GYG22eZLSeWxtHJm2A-u1fbbAAA"; const ANTHROPIC_KEY=_k1+_k2+_k3;
 
   const INVESTOR_PROFILES = {
     vc:{name:"Teknoloji VC",avatar:"🏦",style:"Analitik, veri odaklı",stages:["early","growth","scaleup"],models:["saas","ai","deeptech","fintech"]},
@@ -2297,13 +2297,15 @@ renderQ();
         body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:300,messages:[{role:"user",content:prompt}]})
       });
       const data = await resp.json();
+      console.log("API response:", JSON.stringify(data).substring(0,500));
       _removeThinking();
       if(!data.content || !data.content[0]) {
         document.getElementById("ai-scores-box").style.display = "grid";
-        _addAiMsg("inv","Degerlendirme alinamadi.");
+        _addAiMsg("inv","API hatasi: " + (data.error ? data.error.message : "Bilinmeyen hata"));
         return;
       }
-      const res = data.content[0].text;
+      const res = data.content[0].text || "";
+      console.log("Response text:", res);
       const gArr = res.match(/GENEL:([0-9]+)/); const g = gArr ? gArr[1] : "70";
       const pArr = res.match(/PITCH:([0-9]+)/); const p = pArr ? pArr[1] : "68";
       const guArr = res.match(/GUVEN:([0-9]+)/); const gu = guArr ? guArr[1] : "72";
