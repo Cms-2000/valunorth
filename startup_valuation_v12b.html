@@ -14,14 +14,14 @@
   <h2 style="font-size:1.4rem;font-weight:600;color:#1C2535;margin-bottom:.5rem;">Değerlemenizi Nasıl Başlatmak İstersiniz?</h2>
   <p style="color:#888;font-size:.95rem;margin-bottom:2rem;">İki yöntem de aynı kapsamlı raporu üretir.</p>
   <div style="max-width:480px;margin:0 auto;">
-    <button class="start-choice-btn manual" onclick="chooseManual()">
+    <button class="start-choice-btn manual" onclick="document.getElementById('start-card').style.display='none';document.getElementById('quiz-card').style.display='block';document.getElementById('quiz-card').style.removeProperty('display');var q=document.getElementById('quiz-card');q.style.display='block';if(typeof renderQ==='function')renderQ();window.scrollTo(0,0);">
       <span style="font-size:1.75rem;flex-shrink:0;">📝</span>
       <div>
         <div style="font-weight:700;color:#1C2535;font-size:1rem;margin-bottom:.25rem;">Soruları Kendim Cevaplayacağım</div>
         <div style="color:#888;font-size:.875rem;">25 soruluk akıllı anket — yaklaşık 7 dakika.</div>
       </div>
     </button>
-    <button class="start-choice-btn pitch" onclick="choosePitchDeck()">
+    <button class="start-choice-btn pitch" onclick="if(typeof choosePitchDeck==='function'){choosePitchDeck();}else{alert('Lütfen sayfayı yenileyin.');}">
       <span style="font-size:1.75rem;flex-shrink:0;">📊</span>
       <div>
         <div style="font-weight:700;color:#534AB7;font-size:1rem;margin-bottom:.25rem;">Yatırım Sunumumu Yükleyeyim <span style="background:#534AB7;color:#fff;font-size:.7rem;padding:2px 7px;border-radius:20px;margin-left:4px;">PLUS</span></div>
