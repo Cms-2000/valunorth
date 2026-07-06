@@ -624,7 +624,15 @@ body{padding-top:44px;}
       </div>
     </div>
 
-    <div class="action-row">
+    <div style="background:linear-gradient(135deg,#1C2535,#2E3D55);border-radius:12px;padding:24px 28px;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+  <div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px;">Pro Paket — ₺7.500/yıl</div>
+    <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:4px;">AI Yatırımcı Simülasyonu & Pitch Deck Analizi</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);">Pitch sürecinizi test edin · Sunumunuzu puanlayın · Yatırıma hazırlanın</div>
+  </div>
+  <button onclick="openPlusModal()" style="background:#5DCAA5;color:#04342C;border:none;border-radius:99px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Pro'ya Geç →</button>
+</div>
+<div class="action-row">
       <button class="btn-pdf" onclick="doPrint()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         PDF Olarak Kaydet
@@ -1048,7 +1056,7 @@ function getScenarioPool(val,sc){
   {
     const priority = sc.tr<40 ? 95 : sc.tr<65 ? 70 : 40;
     const targetRev=Math.max(r3*2,50000);
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#534AB7",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#534AB7",
       `Geliri %30 Artırmak — ${sg==="b2b"?"B2B Outreach":"Performance Pazarlama"} Hızlandırması`,
       `${mn} modelinde ${sg==="b2b"?"LinkedIn ve doğrudan satış":"Meta/Google performance reklam"} kanalına yatırım yaparak 3 ayda ${newCust3m} yeni müşteri edinmek. Mevcut ${cust} müşteriye ek olarak toplam ${cust+newCust3m} müşteri tabanına ulaşmak hedefleniyor.`,
       "+%30–50 değerleme","3 ay","Orta",
@@ -1066,7 +1074,7 @@ function getScenarioPool(val,sc){
   {
     const noTech = tm<=2 && m!=="service";
     const priority = noTech ? 90 : sc.tm<50 ? 65 : 30;
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#1D9E75",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#1D9E75",
       noTech?"Teknik Kurucu Eklemek (Öncelikli)":"Kıdemli CTO ile Teknik Liderliği Güçlendirmek",
       `${mn} şirketinde ${noTech?"teknik kurucunun olmaması yatırımcı iskontosunu %20–30 artırıyor":"teknik liderliği güçlendirmek ürün hızını ve değerleme çarpanını artırır"}. Hisse karşılığı (%5–15) veya maaş+hisse kombinasyonuyla deneyimli teknik profil eklemek en etkili adımlardan biri.`,
       "+%20–30 değerleme","1–3 ay (arama)","Yüksek",
@@ -1085,7 +1093,7 @@ function getScenarioPool(val,sc){
     const priority = prodStage<=3 ? 80 : prodStage===4 ? 55 : 35;
     const prodTitle = prodStage<=2?"MVP'den Ticari Ürüne Geçiş":prodStage<=3?"Beta'dan Lansmana: Ürün Olgunlaştırma":"Ürün Derinleştirme & Yeni Gelir Özellikleri";
     const prodDesc = prodStage<=2?`MVP aşamasından ödeme yapan müşteri kazanabilecek ticari ürüne geçmek. İlk ödeme kanıtı olmadan değerleme tavanı düşük kalır.`:prodStage<=3?`Beta kullanıcı geri bildirimlerini ürüne yansıtarak ticari lansmana hazırlanmak. Bu adım traction'ı ve değerleme güvenilirliğini artırır.`:`Mevcut ürüne upsell veya cross-sell fırsatı yaratan yeni özellikler eklemek. LTV artışı değerleme çarpanını doğrudan etkiler.`;
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#BA7517",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#BA7517",
       prodTitle, prodDesc,
       "+%15–25 değerleme","2–4 ay","Orta-Yüksek",
       [
@@ -1101,7 +1109,7 @@ function getScenarioPool(val,sc){
   // Öncelik: deeptech veya moat düşükse yüksek
   {
     const priority = m==="deeptech"?85 : moat<=2?72 : diff>=3?50:35;
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#E24B4A",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#E24B4A",
       "IP Koruma: Patent, Marka Tescili & Hukuki Altyapı",
       `${m==="deeptech"?"Teknoloji patenti":"Yazılım tescili ve marka koruması"} ile ürününüzü rakip kopyalamasına karşı korumak. Moat skorunu artıran en düşük maliyetli ve en kalıcı adım. Yatırımcılar IP varlığını değerleme priminde değerlendirir.`,
       "+%15–25 değerleme (moat artışı)","3–6 ay (yasal süreç)","Düşük",
@@ -1118,7 +1126,7 @@ function getScenarioPool(val,sc){
   // Öncelik: B2B ve erken aşamada yüksek; B2C e-ticarette daha düşük
   {
     const priority = sg==="b2b"&&sc.tr<70?65 : sg==="b2c"&&m==="ecommerce"?40 : 55;
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#0C447C",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#0C447C",
       "İçerik Pazarlama, SEO & Organik Büyüme Motoru",
       `${sg==="b2b"?"Karar vericilerin":"Hedef kitlenin"} aradığı içerikleri üretmek ve organik trafik kanalını kurmak. 6–12 ay vadeli yatırım olsa da uzun vadede en düşük CAC'ı ve en sürdürülebilir büyümeyi sağlar.`,
       "+%10–20 değerleme (traction artışı)","6–12 ay","Düşük-Orta",
@@ -1136,7 +1144,7 @@ function getScenarioPool(val,sc){
   {
     const priority = exitS===0&&val.st==="seed"?75 : exitS===0?60 : 30;
     // Versiyon A: Equity Bazlı
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#7C3AED",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#7C3AED",
       "Danışman Kurulu — Equity Modeli (Önerilen)",
       `2–3 deneyimli ismi hisse karşılığı (%0.25–0.5 equity) danışman olarak eklemek. Nakit çıkışı minimum, yatırımcı ağına anında erişim. İlk kez kurucu için en verimli seçenek. Neden öneriyoruz: Erken aşamada nakit korurken değerleme primini yakalar; doğru danışman 1 yatırımcı bağlantısıyla tüm maliyeti fazlasıyla geri öder.`,
       "+%10–15 değerleme","1–2 ay","Düşük",
@@ -1148,7 +1156,7 @@ function getScenarioPool(val,sc){
       ],
       "Doğru danışman = sektör uzmanlığı + aktif yatırımcı ağı + zaman ayırabilme kapasitesi. Equity vermeden önce referans kontrolü kritik.",28)});
     // Versiyon B: Ücretli Danışman
-    pool.push({priority:priority-5, card:()=>buildScenarioCard("__NUM__","#5B21B6",
+    pool.push({priority:priority-5, card:()=>buildScenarioCard(n,"#5B21B6",
       "Danışman Kurulu — Ücretli Model (Bütçe Gerektiren)",
       `Deneyimli sektör danışmanına aylık ücret + hukuki destek ile çalışmak. Equity vermek istemeyenler veya çok spesifik uzmanlık gerektiren durumlar için uygun. Nakit yükü yüksek ama sahiplik korunur.`,
       "+%10–15 değerleme","3 ay","Orta",
@@ -1165,7 +1173,7 @@ function getScenarioPool(val,sc){
   // Öncelik: growth/scaleup aşamasında ve CAC bilinmiyorsa yüksek
   {
     const priority = (val.st==="growth"||val.st==="scaleup")&&cacAware<2?80 : cacAware<1?70 : sc.fin<50?60:40;
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#BE185D",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#BE185D",
       "Birim Ekonomisini Optimize Etmek (CAC ↓ · LTV ↑)",
       `CAC'ı düşürmek ve LTV'yi artırmak değerleme çarpanını doğrudan etkiler. LTV/CAC > 3 yatırımcıların aradığı birim ekonomisi kanıtıdır. Churn oranını %1 düşürmek LTV'yi %10–15 artırır.`,
       "+%20–35 değerleme (çarpan artışı)","3–6 ay","Orta",
@@ -1182,7 +1190,7 @@ function getScenarioPool(val,sc){
   // Öncelik: büyük pazar + iyi traction varsa yüksek; erken aşamada düşük
   {
     const priority = mkt>=3&&sc.tr>=50&&(val.st==="growth"||val.st==="scaleup")?75 : mkt>=2&&sc.tr>=40?50:25;
-    pool.push({priority, card:()=>buildScenarioCard("__NUM__","#065F46",
+    pool.push({priority, card:(n)=>buildScenarioCard(n,"#065F46",
       "İlk Uluslararası Pazar Açılımı (MENA / Doğu Avrupa)",
       `Türkiye'de kanıtlanan modeli MENA veya Doğu Avrupa'ya taşımak. "Global potansiyel" değerleme primini kazanmak ve pazar büyüklüğü skorunu artırmak hedefleniyor. İlk uluslararası müşteri veya LOI değerlemeyi pratikte artırır.`,
       "+%25–45 değerleme (pazar priemi)","6–12 ay","Yüksek",
@@ -1201,7 +1209,7 @@ function getScenarioPool(val,sc){
   {
     const priority = runway<=2?92 : runway===3?55:20;
     if(priority>=45){
-      pool.push({priority, card:()=>buildScenarioCard("__NUM__","#92400E",
+      pool.push({priority, card:(n)=>buildScenarioCard(n,"#92400E",
         runway<=2?"Acil: Nakit Akışını Stabilize Etmek":"Finansal Sağlığı Güçlendirmek & Runway Uzatmak",
         runway<=2?`${["3 aydan az","3–6 ay"][runway-1]||"kısa"} runway ciddi operasyonel risk. Yeni yatırım bulmadan önce burn rate'i düşürmek veya hızla gelir üretmek öncelikli olmalı.`:`Mevcut runway'i 12+ aya uzatmak hem operasyonel rahatlık hem yatırımcı güveni açısından kritik. Bu adım diğer tüm senaryoların uygulanabilirliğini artırır.`,
         runway<=2?"+Hayatta kalma (öncelikli)":"+%10–15 değerleme","1–3 ay","Yüksek",
@@ -1219,7 +1227,7 @@ function getScenarioPool(val,sc){
   const universal=[];
 
   // U1: Marka & İletişim
-  universal.push({card:()=>buildScenarioCard("__NUM__","#444441",
+  universal.push({card:(n)=>buildScenarioCard(n,"#444441",
     "Marka Kimliği & Dijital Varlık Oluşturmak",
     `Güçlü marka kimliği ve tutarlı dijital varlık (web sitesi, LinkedIn, içerik) her aşamada değerlemeyi destekler. Yatırımcılar ilk araştırmayı dijitalde yapıyor; profesyonel görünüm güven oluşturur.`,
     "+%8–15 değerleme (itibar priemi)","1–2 ay","Düşük",
@@ -1232,7 +1240,7 @@ function getScenarioPool(val,sc){
     "Marka yatırımı doğrudan gelir getirmez ama yatırımcı ilk izlenimini belirler. Seed aşamasında dahi göz ardı edilmemeli.",20,"mo")});
 
   // U2: Hukuki Temel & Şirket Yapısı
-  universal.push({card:()=>buildScenarioCard("__NUM__","#2E3D55",
+  universal.push({card:(n)=>buildScenarioCard(n,"#2E3D55",
     "Hukuki Altyapıyı Güçlendirmek & Yatırıma Hazır Şirket Yapısı",
     `Yatırımcılar due diligence sürecinde şirket belgelerini, ortaklık yapısını ve sözleşmeleri inceler. Eksik veya hatalı hukuki altyapı yatırım sürecini durdurur veya değerlemeyi aşağı çeker.`,
     "+%10–20 değerleme (risk azaltma)","1–2 ay","Düşük",
@@ -1255,7 +1263,7 @@ function getScenarioPool(val,sc){
       <div class="scenario-section-title" style="color:#534AB7;">Öncelikli Senaryolar — Profilinize Özel</div>
       <div class="scenario-section-sub">Girişiminizin aşaması, skoru ve hedefi analiz edilerek öncelik sırasıyla seçilmiştir</div>
     </div>
-    ${priority6.map((item,i)=>item.card().replace('"__NUM__"',String(i+1))).join("")}`;
+    ${priority6.map((item,i)=>item.card(i+1)).join("")}`;
 
   // Evrensel bölüm
   const universalSection=`
@@ -1263,7 +1271,7 @@ function getScenarioPool(val,sc){
       <div class="scenario-section-title" style="color:#0F6E56;">Her Aşamada Geçerli Fırsatlar</div>
       <div class="scenario-section-sub">Hangi aşamada olursa olsun değerlemeyi ve yatırıma hazırlığı artıran evrensel adımlar</div>
     </div>
-    ${universal2.map((item,i)=>item.card().replace('"__NUM__"',String(i+7))).join("")}`;
+    ${universal2.map((item,i)=>item.card(i+7)).join("")}`;
 
   return prioritySection+universalSection;
 }
