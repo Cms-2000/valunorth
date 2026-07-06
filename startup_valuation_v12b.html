@@ -14,14 +14,14 @@
   <h2 style="font-size:1.4rem;font-weight:600;color:#1C2535;margin-bottom:.5rem;">Değerlemenizi Nasıl Başlatmak İstersiniz?</h2>
   <p style="color:#888;font-size:.95rem;margin-bottom:2rem;">İki yöntem de aynı kapsamlı raporu üretir.</p>
   <div style="max-width:480px;margin:0 auto;">
-    <button class="start-choice-btn manual" onclick="chooseManual()">
+    <button class="start-choice-btn manual" onclick="document.getElementById('start-card').style.display='none';document.getElementById('quiz-card').style.display='block';renderQ();window.scrollTo(0,0);">
       <span style="font-size:1.75rem;flex-shrink:0;">📝</span>
       <div>
         <div style="font-weight:700;color:#1C2535;font-size:1rem;margin-bottom:.25rem;">Soruları Kendim Cevaplayacağım</div>
         <div style="color:#888;font-size:.875rem;">25 soruluk akıllı anket — yaklaşık 7 dakika.</div>
       </div>
     </button>
-    <button class="start-choice-btn pitch" onclick="choosePitchDeck()">
+    <button class="start-choice-btn pitch" onclick="var u=typeof auth!=='undefined'&&auth.currentUser;if(!u){openAuthModal('login');}else{db.collection('users').doc(u.uid).get().then(function(s){if(s.exists&&s.data().level==='plus'){document.getElementById('start-card').style.display='none';document.getElementById('pitch-upload-card').style.display='block';window.scrollTo(0,0);}else{alert('Bu özellik Plus paketinde mevcuttur.');}});}">
       <span style="font-size:1.75rem;flex-shrink:0;">📊</span>
       <div>
         <div style="font-weight:700;color:#534AB7;font-size:1rem;margin-bottom:.25rem;">Yatırım Sunumumu Yükleyeyim <span style="background:#534AB7;color:#fff;font-size:.7rem;padding:2px 7px;border-radius:20px;margin-left:4px;">PLUS</span></div>
