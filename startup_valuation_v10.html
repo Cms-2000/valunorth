@@ -603,10 +603,10 @@ body{padding-top:44px;}
       <div class="ai-sim-lock" id="ai-sim-lock-box">
         <span style="font-size:24px;">🔒</span>
         <div>
-          <div class="ai-sim-lock-text" style="font-weight:600;color:rgba(255,255,255,0.8);">Plus paketinde açılır</div>
-          <div class="ai-sim-lock-text">₺5.000 · Tek seferlik · 1 yıl erişim</div>
+          <div class="ai-sim-lock-text" style="font-weight:600;color:rgba(255,255,255,0.8);">Pro paketinde açılır</div>
+          <div class="ai-sim-lock-text">₺7.500 · Yıllık erişim</div>
         </div>
-        <button class="lock-btn" style="margin-left:auto;white-space:nowrap;" onclick="openPlusModal()">Plus'a Geç →</button>
+        <button class="lock-btn" style="margin-left:auto;white-space:nowrap;" onclick="openPlusModal()">Pro'ya Geç →</button>
       </div>
       <!-- Aktif simülasyon (Plus kullanıcı) -->
       <div id="ai-sim-active" style="display:none;" class="ai-sim-active">
@@ -1876,7 +1876,7 @@ renderQ();
     return `<div class="lock-overlay">
       <div class="lock-icon">🔒</div>
       <div class="lock-title">Plus paketine özel içerik</div>
-      <div class="lock-sub">₺5.000 · Tek seferlik · 1 yıl erişim</div>
+      <div class="lock-sub">₺4.000 · Yıllık erişim</div>
       <button class="lock-btn lock-btn-green" onclick="openPlusModal()">Plus'a Geç →</button>
     </div>`;
   }
@@ -1921,7 +1921,7 @@ renderQ();
   };
 
   window.openPlusModal = function() {
-    alert("Yakinda! Odeme sistemi tamamlaninca Plus paketi aktif olacak. Bilgi: hello@valunorth.com");
+    alert("Plus paketi (₺4.000/yıl) ve Pro paketi (₺7.500/yıl) için hello@valunorth.com adresine yazın veya valunorth.com adresini ziyaret edin. paketi aktif olacak. Bilgi: hello@valunorth.com");
   };
 
   // ── KULLANICI PROFİLİ ──
