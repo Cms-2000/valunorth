@@ -43,8 +43,7 @@
     document.getElementById('btn-manual').addEventListener('click', function() {
       document.getElementById('start-card').style.display = 'none';
       document.getElementById('quiz-card').style.display = 'block';
-      renderQ();
-      window.scrollTo(0,0);
+      setTimeout(function(){ renderQ(); window.scrollTo(0,0); }, 50);
     });
     document.getElementById('btn-pitch').addEventListener('click', function() {
       if(typeof choosePitchDeck === 'function') choosePitchDeck();
