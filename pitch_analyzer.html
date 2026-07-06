@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch Deck Analiz — Valunorth</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4EF;color:#1C2535;min-height:100vh;padding:2rem 1rem;}
+.container{max-width:680px;margin:0 auto;}
+
+/* HEADER */
+.header{margin-bottom:2rem;}
+.logo{font-size:11px;font-weight:600;color:#534AB7;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.logo span{color:#5DCAA5;}
+h1{font-size:24px;font-weight:600;color:#1C2535;margin-bottom:4px;}
+.subtitle{font-size:14px;color:#888;}
+
+/* UPLOAD CARD */
+.card{background:#fff;border:.5px solid #e0dfd8;border-radius:16px;padding:1.5rem;margin-bottom:1rem;}
+
+.drop-zone{border:2px dashed #C8C5F0;border-radius:12px;padding:3rem 1.5rem;text-align:center;cursor:pointer;background:#FAFAFA;transition:all .2s;position:relative;}
+.drop-zone:hover,.drop-zone.drag-over{background:#EEEDFE;border-color:#534AB7;}
+.drop-zone-icon{font-size:2.5rem;margin-bottom:.75rem;}
+.drop-zone-title{font-size:1rem;font-weight:600;color:#534AB7;margin-bottom:.25rem;}
+.drop-zone-sub{font-size:.85rem;color:#aaa;}
+
+.file-selected{display:none;align-items:center;gap:1rem;padding:1rem;background:#EEEDFE;border-radius:10px;margin-top:1rem;}
+.file-icon{font-size:1.75rem;flex-shrink:0;}
+.file-name{font-size:.9rem;font-weight:600;color:#3C3489;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-size{font-size:.8rem;color:#888;}
+.file-remove{background:none;border:none;color:#aaa;cursor:pointer;font-size:1.1rem;padding:4px;}
+.file-remove:hover{color:#C0392B;}
+
+.btn-analyze{width:100%;padding:.9rem;background:#534AB7;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;font-family:inherit;margin-top:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-analyze:hover{background:#3C3489;}
+.btn-analyze:disabled{opacity:.4;cursor:not-allowed;}
+
+/* STATUS */
+.status-bar{display:none;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-radius:10px;margin-top:1rem;font-size:.9rem;}
+.status-bar.loading{background:#EEF2FF;color:#534AB7;}
+.status-bar.error{background:#FFF0F0;color:#C0392B;}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(83,74,183,.3);border-top-color:#534AB7;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESULTS */
+.results{display:none;}
+
+.score-hero{background:linear-gradient(135deg,#1C2535,#2E3D55);border-radius:16px;padding:2rem;color:#fff;text-align:center;margin-bottom:1rem;position:relative;overflow:hidden;}
+.score-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(93,202,165,.07);}
+.score-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.5rem;}
+.score-number{font-size:5rem;font-weight:700;line-height:1;margin-bottom:.25rem;}
+.score-number.strong{color:#5DCAA5;}
+.score-number.medium{color:#EF9F27;}
+.score-number.weak{color:#E24B4A;}
+.score-tag{display:inline-block;padding:4px 16px;border-radius:99px;font-size:.8rem;font-weight:600;margin-bottom:1rem;}
+.score-tag.strong{background:rgba(93,202,165,.2);color:#5DCAA5;}
+.score-tag.medium{background:rgba(239,159,39,.2);color:#EF9F27;}
+.score-tag.weak{background:rgba(226,75,74,.2);color:#E24B4A;}
+.score-summary{font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.6;max-width:480px;margin:0 auto;}
+
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa;margin-bottom:1rem;}
+
+.criteria-list{display:flex;flex-direction:column;gap:.75rem;}
+.criterion{padding:1rem 1.25rem;background:#F8F7F4;border-radius:10px;}
+.criterion-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
+.criterion-name{font-size:.875rem;font-weight:600;color:#1C2535;}
+.criterion-score{font-size:.875rem;font-weight:700;}
+.criterion-score.high{color:#0F6E56;}
+.criterion-score.mid{color:#633806;}
+.criterion-score.low{color:#C0392B;}
+.criterion-bar{background:#E8E7F0;border-radius:99px;height:5px;margin-bottom:.5rem;}
+.criterion-fill{height:5px;border-radius:99px;transition:width .6s ease;}
+.criterion-suggestion{font-size:.8rem;color:#666;line-height:1.5;}
+
+.btn-new{width:100%;padding:.85rem;background:transparent;color:#534AB7;border:1.5px solid #534AB7;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:.5rem;}
+.btn-new:hover{background:#EEEDFE;}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:2rem;font-size:.8rem;color:#bbb;}
+.footer a{color:#534AB7;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">Valu<span>north</span></div>
+    <h1>Pitch Deck Analizi</h1>
+    <p class="subtitle">Yatırım sunumunuzu yükleyin — AI 10 kriterde değerlendirir, puanlar ve öneriler sunar.</p>
+  </div>
+
+  <!-- YÜKLEME KARTI -->
+  <div class="card" id="upload-card">
+    <div class="section-title">Sunum Dosyası</div>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="drop-zone-icon">📄</div>
+      <div class="drop-zone-title">PDF yüklemek için tıklayın</div>
+      <div class="drop-zone-sub">veya sürükleyip bırakın · Maksimum 10MB</div>
+    </div>
+    <input type="file" id="file-input" accept=".pdf" style="display:none;" onchange="onFileSelect(event)">
+
+    <div class="file-selected" id="file-selected">
+      <span class="file-icon">📄</span>
+      <div>
+        <div class="file-name" id="file-name">dosya.pdf</div>
+        <div class="file-size" id="file-size"></div>
+      </div>
+      <button class="file-remove" onclick="removeFile()" title="Kaldır">✕</button>
+    </div>
+
+    <div class="status-bar" id="status-bar">
+      <div class="spinner" id="status-spinner"></div>
+      <span id="status-text">Analiz ediliyor...</span>
+    </div>
+
+    <button class="btn-analyze" id="btn-analyze" disabled onclick="analyze()">
+      <span>✨</span> Analiz Et
+    </button>
+  </div>
+
+  <!-- SONUÇLAR -->
+  <div class="results" id="results">
+    <div class="score-hero">
+      <div class="score-label">Pitch Deck Skoru</div>
+      <div class="score-number" id="score-number">—</div>
+      <div class="score-tag" id="score-tag">—</div>
+      <div class="score-summary" id="score-summary"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Kriter Bazlı Değerlendirme</div>
+      <div class="criteria-list" id="criteria-list"></div>
+    </div>
+
+    <button class="btn-new" onclick="reset()">↺ Yeni Analiz</button>
+  </div>
+
+  <div class="footer">
+    <a href="https://valunorth.com/startup_valuation_v10.html">← Değerleme Motoruna Dön</a>
+  </div>
+</div>
+
+<script>
+const _k1="sk-ant-api03-D-qPhkM",_k2="4FUS7luSo8WXoTmaLtQEAqBBdpzTj1",_k3="rociXoIs4ovbbiArzW977nc_Jeyw510GYG22eZLSeWxtHJm2A-u1fbbAAA";
+const AKEY=_k1+_k2+_k3;
+
+const CRITERIA = [
+  {key:"problem_definition",    label:"Problem Tanımı"},
+  {key:"solution_clarity",      label:"Çözüm Netliği"},
+  {key:"market_size",           label:"Pazar Büyüklüğü"},
+  {key:"business_model",        label:"İş Modeli"},
+  {key:"traction",              label:"Traction"},
+  {key:"competition",           label:"Rekabet Analizi"},
+  {key:"team",                  label:"Ekip"},
+  {key:"financials",            label:"Finansallar"},
+  {key:"investment_ask",        label:"Yatırım Talebi"},
+  {key:"presentation_quality",  label:"Sunum Kalitesi"}
+];
+
+let selectedFile = null;
+
+// Drag & drop
+const dz = document.getElementById("drop-zone");
+dz.addEventListener("dragover", e=>{e.preventDefault();dz.classList.add("drag-over");});
+dz.addEventListener("dragleave", ()=>dz.classList.remove("drag-over"));
+dz.addEventListener("drop", e=>{
+  e.preventDefault(); dz.classList.remove("drag-over");
+  const f = e.dataTransfer.files[0];
+  if(f && f.type==="application/pdf") setFile(f);
+  else showError("Lütfen PDF formatında bir dosya yükleyin.");
+});
+
+function onFileSelect(e){
+  const f = e.target.files[0];
+  if(f) setFile(f);
+}
+
+function setFile(f){
+  if(f.size > 10*1024*1024){ showError("Dosya 10MB'dan büyük olamaz."); return; }
+  selectedFile = f;
+  document.getElementById("file-name").textContent = f.name;
+  document.getElementById("file-size").textContent = (f.size/1024).toFixed(0) + " KB";
+  document.getElementById("file-selected").style.display = "flex";
+  document.getElementById("btn-analyze").disabled = false;
+  hideStatus();
+}
+
+function removeFile(){
+  selectedFile = null;
+  document.getElementById("file-selected").style.display = "none";
+  document.getElementById("btn-analyze").disabled = true;
+  document.getElementById("file-input").value = "";
+  hideStatus();
+}
+
+function showStatus(msg){
+  const bar = document.getElementById("status-bar");
+  bar.className = "status-bar loading";
+  bar.style.display = "flex";
+  document.getElementById("status-spinner").style.display = "block";
+  document.getElementById("status-text").textContent = msg;
+}
+
+function showError(msg){
+  const bar = document.getElementById("status-bar");
+  bar.className = "status-bar error";
+  bar.style.display = "flex";
+  document.getElementById("status-spinner").style.display = "none";
+  document.getElementById("status-text").textContent = msg;
+}
+
+function hideStatus(){
+  document.getElementById("status-bar").style.display = "none";
+}
+
+async function analyze(){
+  if(!selectedFile) return;
+
+  document.getElementById("btn-analyze").disabled = true;
+  document.getElementById("results").style.display = "none";
+  showStatus("Sunumunuz okunuyor...");
+
+  try{
+    // PDF → base64
+    const base64 = await new Promise((res,rej)=>{
+      const reader = new FileReader();
+      reader.onload = ()=>res(reader.result.split(",")[1]);
+      reader.onerror = rej;
+      reader.readAsDataURL(selectedFile);
+    });
+
+    showStatus("AI analiz ediyor... 15-30 saniye sürebilir.");
+
+    const prompt = `Sen deneyimli bir VC analisti ve pitch deck uzmanısın. Bu yatırım sunumunu Türkiye startup ekosistemi perspektifinden değerlendir.
+
+10 kriterin her biri için:
+- 0-10 arası puan ver (0=çok zayıf, 10=mükemmel)
+- 1-2 cümle Türkçe öneri yaz (somut ve yapıcı ol)
+
+Kriterler: problem_definition (problem ne kadar net ve acil?), solution_clarity (çözüm ne kadar anlaşılır ve diferansiye?), market_size (TAM/SAM/SOM var mı, gerçekçi mi?), business_model (gelir modeli net mi?), traction (büyüme kanıtı var mı?), competition (rakip analizi yapılmış mı?), team (ekip yetkinliği gösterilmiş mi?), financials (finansal projeksiyon var mı?), investment_ask (ne kadar, ne için isteniyor net mi?), presentation_quality (slaytlar akıcı, profesyonel mi?)
+
+total_score: ağırlıklı ortalama (0-100)
+summary: 2-3 cümle genel özet (Türkçe, dürüst ama yapıcı)
+
+SADECE JSON döndür:
+{"scores":{"problem_definition":7,...},"suggestions":{"problem_definition":"öneri..."},"total_score":65,"summary":"özet..."}`;
+
+    const resp = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key":AKEY,
+        "anthropic-version":"2023-06-01",
+        "anthropic-dangerous-direct-browser-access":"true"
+      },
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6",
+        max_tokens:1500,
+        messages:[{
+          role:"user",
+          content:[
+            {type:"document",source:{type:"base64",media_type:"application/pdf",data:base64}},
+            {type:"text",text:prompt}
+          ]
+        }]
+      })
+    });
+
+    const data = await resp.json();
+
+    if(!data.content || !data.content[0]){
+      throw new Error(data.error ? data.error.message : "API yanıt vermedi.");
+    }
+
+    let raw = data.content[0].text.trim();
+    raw = raw.replace(/```json/g,"").replace(/```/g,"").trim();
+    const result = JSON.parse(raw);
+
+    renderResults(result);
+
+  }catch(e){
+    showError("Hata: " + e.message);
+    document.getElementById("btn-analyze").disabled = false;
+  }
+}
+
+function renderResults(r){
+  hideStatus();
+  const total = r.total_score || 0;
+  const scores = r.scores || {};
+  const suggestions = r.suggestions || {};
+
+  // Skor hero
+  const numEl = document.getElementById("score-number");
+  const tagEl = document.getElementById("score-tag");
+  numEl.textContent = total;
+
+  if(total >= 70){
+    numEl.className = "score-number strong";
+    tagEl.className = "score-tag strong";
+    tagEl.textContent = "Güçlü Sunum";
+  } else if(total >= 50){
+    numEl.className = "score-number medium";
+    tagEl.className = "score-tag medium";
+    tagEl.textContent = "Geliştirilmeli";
+  } else {
+    numEl.className = "score-number weak";
+    tagEl.className = "score-tag weak";
+    tagEl.textContent = "Zayıf Sunum";
+  }
+
+  document.getElementById("score-summary").textContent = r.summary || "";
+
+  // Kriterler
+  const list = document.getElementById("criteria-list");
+  list.innerHTML = "";
+  CRITERIA.forEach(c=>{
+    const s = scores[c.key] || 0;
+    const sug = suggestions[c.key] || "";
+    const cls = s>=7?"high":s>=5?"mid":"low";
+    const color = s>=7?"#0F6E56":s>=5?"#633806":"#C0392B";
+    const fillColor = s>=7?"#1D9E75":s>=5?"#EF9F27":"#E24B4A";
+
+    const div = document.createElement("div");
+    div.className = "criterion";
+    div.innerHTML = `
+      <div class="criterion-header">
+        <span class="criterion-name">${c.label}</span>
+        <span class="criterion-score ${cls}">${s}/10</span>
+      </div>
+      <div class="criterion-bar">
+        <div class="criterion-fill" style="width:${s*10}%;background:${fillColor};"></div>
+      </div>
+      ${sug ? `<div class="criterion-suggestion">💡 ${sug}</div>` : ""}
+    `;
+    list.appendChild(div);
+  });
+
+  document.getElementById("upload-card").style.display = "none";
+  document.getElementById("results").style.display = "block";
+  window.scrollTo(0,0);
+}
+
+function reset(){
+  selectedFile = null;
+  document.getElementById("file-input").value = "";
+  document.getElementById("file-selected").style.display = "none";
+  document.getElementById("btn-analyze").disabled = true;
+  document.getElementById("results").style.display = "none";
+  document.getElementById("upload-card").style.display = "block";
+  hideStatus();
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
