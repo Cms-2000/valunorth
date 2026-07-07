@@ -1695,8 +1695,8 @@ function renderQ(){
   document.getElementById("btn-next").disabled=sv===undefined;
   document.getElementById("btn-back").style.visibility=cur===0?"hidden":"visible";
 }
-function pick(i){A[Qs[cur].key]=Qs[cur].opts[i].v;document.querySelectorAll(".opt").forEach((b,j)=>b.classList.toggle("selected",j===i));document.getElementById("btn-next").disabled=false;}
-function goNext(){if(cur<Qs.length-1){cur++;renderQ();}else showResult();}
+function pick(i){A[Qs[cur].key]=Qs[cur].opts[i].v;var opts=document.getElementById("q-opts").querySelectorAll(".opt");opts.forEach(function(b,j){b.classList.toggle("selected",j===i);});document.getElementById("btn-next").disabled=false;}
+function goNext(){if(cur<Qs.length-1){cur++;renderQ();}else{document.getElementById("btn-next").disabled=true;showResult();}}
 function goBack(){if(cur>0){cur--;renderQ();}}
 function restart(){A={};cur=0;document.getElementById("result-area").style.display="none";["card-val","card-charts","card-growth","card-scenarios","card-report","card-timeline","card-summary"].forEach(id=>document.getElementById(id).innerHTML="");document.getElementById("quiz-card").style.display="block";renderQ();window.scrollTo(0,0);}
 renderQ();
