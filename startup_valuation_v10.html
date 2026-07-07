@@ -1573,9 +1573,11 @@ function showResult(){
       </div>
     </div>`;
 
-  // Rozet bloğu
-  const badgeEl = buildBadgeBlock(vnScore, si.l);
-  document.getElementById("valunorth-score-area").insertAdjacentElement("afterend", badgeEl);
+  // Rozet bloğu — Plus'a özel
+  if(typeof _userIsPlus !== "undefined" && _userIsPlus) {
+    const badgeEl = buildBadgeBlock(vnScore, si.l);
+    document.getElementById("valunorth-score-area").insertAdjacentElement("afterend", badgeEl);
+  }
 
   // Benchmark ekosistem karşılaştırması
   const benchmarkHTML = `<div class="card" style="margin-bottom:1rem;">
@@ -1883,7 +1885,7 @@ renderQ();
   };
 
   // ── PLUS KİLİT SİSTEMİ ──
-  const LOCKED_SECTIONS = ["card-scenarios","card-timeline","card-summary"];
+  const LOCKED_SECTIONS = ["card-growth","card-scenarios","card-report","card-timeline","card-summary"];
 
   function getLockHTML(isLoggedIn) {
     if(!isLoggedIn) {
@@ -1910,8 +1912,11 @@ renderQ();
         const snap = await db.collection("users").doc(currentUser.uid).get();
         if(snap.exists) {
           const d = snap.data();
-          if(d.level === "plus") {
-            isPlus = true; // Expiry kontrolü iyzico entegrasyonunda yapılacak
+          if(d.level === "plus" || d.level === "pro") {
+            isPlus = true; // Plus ve Pro her ikisi de Plus kilitlerini açar
+          }
+          if(d.level === "pro") {
+            window._userIsPro = true;
           }
         }
       } catch(e) { console.error("Plus kontrol:", e); }
@@ -1936,7 +1941,12 @@ renderQ();
       pdfBtn.style.opacity = "0.5";
     }
 
+    window._userIsPlus = isPlus;
     if(isPlus && window.aiStartupProfile && typeof initAiSim === "function") {
+      initAiSim(window.aiStartupProfile);
+    }
+    // Pro kullanıcısı için AI sim aç
+    if(window._userIsPro && window.aiStartupProfile && typeof initAiSim === "function") {
       initAiSim(window.aiStartupProfile);
     }
   };
