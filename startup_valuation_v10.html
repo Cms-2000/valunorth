@@ -1704,12 +1704,14 @@ function showResult(){
       customers: A.cust,
       revenue3m: A.rev3m
     };
-    // Pro kullanıcısı için AI sim kilidi kaldır
-    if(window._userIsPlus || window._userIsPro) {
-      if(typeof initAiSim === "function") {
-        initAiSim(window.aiStartupProfile);
+    // Pro kullanıcısı için AI sim kilidi kaldır - applyLocks'tan sonra
+    setTimeout(function() {
+      if(window._userIsPlus || window._userIsPro) {
+        if(typeof initAiSim === "function") {
+          initAiSim(window.aiStartupProfile);
+        }
       }
-    }
+    }, 800);
   }
   // Kilitleri uygula
   setTimeout(()=>{ if(typeof applyLocks==="function") applyLocks(); }, 100);
