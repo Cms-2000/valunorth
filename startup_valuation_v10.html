@@ -630,7 +630,7 @@ body{padding-top:44px;}
     <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:4px;">AI Yatırımcı Simülasyonu & Pitch Deck Analizi</div>
     <div style="font-size:13px;color:rgba(255,255,255,.5);">Pitch sürecinizi test edin · Sunumunuzu puanlayın · Yatırıma hazırlanın</div>
   </div>
-  <button onclick="openPlusModal()" style="background:#5DCAA5;color:#04342C;border:none;border-radius:99px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Pro'ya Geç →</button>
+  <button onclick="window.open('https://valunorth.com/pitch_analyzer.html','_blank')" style="background:#5DCAA5;color:#04342C;border:none;border-radius:99px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Analizi Başlat →</button>
 </div>
 <div class="action-row">
       <button class="btn-pdf" onclick="doPrint()">
@@ -1772,6 +1772,20 @@ renderQ();
       document.getElementById("auth-logged-out").style.display = "none";
       document.getElementById("auth-logged-in").style.display = "flex";
       await loadUserProfile(user.uid);
+      // Level kontrolü - direkt burada set et
+      try {
+        const _uSnap = await db.collection("users").doc(user.uid).get();
+        if(_uSnap.exists) {
+          const _uLevel = _uSnap.data().level;
+          if(_uLevel === "plus" || _uLevel === "pro") {
+            window._userIsPlus = true;
+            window._globalIsPlus = true;
+          }
+          if(_uLevel === "pro") {
+            window._userIsPro = true;
+          }
+        }
+      } catch(e) {}
       if(corpData && corpData.account_type === "investor") {
         document.getElementById("auth-user-email").textContent = "Yatırımcı Hesabı";
       } else {
@@ -1996,7 +2010,7 @@ renderQ();
   };
 
   window.openPlusModal = function() {
-    alert("Plus paketi (₺4.000/yıl) ve Pro paketi (₺7.500/yıl) için hello@valunorth.com adresine yazın veya valunorth.com adresini ziyaret edin. paketi aktif olacak. Bilgi: hello@valunorth.com");
+    alert("Plus (₺4.000/yıl) veya Pro (₺7.500/yıl) pakete geçmek için hello@valunorth.com adresine yazın. paketi aktif olacak. Bilgi: hello@valunorth.com");
   };
 
   // ── KULLANICI PROFİLİ ──
