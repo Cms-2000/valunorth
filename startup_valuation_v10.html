@@ -716,12 +716,17 @@ document.getElementById("valunorth-score-area").innerHTML=`
       </div>
     </div>`;
 
-  // Rozet
-  const badgeEl = buildBadgeBlock(vnScore, si.l);
-  const scoreArea = document.getElementById("valunorth-score-area");
-  if(scoreArea && !document.getElementById("vn-badge-block")) {
-    scoreArea.insertAdjacentElement("afterend", badgeEl);
-  }
+  // Rozet — applyLocks'tan SONRA render et
+  setTimeout(function() {
+    const existBadge = document.getElementById("vn-badge-block");
+    if(existBadge) existBadge.remove();
+    const scoreArea2 = document.getElementById("valunorth-score-area");
+    if(scoreArea2 && window._userIsPlus) {
+      const badgeEl2 = buildBadgeBlock(vnScore, si.l);
+      badgeEl2.style.display = "block";
+      scoreArea2.insertAdjacentElement("afterend", badgeEl2);
+    }
+  }, 500);
 }
 function buildBadgeBlock(score, stageName) {
   const s = Math.round(score);
