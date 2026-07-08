@@ -596,11 +596,11 @@ body{padding-top:44px;}
     <div class="card" id="card-summary"></div>
     <!-- AI SİMÜLASYON KARTI -->
     <div class="ai-sim-card" id="card-ai-sim">
-      <div class="ai-sim-badge">✨ Plus Özelliği</div>
+      <div class="ai-sim-badge">✨ Pro Özelliği</div>
       <div class="ai-sim-title">AI Yatırımcı Simülasyonu</div>
       <div class="ai-sim-sub">Profilinize özel yatırımcı soruları alın. Pitch sürecinizi test edin, zayıf noktalarınızı keşfedin.</div>
       <!-- Kilitli görünüm (Plus değil) -->
-      <div class="ai-sim-lock" id="ai-sim-lock-box">
+      <div class="ai-sim-lock" id="ai-sim-lock-box" style="display:none;">
         <span style="font-size:24px;">🔒</span>
         <div>
           <div class="ai-sim-lock-text" style="font-weight:600;color:rgba(255,255,255,0.8);">Pro paketinde açılır</div>
@@ -1704,17 +1704,10 @@ function showResult(){
       customers: A.cust,
       revenue3m: A.rev3m
     };
-    // Pro kullanıcısı için AI sim kilidi kaldır - applyLocks'tan sonra
-    setTimeout(function() {
-      if(window._userIsPlus || window._userIsPro) {
-        if(typeof initAiSim === "function") {
-          initAiSim(window.aiStartupProfile);
-        }
-      }
-    }, 800);
+
   }
   // Kilitleri uygula
-  setTimeout(()=>{ if(typeof applyLocks==="function") applyLocks(); }, 100);
+  setTimeout(()=>{ if(typeof applyLocks==="function") applyLocks(); }, 200);
 }
 
 function doPrint(){window.print();}
@@ -1972,11 +1965,18 @@ renderQ();
 
     window._userIsPlus = isPlus;
     window._globalIsPlus = isPlus;
-    if(isPlus && window.aiStartupProfile && typeof initAiSim === "function") {
-      initAiSim(window.aiStartupProfile);
-    }
-    if(window._userIsPro && window.aiStartupProfile && typeof initAiSim === "function") {
-      initAiSim(window.aiStartupProfile);
+    // AI sim kilidi
+    const aiLock = document.getElementById("ai-sim-lock-box");
+    const aiActive = document.getElementById("ai-sim-active");
+    if(isPlus) {
+      if(aiLock) aiLock.style.display = "none";
+      if(aiActive) aiActive.style.display = "block";
+      if(window.aiStartupProfile && typeof initAiSim === "function") {
+        initAiSim(window.aiStartupProfile);
+      }
+    } else {
+      if(aiLock) aiLock.style.display = "flex";
+      if(aiActive) aiActive.style.display = "none";
     }
     // Rapor açıksa score/rozet göster veya gizle
     if(document.getElementById("result-area").style.display !== "none") {
