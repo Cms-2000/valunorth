@@ -697,6 +697,30 @@ function buildBadgeSVG(score, stageName) {
   </svg>`;
 }
 
+
+function renderScoreAndBadge(val, sc) {
+  if(!document.getElementById("valunorth-score-area")) return;
+  const vnScore = sc.total || 0;
+  const si = stInfo(val.st);
+document.getElementById("valunorth-score-area").innerHTML=`
+    <div class="valunorth-score-block">
+      <div class="vn-score-num">${vnScore}</div>
+      <div class="vn-score-right">
+        <div class="vn-score-label">${vnLabel}</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="vn-score-bar" style="flex:1;"><div class="vn-score-fill" style="width:${vnScore}%;"></div></div>
+          <span class="vn-score-max">/100</span>
+        </div>
+      </div>
+    </div>`;
+
+  // Rozet
+  const badgeEl = buildBadgeBlock(vnScore, si.l);
+  const scoreArea = document.getElementById("valunorth-score-area");
+  if(scoreArea && !document.getElementById("vn-badge-block")) {
+    scoreArea.insertAdjacentElement("afterend", badgeEl);
+  }
+}
 function buildBadgeBlock(score, stageName) {
   const s = Math.round(score);
   const raw = "https://valunorth.com/badge/" + s;
@@ -1538,6 +1562,7 @@ function buildSummaryTable(val, sc) {
 /* ══ RENDER ══ */
 function showResult(){
   const val=calcVal(),sc=getScores(),si=stInfo(val.st),wts=getWeights(val.st);
+  window._val=val;window._sc=sc;;
   const today=new Date().toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
   document.getElementById("pdf-sub").textContent=`${si.l} Aşaması · ${Object.keys(wts).join(", ")}`;
   document.getElementById("pdf-date").textContent=`Rapor tarihi: ${today}`;
@@ -1947,6 +1972,10 @@ renderQ();
     // Pro kullanıcısı için AI sim aç
     if(window._userIsPro && window.aiStartupProfile && typeof initAiSim === "function") {
       initAiSim(window.aiStartupProfile);
+    }
+    // Score ve rozeti Plus/Pro için sonradan render et
+    if(isPlus && window._val && window._sc) {
+      renderScoreAndBadge(window._val, window._sc);
     }
   };
 
