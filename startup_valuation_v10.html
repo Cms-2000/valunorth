@@ -700,7 +700,8 @@ function buildBadgeSVG(score, stageName) {
 
 function renderScoreAndBadge(val, sc) {
   if(!document.getElementById("valunorth-score-area")) return;
-  const vnScore = sc.total || 0;
+  if(!sc || !val) return;
+  const vnScore = Math.round((sc.tr+sc.tm+sc.mk+sc.mo+sc.fin)/5);
   const si = stInfo(val.st);
 document.getElementById("valunorth-score-area").innerHTML=`
     <div class="valunorth-score-block">
