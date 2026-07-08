@@ -1888,18 +1888,10 @@ renderQ();
   const LOCKED_SECTIONS = ["valunorth-score-area","card-growth","card-scenarios","card-report","card-timeline","card-summary"];
 
   function getLockHTML(isLoggedIn) {
-    if(!isLoggedIn) {
-      return `<div class="lock-overlay">
-        <div class="lock-icon">🔒</div>
-        <div class="lock-title">Bu bölüm Plus paketine özel</div>
-        <div class="lock-sub">Giriş yapın ve Plus'a geçerek tüm içeriğe erişin.</div>
-        <button class="lock-btn" onclick="openAuthModal('register')">Ücretsiz Kayıt Ol</button>
-      </div>`;
-    }
     return `<div class="lock-overlay">
       <div class="lock-icon">🔒</div>
       <div class="lock-title">Plus paketine özel içerik</div>
-      <div class="lock-sub">₺4.000 · Yıllık erişim</div>
+      <div class="lock-sub">₺4.000 / yıl · Tüm senaryolar, PDF rapor ve daha fazlası</div>
       <button class="lock-btn lock-btn-green" onclick="openPlusModal()">Plus'a Geç →</button>
     </div>`;
   }
