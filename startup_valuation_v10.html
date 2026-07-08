@@ -781,8 +781,6 @@ const Qs=[
 ];
 
 let cur=0,A={};
-var _globalIsPlus=false,_globalIsPro=false;
-
 /* ══ HESAPLAMA ══ */
 function getStage(){const r=A.rev3m||0,c=A.cust||0,g=A.growth||0,sp=A.stage_prod||1,pf=A.prev_fund||0,hc=A.headcount||1;const sc={preseed:0,seed:0,early:0,growth:0,scaleup:0,late:0};
   // Gelir sinyali (ağırlık 30 - temel)
@@ -1564,7 +1562,7 @@ function buildSummaryTable(val, sc) {
 /* ══ RENDER ══ */
 function showResult(){
   const val=calcVal(),sc=getScores(),si=stInfo(val.st),wts=getWeights(val.st);
-  window._val=val;window._sc=sc;;
+  window._val=val;window._sc=sc;
   const today=new Date().toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
   document.getElementById("pdf-sub").textContent=`${si.l} Aşaması · ${Object.keys(wts).join(", ")}`;
   document.getElementById("pdf-date").textContent=`Rapor tarihi: ${today}`;
@@ -1589,11 +1587,8 @@ function showResult(){
   const vnScore = Math.round((sc.tr+sc.tm+sc.mk+sc.mo+sc.fin)/5);
   const vnLabel = vnScore>=75?"Türkiye ortalamasının çok üzerinde · Top %10":vnScore>=60?"Türkiye ortalamasının üzerinde · Top %25":vnScore>=45?"Türkiye ortalamasına yakın":"Türkiye ortalamasının altında — iyileştirme öncelikli";
 
-  // Girişim Skoru - Plus/Pro kullanıcılarına göster
-  const _scoreEl = document.getElementById("valunorth-score-area");
-  if(_globalIsPlus || _globalIsPro) {
-    _scoreEl.style.display = "block";
-    _scoreEl.innerHTML = `
+  // Girişim Skoru — her zaman render et
+  document.getElementById("valunorth-score-area").innerHTML=`
     <div class="valunorth-score-block">
       <div class="vn-score-num">${vnScore}</div>
       <div class="vn-score-right">
@@ -1604,14 +1599,6 @@ function showResult(){
         </div>
       </div>
     </div>`;
-    // Rozet
-    const _existBadge = document.getElementById("vn-badge-block");
-    if(_existBadge) _existBadge.remove();
-    const _badgeEl = buildBadgeBlock(vnScore, si.l);
-    _scoreEl.insertAdjacentElement("afterend", _badgeEl);
-  } else {
-    _scoreEl.style.display = "none";
-  }
 
   // Benchmark ekosistem karşılaştırması
   const benchmarkHTML = `<div class="card" style="margin-bottom:1rem;">
@@ -1940,11 +1927,11 @@ renderQ();
           const d = snap.data();
           if(d.level === "plus" || d.level === "pro") {
             isPlus = true;
-            _globalIsPlus = true;
+            window._globalIsPlus = true;
           }
           if(d.level === "pro") {
             window._userIsPro = true;
-            _globalIsPro = true;
+            window._globalIsPro = true;
           }
         }
       } catch(e) { console.error("Plus kontrol:", e); }
@@ -1970,6 +1957,11 @@ renderQ();
     }
 
     window._userIsPlus = isPlus;
+    // Score ve rozet görünürlüğü
+    const _sa = document.getElementById("valunorth-score-area");
+    const _ba = document.getElementById("vn-badge-block");
+    if(_sa) _sa.style.display = isPlus ? "block" : "none";
+    if(_ba) _ba.style.display = isPlus ? "block" : "none";
     if(isPlus && window.aiStartupProfile && typeof initAiSim === "function") {
       initAiSim(window.aiStartupProfile);
     }
