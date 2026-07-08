@@ -1926,7 +1926,7 @@ renderQ();
 
   window.applyLocks = async function() {
     const isLoggedIn = !!currentUser;
-    let isPlus = false;
+    let isPlus = window._userIsPlus || false;
     if(currentUser) {
       try {
         const snap = await db.collection("users").doc(currentUser.uid).get();
