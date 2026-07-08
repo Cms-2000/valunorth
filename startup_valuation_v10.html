@@ -1561,6 +1561,10 @@ function showResult(){
   // Valunorth Score bloğu
   const vnScore = Math.round((sc.tr+sc.tm+sc.mk+sc.mo+sc.fin)/5);
   const vnLabel = vnScore>=75?"Türkiye ortalamasının çok üzerinde · Top %10":vnScore>=60?"Türkiye ortalamasının üzerinde · Top %25":vnScore>=45?"Türkiye ortalamasına yakın":"Türkiye ortalamasının altında — iyileştirme öncelikli";
+
+  // Girişim Skoru - Plus paketine özel
+  if(typeof _userIsPlus !== "undefined" && _userIsPlus) {
+
   document.getElementById("valunorth-score-area").innerHTML=`
     <div class="valunorth-score-block">
       <div class="vn-score-num">${vnScore}</div>
@@ -1572,6 +1576,9 @@ function showResult(){
         </div>
       </div>
     </div>`;
+  } else {
+    document.getElementById("valunorth-score-area").innerHTML = "";
+  }
 
   // Rozet bloğu — Plus'a özel
   if(typeof _userIsPlus !== "undefined" && _userIsPlus) {
@@ -1885,7 +1892,7 @@ renderQ();
   };
 
   // ── PLUS KİLİT SİSTEMİ ──
-  const LOCKED_SECTIONS = ["valunorth-score-area","card-growth","card-scenarios","card-report","card-timeline","card-summary"];
+  const LOCKED_SECTIONS = ["card-growth","card-scenarios","card-report","card-timeline","card-summary"];
 
   function getLockHTML(isLoggedIn) {
     return `<div class="lock-overlay">
