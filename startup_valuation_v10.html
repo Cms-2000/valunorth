@@ -1588,10 +1588,11 @@ function showResult(){
   const vnScore = Math.round((sc.tr+sc.tm+sc.mk+sc.mo+sc.fin)/5);
   const vnLabel = vnScore>=75?"Türkiye ortalamasının çok üzerinde · Top %10":vnScore>=60?"Türkiye ortalamasının üzerinde · Top %25":vnScore>=45?"Türkiye ortalamasına yakın":"Türkiye ortalamasının altında — iyileştirme öncelikli";
 
-  // Girişim Skoru - Plus paketine özel
-  if(typeof _userIsPlus !== "undefined" && _userIsPlus) {
-
-  document.getElementById("valunorth-score-area").innerHTML=`
+  // Girişim Skoru - Plus/Pro kullanıcılarına göster
+  const _scoreEl = document.getElementById("valunorth-score-area");
+  if(_globalIsPlus || _globalIsPro) {
+    _scoreEl.style.display = "block";
+    _scoreEl.innerHTML = `
     <div class="valunorth-score-block">
       <div class="vn-score-num">${vnScore}</div>
       <div class="vn-score-right">
@@ -1602,14 +1603,13 @@ function showResult(){
         </div>
       </div>
     </div>`;
+    // Rozet
+    const _existBadge = document.getElementById("vn-badge-block");
+    if(_existBadge) _existBadge.remove();
+    const _badgeEl = buildBadgeBlock(vnScore, si.l);
+    _scoreEl.insertAdjacentElement("afterend", _badgeEl);
   } else {
-    document.getElementById("valunorth-score-area").innerHTML = "";
-  }
-
-  // Rozet bloğu — Plus'a özel
-  if(typeof _userIsPlus !== "undefined" && _userIsPlus) {
-    const badgeEl = buildBadgeBlock(vnScore, si.l);
-    document.getElementById("valunorth-score-area").insertAdjacentElement("afterend", badgeEl);
+    _scoreEl.style.display = "none";
   }
 
   // Benchmark ekosistem karşılaştırması
@@ -1938,10 +1938,12 @@ renderQ();
         if(snap.exists) {
           const d = snap.data();
           if(d.level === "plus" || d.level === "pro") {
-            isPlus = true; // Plus ve Pro her ikisi de Plus kilitlerini açar
+            isPlus = true;
+            _globalIsPlus = true;
           }
           if(d.level === "pro") {
             window._userIsPro = true;
+            _globalIsPro = true;
           }
         }
       } catch(e) { console.error("Plus kontrol:", e); }
@@ -1974,10 +1976,7 @@ renderQ();
     if(window._userIsPro && window.aiStartupProfile && typeof initAiSim === "function") {
       initAiSim(window.aiStartupProfile);
     }
-    // Score ve rozeti Plus/Pro için sonradan render et
-    if(isPlus && window._val && window._sc) {
-      renderScoreAndBadge(window._val, window._sc);
-    }
+
   };
 
   window.openPlusModal = function() {
