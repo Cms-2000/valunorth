@@ -1957,19 +1957,28 @@ renderQ();
     }
 
     window._userIsPlus = isPlus;
-    // Score ve rozet görünürlüğü
-    const _sa = document.getElementById("valunorth-score-area");
-    const _ba = document.getElementById("vn-badge-block");
-    if(_sa) _sa.style.display = isPlus ? "block" : "none";
-    if(_ba) _ba.style.display = isPlus ? "block" : "none";
+    window._globalIsPlus = isPlus;
     if(isPlus && window.aiStartupProfile && typeof initAiSim === "function") {
       initAiSim(window.aiStartupProfile);
     }
-    // Pro kullanıcısı için AI sim aç
     if(window._userIsPro && window.aiStartupProfile && typeof initAiSim === "function") {
       initAiSim(window.aiStartupProfile);
     }
-
+    // Rapor açıksa score/rozet göster veya gizle
+    if(document.getElementById("result-area").style.display !== "none") {
+      const _sa = document.getElementById("valunorth-score-area");
+      const _ba = document.getElementById("vn-badge-block");
+      if(!isPlus) {
+        if(_sa) _sa.style.display = "none";
+        if(_ba) _ba.style.display = "none";
+      } else {
+        if(_sa) _sa.style.display = "block";
+        if(_ba) _ba.style.display = "block";
+        if(window._val && window._sc && typeof renderScoreAndBadge === "function") {
+          renderScoreAndBadge(window._val, window._sc);
+        }
+      }
+    }
   };
 
   window.openPlusModal = function() {
