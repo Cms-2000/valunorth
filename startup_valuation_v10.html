@@ -726,7 +726,7 @@ function buildBadgeBlock(score, stageName) {
   const s = Math.round(score);
   const raw = "https://valunorth.com/badge/" + s;
   const el = document.createElement("div");
-  el.className = "vn-badge-wrap";
+  el.className = "vn-badge-wrap";el.id = "vn-badge-block";el.style.display="none";
   el.innerHTML = "<div class='vn-badge-svg'>" + buildBadgeSVG(s, stageName) + "</div>"
     + "<div class='vn-badge-info'>"
     + "<div class='vn-badge-title'>Valunorth Rozeti</div>"
