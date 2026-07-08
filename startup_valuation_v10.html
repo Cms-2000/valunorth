@@ -702,6 +702,7 @@ function renderScoreAndBadge(val, sc) {
   if(!document.getElementById("valunorth-score-area")) return;
   if(!sc || !val) return;
   const vnScore = Math.round((sc.tr+sc.tm+sc.mk+sc.mo+sc.fin)/5);
+  const vnLabel = vnScore>=75?"Türkiye ortalamasının çok üzerinde · Top %10":vnScore>=60?"Türkiye ortalamasının üzerinde · Top %25":vnScore>=45?"Türkiye ortalamasına yakın":"Türkiye ortalamasının altında — iyileştirme öncelikli";
   const si = stInfo(val.st);
 document.getElementById("valunorth-score-area").innerHTML=`
     <div class="valunorth-score-block">
@@ -1864,7 +1865,7 @@ renderQ();
     try {
       await db.collection("users").doc(currentUser.uid).collection("reports").add({
         ...reportData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: new Date(),
         userEmail: currentUser.email
       });
       return true;
@@ -2164,7 +2165,7 @@ renderQ();
     try {
       await db.collection("users").doc(uid).collection("interests").doc(currentUser.uid).set({
         investorUid: currentUser.uid, reportId: rid,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: new Date()
       });
       invInterests.add(rid);
       btn.textContent = "✓ İlgi Gönderildi";
