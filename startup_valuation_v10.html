@@ -1766,7 +1766,28 @@ renderQ();
   let authMode = "login";
 
   // ── AUTH STATE ──
-  auth.onAuthStateChanged(async user => {
+  // Ödeme sonrası geri dönüş — raporu direkt aç
+window.addEventListener("load", function() {
+  try {
+    const pendingVal  = sessionStorage.getItem("vn_pending_val");
+    const pendingSc   = sessionStorage.getItem("vn_pending_sc");
+    if(pendingVal && pendingSc) {
+      window._val = JSON.parse(pendingVal);
+      window._sc  = JSON.parse(pendingSc);
+      sessionStorage.removeItem("vn_pending_val");
+      sessionStorage.removeItem("vn_pending_sc");
+      sessionStorage.removeItem("vn_pending_plan");
+      // Raporu aç
+      setTimeout(function() {
+        if(typeof showResult === "function" && window._val && window._sc) {
+          showResult(window._val, window._sc);
+        }
+      }, 1200);
+    }
+  } catch(e) {}
+});
+
+auth.onAuthStateChanged(async user => {
     currentUser = user;
     if(user) {
       document.getElementById("auth-logged-out").style.display = "none";
@@ -2010,9 +2031,16 @@ renderQ();
   };
 
   window.openPlusModal = function(plan) {
-    // plan: "plus" veya "pro"
     const selectedPlan = plan || "plus";
-    window.location.href = "odeme.html?plan=" + selectedPlan + "&uid=" + (currentUser ? currentUser.uid : "");
+    // Rapor verisini sessionStorage'a kaydet - ödeme sonrası geri dönünce kullanılacak
+    try {
+      if(window._val && window._sc) {
+        sessionStorage.setItem("vn_pending_val", JSON.stringify(window._val));
+        sessionStorage.setItem("vn_pending_sc",  JSON.stringify(window._sc));
+        sessionStorage.setItem("vn_pending_plan", selectedPlan);
+      }
+    } catch(e) {}
+    window.location.href = "odeme.html?plan=" + selectedPlan;
   };
 
   // ── KULLANICI PROFİLİ ──
