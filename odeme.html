@@ -176,8 +176,8 @@ firebase.initializeApp({
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-var IYZICO_API_KEY = "sandbox-mZEb6oNFFrDbfQCCxyEqiu0RedGu3jcI";
-var IYZICO_SECRET_KEY = "sandbox-OnK4JabsEEuyUxSptshQjO5bW8drGuyx";
+var IYZICO_API_KEY = "SANDBOX_API_KEY_BURAYA";
+var IYZICO_SECRET_KEY = "SANDBOX_SECRET_KEY_BURAYA";
 
 var params = new URLSearchParams(window.location.search);
 var plan = params.get("plan") || "plus";
@@ -320,7 +320,8 @@ function startPayment(){
 }
 
 function goToPlatform(){
-  window.location.href = "startup_valuation_v10.html";
+  // sessionStorage'daki veri varsa rapor direkt açılacak
+  window.location.href = "startup_valuation_v10.html?from=payment";
 }
 </script>
 </body>
