@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ödeme — Valunorth</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Calibri,sans-serif;background:#F5F4EF;color:#1C2535;min-height:100vh;}
+nav{background:#1C2535;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;}
+nav a.logo{text-decoration:none;font-size:20px;font-weight:700;color:#fff;}
+nav a.logo span{color:#5DCAA5;}
+nav a.back{color:#5DCAA5;font-size:13px;text-decoration:none;border:1px solid #5DCAA5;padding:6px 14px;border-radius:99px;}
+.container{max-width:480px;margin:48px auto;padding:0 20px 80px;}
+.card{background:#fff;border-radius:14px;padding:32px;border:.5px solid #e0dfd8;box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.plan-badge{display:inline-block;padding:4px 14px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
+.plan-plus .plan-badge{background:#E8F5F1;color:#0F6E56;}
+.plan-pro .plan-badge{background:#EEEDFE;color:#534AB7;}
+h1{font-size:24px;font-weight:700;color:#1C2535;margin-bottom:6px;}
+.price{font-size:36px;font-weight:800;color:#1C2535;margin:16px 0 4px;}
+.price span{font-size:14px;font-weight:400;color:#888;}
+.features{margin:20px 0;padding:0;list-style:none;}
+.features li{font-size:13.5px;color:#444;padding:6px 0;border-bottom:.5px solid #f0f0f0;display:flex;align-items:center;gap:8px;}
+.features li:last-child{border-bottom:none;}
+.features li::before{content:"✓";color:#0F6E56;font-weight:700;}
+.divider{border:none;border-top:.5px solid #e8e8e8;margin:24px 0;}
+.form-group{margin-bottom:16px;}
+label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+input{width:100%;padding:12px 14px;border:1.5px solid #e0dfd8;border-radius:8px;font-size:14px;font-family:inherit;color:#1C2535;outline:none;transition:border .2s;}
+input:focus{border-color:#534AB7;}
+.card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-pay{width:100%;padding:16px;background:#0F6E56;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;transition:background .2s;}
+.btn-pay:hover{background:#1D9E75;}
+.btn-pay:disabled{background:#ccc;cursor:not-allowed;}
+.security{text-align:center;font-size:11px;color:#999;margin-top:16px;}
+.logos{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px;opacity:.6;}
+.loading{display:none;text-align:center;padding:20px;}
+.spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:#0F6E56;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.success-box{display:none;text-align:center;padding:32px 20px;}
+.success-box .icon{font-size:52px;margin-bottom:16px;}
+.success-box h2{font-size:22px;font-weight:700;color:#0F6E56;margin-bottom:8px;}
+.success-box p{font-size:14px;color:#666;}
+.error-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;margin-bottom:16px;display:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="/">Valu<span>north</span></a>
+  <a class="back" href="javascript:history.back()">← Geri</a>
+</nav>
+
+<div class="container">
+  <div class="card" id="payment-card">
+
+    <!-- Plan bilgisi -->
+    <div id="plan-info"></div>
+
+    <hr class="divider">
+
+    <!-- Hata kutusu -->
+    <div class="error-box" id="error-box"></div>
+
+    <!-- Kart formu -->
+    <div id="payment-form">
+      <div class="form-group">
+        <label>Kart Üzerindeki Ad Soyad</label>
+        <input type="text" id="card-name" placeholder="Ad Soyad" autocomplete="cc-name">
+      </div>
+      <div class="form-group">
+        <label>Kart Numarası</label>
+        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+      </div>
+      <div class="card-row">
+        <div class="form-group">
+          <label>Son Kullanma (AA/YY)</label>
+          <input type="text" id="card-expiry" placeholder="AA/YY" maxlength="5" autocomplete="cc-exp">
+        </div>
+        <div class="form-group">
+          <label>CVV</label>
+          <input type="text" id="card-cvc" placeholder="123" maxlength="3" autocomplete="cc-csc">
+        </div>
+      </div>
+
+      <button class="btn-pay" id="btn-pay" onclick="startPayment()">
+        Güvenli Ödeme Yap
+      </button>
+
+      <div class="security">
+        🔒 256-bit SSL şifreleme · PCI DSS uyumlu
+      </div>
+      <div class="logos">
+        <!-- iyzico logosu inline SVG -->
+        <svg height="22" viewBox="0 0 80 28" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="20" font-family="Arial" font-size="18" font-weight="bold" fill="#1A56DB">iyzico</text>
+        </svg>
+        <svg height="20" viewBox="0 0 60 20" xmlns="http://www.w3.org/2000/svg">
+          <rect width="60" height="20" rx="3" fill="#1A1F71"/>
+          <text x="30" y="14" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="1">VISA</text>
+        </svg>
+        <svg height="24" viewBox="0 0 50 32" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="16" r="13" fill="#EB001B"/>
+          <circle cx="30" cy="16" r="13" fill="#F79E1B"/>
+          <path d="M25 6.8a13 13 0 0 1 0 18.4A13 13 0 0 1 25 6.8z" fill="#FF5F00"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p style="color:#666;font-size:14px;">Ödemeniz işleniyor...</p>
+    </div>
+
+    <!-- Başarı -->
+    <div class="success-box" id="success-box">
+      <div class="icon">🎉</div>
+      <h2>Ödeme Başarılı!</h2>
+      <p id="success-msg"></p>
+      <button class="btn-pay" style="margin-top:24px;max-width:240px;margin-left:auto;margin-right:auto;" onclick="goToPlatform()">
+        Platforma Git →
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ── Firebase Config ──
+const firebaseConfig = {
+  apiKey: "AIzaSyBl2UgqYBI3IGD2wbz_4rRkzcgvzyXnso8",
+  authDomain: "valunorth-33840.firebaseapp.com",
+  projectId: "valunorth-33840",
+  storageBucket: "valunorth-33840.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "valunorth"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ── iyzico Sandbox Config ──
+// BURAYA SANDBOX BİLGİLERİNİ KOY
+const IYZICO_CONFIG = {
+  baseUrl: "https://sandbox-api.iyzipay.com",
+  apiKey: "SANDBOX_API_KEY_BURAYA",
+  secretKey: "SANDBOX_SECRET_KEY_BURAYA"
+};
+
+// ── URL Parametreleri ──
+const params = new URLSearchParams(window.location.search);
+const plan = params.get("plan") || "plus";
+const uid = params.get("uid") || "";
+
+const PLANS = {
+  plus: {
+    name: "Plus Paketi",
+    price: "4.000",
+    priceNum: 4000,
+    period: "/ yıl",
+    badge: "Plus",
+    cssClass: "plan-plus",
+    features: [
+      "Freemium'daki her şey",
+      "3 değerleme hakkı / yıl",
+      "Valunorth Girişim Skoru",
+      "8 senaryo + maliyet analizi",
+      "12 aylık aksiyon takvimi",
+      "Gelir büyüme projeksiyonu",
+      "Değerleme geçmişi + PDF rapor",
+      "Valunorth Rozeti"
+    ]
+  },
+  pro: {
+    name: "Pro Paket",
+    price: "7.500",
+    priceNum: 7500,
+    period: "/ yıl",
+    badge: "Pro",
+    cssClass: "plan-pro",
+    features: [
+      "Plus'taki her şey",
+      "Sınırsız değerleme / yıl",
+      "AI Yatırımcı Simülasyonu",
+      "Pitch Deck Puanlama",
+      "Pitch Deck Skor + Öneriler"
+    ]
+  }
+};
+
+const selectedPlan = PLANS[plan] || PLANS.plus;
+
+// Plan bilgisini doldur
+document.getElementById("plan-info").innerHTML = `
+  <div class="${selectedPlan.cssClass}">
+    <span class="plan-badge">${selectedPlan.badge}</span>
+    <h1>${selectedPlan.name}</h1>
+    <div class="price">₺${selectedPlan.price} <span>${selectedPlan.period}</span></div>
+    <ul class="features">
+      ${selectedPlan.features.map(f => `<li>${f}</li>`).join("")}
+    </ul>
+  </div>
+`;
+
+// ── Kart numarası formatla ──
+document.getElementById("card-number").addEventListener("input", function(e) {
+  let val = e.target.value.replace(/\D/g, "").substring(0, 16);
+  e.target.value = val.replace(/(.{4})/g, "$1 ").trim();
+});
+
+document.getElementById("card-expiry").addEventListener("input", function(e) {
+  let val = e.target.value.replace(/\D/g, "").substring(0, 4);
+  if(val.length >= 3) val = val.substring(0,2) + "/" + val.substring(2);
+  e.target.value = val;
+});
+
+// ── Kullanıcı kontrolü ──
+let currentUser = null;
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if(!user) {
+    showError("Ödeme yapabilmek için giriş yapmanız gerekiyor.");
+    document.getElementById("btn-pay").disabled = true;
+  }
+});
+
+function showError(msg) {
+  const box = document.getElementById("error-box");
+  box.textContent = msg;
+  box.style.display = "block";
+}
+
+function hideError() {
+  document.getElementById("error-box").style.display = "none";
+}
+
+// ── Ödeme Başlat ──
+async function startPayment() {
+  hideError();
+
+  const cardName = document.getElementById("card-name").value.trim();
+  const cardNumber = document.getElementById("card-number").value.replace(/\s/g, "");
+  const cardExpiry = document.getElementById("card-expiry").value;
+  const cardCvc = document.getElementById("card-cvc").value.trim();
+
+  // Validasyon
+  if(!cardName) return showError("Lütfen kart üzerindeki adı girin.");
+  if(cardNumber.length < 16) return showError("Lütfen geçerli bir kart numarası girin.");
+  if(!cardExpiry.includes("/") || cardExpiry.length < 5) return showError("Lütfen son kullanma tarihini AA/YY formatında girin.");
+  if(cardCvc.length < 3) return showError("Lütfen CVV kodunu girin.");
+  if(!currentUser) return showError("Lütfen önce giriş yapın.");
+
+  const [expMonth, expYear] = cardExpiry.split("/");
+
+  // Loading göster
+  document.getElementById("payment-form").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+
+  try {
+    // iyzico'ya ödeme isteği gönder
+    // NOT: Gerçek iyzico entegrasyonu backend gerektirir
+    // Şimdilik Firebase Cloud Function veya backend endpoint çağrısı olacak
+    // Sandbox test için simülasyon
+    const paymentResult = await processPayment({
+      price: selectedPlan.priceNum.toString(),
+      paidPrice: selectedPlan.priceNum.toString(),
+      currency: "TRY",
+      cardHolderName: cardName,
+      cardNumber: cardNumber,
+      expireMonth: expMonth,
+      expireYear: "20" + expYear,
+      cvc: cardCvc,
+      buyerEmail: currentUser.email,
+      buyerName: currentUser.displayName || cardName,
+      buyerId: currentUser.uid
+    });
+
+    if(paymentResult.status === "success") {
+      // Firebase'de kullanıcı seviyesini güncelle
+      await db.collection("users").doc(currentUser.uid).set({
+        level: plan,
+        plan_activated_at: new Date(),
+        plan_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        payment_ref: paymentResult.paymentId || "sandbox-" + Date.now()
+      }, { merge: true });
+
+      // Başarı göster
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("success-box").style.display = "block";
+      document.getElementById("success-msg").textContent =
+        `${selectedPlan.name} aktif edildi. Artık tüm ${selectedPlan.badge} özelliklerine erişebilirsiniz.`;
+    } else {
+      throw new Error(paymentResult.errorMessage || "Ödeme başarısız.");
+    }
+
+  } catch(err) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("payment-form").style.display = "block";
+    showError("Ödeme hatası: " + err.message);
+  }
+}
+
+// ── iyzico Ödeme İşlemi ──
+// NOT: iyzico güvenlik gereklilikleri nedeniyle kart bilgileri
+// direkt olarak frontend'den iyzico'ya gönderilemez.
+// Bu fonksiyon bir backend endpoint'e istek göndermelidir.
+// Şimdilik sandbox test simülasyonu yapıyoruz.
+async function processPayment(paymentData) {
+  // TODO: Gerçek entegrasyonda bu kısım Firebase Cloud Function'a istek atacak
+  // Cloud Function iyzico API'sine güvenli şekilde bağlanacak
+  
+  // SANDBOX TEST — gerçek entegrasyon için bu kısmı değiştir
+  console.log("Sandbox ödeme isteği:", paymentData);
+  
+  // Sandbox test kartları:
+  // 5528790000000008 - Başarılı
+  // 4766620000000001 - Başarılı
+  // 5400010000000004 - Başarısız (yetersiz bakiye)
+  
+  const testCard = paymentData.cardNumber;
+  if(testCard === "5400010000000004") {
+    return { status: "failure", errorMessage: "Yetersiz bakiye (test)" };
+  }
+  
+  // Diğer tüm kartlar için sandbox'ta başarılı döndür
+  return {
+    status: "success",
+    paymentId: "sandbox-" + Date.now(),
+    price: paymentData.price
+  };
+}
+
+function goToPlatform() {
+  window.location.href = "startup_valuation_v10.html";
+}
+</script>
+
+</body>
+</html>
