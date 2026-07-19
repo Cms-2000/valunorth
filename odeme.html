@@ -66,8 +66,43 @@ input:focus{border-color:#534AB7;}
     <div class="login-box" id="login-box">
       <div class="login-icon">🔐</div>
       <h2>Ödeme için giriş yapın</h2>
-      <p>Google hesabınızla giriş yaparak devam edin.</p>
-      <button class="btn-google" onclick="loginWithGoogle()">🔑 Google ile Giriş Yap</button>
+      <p>Hesabınız yoksa kayıt olun, varsa giriş yapın.</p>
+
+      <!-- Sekme seçimi -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <button onclick="showTab('login')" id="tab-login" style="flex:1;padding:10px;background:#1C2535;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Giriş Yap</button>
+        <button onclick="showTab('register')" id="tab-register" style="flex:1;padding:10px;background:#F5F4EF;color:#1C2535;border:1px solid #e0dfd8;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Kayıt Ol</button>
+      </div>
+
+      <!-- Giriş Formu -->
+      <div id="tab-login-form">
+        <div class="form-group">
+          <label>E-posta</label>
+          <input type="email" id="login-email" placeholder="ornek@email.com">
+        </div>
+        <div class="form-group">
+          <label>Şifre</label>
+          <input type="password" id="login-password" placeholder="Şifreniz">
+        </div>
+        <button class="btn-primary" onclick="loginWithEmail()" style="margin-bottom:12px;">Giriş Yap</button>
+        <div style="text-align:center;font-size:12px;color:#999;margin-bottom:12px;">— veya —</div>
+        <button class="btn-google" onclick="loginWithGoogle()">🔑 Google ile Giriş Yap</button>
+      </div>
+
+      <!-- Kayıt Formu -->
+      <div id="tab-register-form" style="display:none;">
+        <div class="form-group">
+          <label>E-posta</label>
+          <input type="email" id="reg-email" placeholder="ornek@email.com">
+        </div>
+        <div class="form-group">
+          <label>Şifre (en az 6 karakter)</label>
+          <input type="password" id="reg-password" placeholder="Şifre belirleyin">
+        </div>
+        <button class="btn-primary" onclick="registerWithEmail()" style="margin-bottom:12px;">Kayıt Ol</button>
+        <div style="text-align:center;font-size:12px;color:#999;margin-bottom:12px;">— veya —</div>
+        <button class="btn-google" onclick="loginWithGoogle()">🔑 Google ile Kayıt Ol</button>
+      </div>
     </div>
 
     <!-- KART FORMU -->
@@ -141,8 +176,8 @@ firebase.initializeApp({
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-var IYZICO_API_KEY = "sandbox-mZEb6oNFFrDbfQCCxyEqiu0RedGu3jcI";
-var IYZICO_SECRET_KEY = "sandbox-OnK4JabsEEuyUxSptshQjO5bW8drGuyx";
+var IYZICO_API_KEY = "SANDBOX_API_KEY_BURAYA";
+var IYZICO_SECRET_KEY = "SANDBOX_SECRET_KEY_BURAYA";
 
 var params = new URLSearchParams(window.location.search);
 var plan = params.get("plan") || "plus";
@@ -192,6 +227,36 @@ auth.onAuthStateChanged(function(user){
     document.getElementById("payment-form").style.display = "block";
   }
 });
+
+function showTab(tab){
+  document.getElementById("tab-login-form").style.display = tab === "login" ? "block" : "none";
+  document.getElementById("tab-register-form").style.display = tab === "register" ? "block" : "none";
+  document.getElementById("tab-login").style.background = tab === "login" ? "#1C2535" : "#F5F4EF";
+  document.getElementById("tab-login").style.color = tab === "login" ? "#fff" : "#1C2535";
+  document.getElementById("tab-register").style.background = tab === "register" ? "#1C2535" : "#F5F4EF";
+  document.getElementById("tab-register").style.color = tab === "register" ? "#fff" : "#1C2535";
+}
+
+function loginWithEmail(){
+  hideError();
+  var email = document.getElementById("login-email").value.trim();
+  var pass  = document.getElementById("login-password").value;
+  if(!email || !pass) return showError("E-posta ve şifre girin.");
+  auth.signInWithEmailAndPassword(email, pass).catch(function(e){
+    showError("Giriş başarısız: " + (e.code === "auth/wrong-password" ? "Şifre hatalı." : e.code === "auth/user-not-found" ? "Bu e-posta kayıtlı değil." : e.message));
+  });
+}
+
+function registerWithEmail(){
+  hideError();
+  var email = document.getElementById("reg-email").value.trim();
+  var pass  = document.getElementById("reg-password").value;
+  if(!email || !pass) return showError("E-posta ve şifre girin.");
+  if(pass.length < 6) return showError("Şifre en az 6 karakter olmalı.");
+  auth.createUserWithEmailAndPassword(email, pass).catch(function(e){
+    showError("Kayıt başarısız: " + (e.code === "auth/email-already-in-use" ? "Bu e-posta zaten kayıtlı." : e.message));
+  });
+}
 
 function loginWithGoogle(){
   var provider = new firebase.auth.GoogleAuthProvider();
