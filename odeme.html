@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -30,19 +29,23 @@ label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px;
 input{width:100%;padding:12px 14px;border:1.5px solid #e0dfd8;border-radius:8px;font-size:14px;font-family:inherit;color:#1C2535;outline:none;transition:border .2s;}
 input:focus{border-color:#534AB7;}
 .card-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.btn-pay{width:100%;padding:16px;background:#0F6E56;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;transition:background .2s;}
-.btn-pay:hover{background:#1D9E75;}
-.btn-pay:disabled{background:#ccc;cursor:not-allowed;}
+.btn-primary{width:100%;padding:16px;background:#0F6E56;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;transition:background .2s;}
+.btn-primary:hover{background:#1D9E75;}
+.btn-google{width:100%;padding:14px;background:#1C2535;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px;}
 .security{text-align:center;font-size:11px;color:#999;margin-top:16px;}
 .logos{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px;opacity:.6;}
-.loading{display:none;text-align:center;padding:20px;}
-.spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:#0F6E56;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+.loading{display:none;text-align:center;padding:32px 20px;}
+.spinner{width:36px;height:36px;border:3px solid #e0e0e0;border-top-color:#0F6E56;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .success-box{display:none;text-align:center;padding:32px 20px;}
-.success-box .icon{font-size:52px;margin-bottom:16px;}
+.success-icon{font-size:52px;margin-bottom:16px;}
 .success-box h2{font-size:22px;font-weight:700;color:#0F6E56;margin-bottom:8px;}
-.success-box p{font-size:14px;color:#666;}
+.success-box p{font-size:14px;color:#666;margin-bottom:24px;}
 .error-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;margin-bottom:16px;display:none;}
+.login-box{text-align:center;padding:24px 0;display:none;}
+.login-icon{font-size:42px;margin-bottom:12px;}
+.login-box h2{font-size:18px;font-weight:700;color:#1C2535;margin-bottom:8px;}
+.login-box p{font-size:13px;color:#666;margin-bottom:20px;}
 </style>
 </head>
 <body>
@@ -53,62 +56,51 @@ input:focus{border-color:#534AB7;}
 </nav>
 
 <div class="container">
-  <div class="card" id="payment-card">
+  <div class="card">
 
-    <!-- Plan bilgisi -->
     <div id="plan-info"></div>
-
     <hr class="divider">
-
-    <!-- Hata kutusu -->
     <div class="error-box" id="error-box"></div>
 
-    <!-- Kart formu -->
-   <div id="login-required" style="display:none;">
-  <div style="text-align:center;padding:24px 0;">
-    <div style="font-size:42px;margin-bottom:12px;">🔐</div>
-    <h2 style="font-size:18px;font-weight:700;color:#1C2535;margin-bottom:8px;">Ödeme için giriş yapın</h2>
-    <p style="font-size:13px;color:#666;margin-bottom:20px;">Google hesabınızla giriş yapın.</p>
-    <button onclick="loginWithGoogle()" style="width:100%;padding:14px;background:#1C2535;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">🔑 Google ile Giriş Yap</button>
-  </div>
-</div>
+    <!-- GİRİŞ GEREKLİ -->
+    <div class="login-box" id="login-box">
+      <div class="login-icon">🔐</div>
+      <h2>Ödeme için giriş yapın</h2>
+      <p>Google hesabınızla giriş yaparak devam edin.</p>
+      <button class="btn-google" onclick="loginWithGoogle()">🔑 Google ile Giriş Yap</button>
+    </div>
+
+    <!-- KART FORMU -->
     <div id="payment-form" style="display:none;">
       <div class="form-group">
         <label>Kart Üzerindeki Ad Soyad</label>
-        <input type="text" id="card-name" placeholder="Ad Soyad" autocomplete="cc-name">
+        <input type="text" id="card-name" placeholder="Ad Soyad">
       </div>
       <div class="form-group">
         <label>Kart Numarası</label>
-        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
       </div>
       <div class="card-row">
         <div class="form-group">
           <label>Son Kullanma (AA/YY)</label>
-          <input type="text" id="card-expiry" placeholder="AA/YY" maxlength="5" autocomplete="cc-exp">
+          <input type="text" id="card-expiry" placeholder="AA/YY" maxlength="5">
         </div>
         <div class="form-group">
           <label>CVV</label>
-          <input type="text" id="card-cvc" placeholder="123" maxlength="3" autocomplete="cc-csc">
+          <input type="text" id="card-cvc" placeholder="123" maxlength="3">
         </div>
       </div>
-
-      <button class="btn-pay" id="btn-pay" onclick="startPayment()">
-        Güvenli Ödeme Yap
-      </button>
-
-      <div class="security">
-        🔒 256-bit SSL şifreleme · PCI DSS uyumlu
-      </div>
+      <button class="btn-primary" onclick="startPayment()">Güvenli Ödeme Yap</button>
+      <div class="security">🔒 256-bit SSL şifreleme · PCI DSS uyumlu</div>
       <div class="logos">
-        <!-- iyzico logosu inline SVG -->
-        <svg height="22" viewBox="0 0 80 28" xmlns="http://www.w3.org/2000/svg">
-          <text x="0" y="20" font-family="Arial" font-size="18" font-weight="bold" fill="#1A56DB">iyzico</text>
+        <svg height="20" viewBox="0 0 80 24" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="18" font-family="Arial" font-size="16" font-weight="bold" fill="#1A56DB">iyzico</text>
         </svg>
-        <svg height="20" viewBox="0 0 60 20" xmlns="http://www.w3.org/2000/svg">
+        <svg height="18" viewBox="0 0 60 20" xmlns="http://www.w3.org/2000/svg">
           <rect width="60" height="20" rx="3" fill="#1A1F71"/>
-          <text x="30" y="14" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle" letter-spacing="1">VISA</text>
+          <text x="30" y="14" font-family="Arial" font-size="11" font-weight="bold" fill="white" text-anchor="middle">VISA</text>
         </svg>
-        <svg height="24" viewBox="0 0 50 32" xmlns="http://www.w3.org/2000/svg">
+        <svg height="22" viewBox="0 0 50 32" xmlns="http://www.w3.org/2000/svg">
           <circle cx="20" cy="16" r="13" fill="#EB001B"/>
           <circle cx="30" cy="16" r="13" fill="#F79E1B"/>
           <path d="M25 6.8a13 13 0 0 1 0 18.4A13 13 0 0 1 25 6.8z" fill="#FF5F00"/>
@@ -116,254 +108,155 @@ input:focus{border-color:#534AB7;}
       </div>
     </div>
 
-    <!-- Loading -->
+    <!-- LOADING -->
     <div class="loading" id="loading">
       <div class="spinner"></div>
       <p style="color:#666;font-size:14px;">Ödemeniz işleniyor...</p>
     </div>
 
-    <!-- Başarı -->
+    <!-- BAŞARI -->
     <div class="success-box" id="success-box">
-      <div class="icon">🎉</div>
+      <div class="success-icon">🎉</div>
       <h2>Ödeme Başarılı!</h2>
       <p id="success-msg"></p>
-      <button class="btn-pay" style="margin-top:24px;max-width:240px;margin-left:auto;margin-right:auto;" onclick="goToPlatform()">
-        Platforma Git →
-      </button>
+      <button class="btn-primary" style="max-width:240px;margin:0 auto;" onclick="goToPlatform()">Platforma Git →</button>
     </div>
 
   </div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <script>
-// ── Firebase Config ──
-const firebaseConfig = {
+firebase.initializeApp({
   apiKey: "AIzaSyBl2UgqYBI3IGD2wbz_4rRkzcgvzyXnso8",
   authDomain: "valunorth-33840.firebaseapp.com",
   projectId: "valunorth-33840",
   storageBucket: "valunorth-33840.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "valunorth"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+  messagingSenderId: "857492635810",
+  appId: "1:857492635810:web:valunorth"
+});
+var auth = firebase.auth();
+var db = firebase.firestore();
 
-// ── iyzico Sandbox Config ──
-// BURAYA SANDBOX BİLGİLERİNİ KOY
-const IYZICO_CONFIG = {
-  baseUrl: "https://sandbox-api.iyzipay.com",
-  apiKey: "sandbox-mZEb6oNFFrDbfQCCxyEqiu0RedGu3jcI",
-  secretKey: "sandbox-OnK4JabsEEuyUxSptshQjO5bW8drGuyx"
-};
+var IYZICO_API_KEY = "SANDBOX_API_KEY_BURAYA";
+var IYZICO_SECRET_KEY = "SANDBOX_SECRET_KEY_BURAYA";
 
-// ── URL Parametreleri ──
-const params = new URLSearchParams(window.location.search);
-const plan = params.get("plan") || "plus";
-const uid = params.get("uid") || "";
+var params = new URLSearchParams(window.location.search);
+var plan = params.get("plan") || "plus";
 
-const PLANS = {
+var PLANS = {
   plus: {
-    name: "Plus Paketi",
-    price: "4.000",
-    priceNum: 4000,
-    period: "/ yıl",
-    badge: "Plus",
+    name: "Plus Paketi", price: "4.000", priceNum: 4000, badge: "Plus",
     cssClass: "plan-plus",
-    features: [
-      "Freemium'daki her şey",
-      "3 değerleme hakkı / yıl",
-      "Valunorth Girişim Skoru",
-      "8 senaryo + maliyet analizi",
-      "12 aylık aksiyon takvimi",
-      "Gelir büyüme projeksiyonu",
-      "Değerleme geçmişi + PDF rapor",
-      "Valunorth Rozeti"
-    ]
+    features: ["Freemium'daki her şey","3 değerleme hakkı / yıl","Valunorth Girişim Skoru","8 senaryo + maliyet analizi","12 aylık aksiyon takvimi","Gelir büyüme projeksiyonu","Değerleme geçmişi + PDF rapor","Valunorth Rozeti"]
   },
   pro: {
-    name: "Pro Paket",
-    price: "7.500",
-    priceNum: 7500,
-    period: "/ yıl",
-    badge: "Pro",
+    name: "Pro Paket", price: "7.500", priceNum: 7500, badge: "Pro",
     cssClass: "plan-pro",
-    features: [
-      "Plus'taki her şey",
-      "Sınırsız değerleme / yıl",
-      "AI Yatırımcı Simülasyonu",
-      "Pitch Deck Puanlama",
-      "Pitch Deck Skor + Öneriler"
-    ]
+    features: ["Plus'taki her şey","Sınırsız değerleme / yıl","AI Yatırımcı Simülasyonu","Pitch Deck Puanlama","Pitch Deck Skor + Öneriler"]
   }
 };
 
-const selectedPlan = PLANS[plan] || PLANS.plus;
+var sel = PLANS[plan] || PLANS.plus;
 
-// Plan bilgisini doldur
-document.getElementById("plan-info").innerHTML = `
-  <div class="${selectedPlan.cssClass}">
-    <span class="plan-badge">${selectedPlan.badge}</span>
-    <h1>${selectedPlan.name}</h1>
-    <div class="price">₺${selectedPlan.price} <span>${selectedPlan.period}</span></div>
-    <ul class="features">
-      ${selectedPlan.features.map(f => `<li>${f}</li>`).join("")}
-    </ul>
-  </div>
-`;
+document.getElementById("plan-info").innerHTML =
+  '<div class="' + sel.cssClass + '">' +
+  '<span class="plan-badge">' + sel.badge + '</span>' +
+  '<h1>' + sel.name + '</h1>' +
+  '<div class="price">₺' + sel.price + ' <span>/ yıl</span></div>' +
+  '<ul class="features">' + sel.features.map(function(f){return '<li>'+f+'</li>';}).join("") + '</ul>' +
+  '</div>';
 
-// ── Kart numarası formatla ──
-document.getElementById("card-number").addEventListener("input", function(e) {
-  let val = e.target.value.replace(/\D/g, "").substring(0, 16);
-  e.target.value = val.replace(/(.{4})/g, "$1 ").trim();
+document.getElementById("card-number").addEventListener("input", function(e){
+  var v = e.target.value.replace(/\D/g,"").substring(0,16);
+  e.target.value = v.replace(/(.{4})/g,"$1 ").trim();
+});
+document.getElementById("card-expiry").addEventListener("input", function(e){
+  var v = e.target.value.replace(/\D/g,"").substring(0,4);
+  if(v.length >= 3) v = v.substring(0,2) + "/" + v.substring(2);
+  e.target.value = v;
 });
 
-document.getElementById("card-expiry").addEventListener("input", function(e) {
-  let val = e.target.value.replace(/\D/g, "").substring(0, 4);
-  if(val.length >= 3) val = val.substring(0,2) + "/" + val.substring(2);
-  e.target.value = val;
-});
+var currentUser = null;
 
-// ── Kullanıcı kontrolü ──
-let currentUser = null;
-auth.onAuthStateChanged(user => {
+auth.onAuthStateChanged(function(user){
   currentUser = user;
-  if(!user) {
-    document.getElementById("login-required").style.display = "block";
+  if(!user){
+    document.getElementById("login-box").style.display = "block";
     document.getElementById("payment-form").style.display = "none";
   } else {
-    document.getElementById("login-required").style.display = "none";
+    document.getElementById("login-box").style.display = "none";
     document.getElementById("payment-form").style.display = "block";
   }
 });
 
-async function loginWithGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    await auth.signInWithPopup(provider);
-  } catch(e) {
+function loginWithGoogle(){
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(function(e){
     showError("Giriş başarısız: " + e.message);
-  }
+  });
 }
 
-  }
-});
-
-function showError(msg) {
-  const box = document.getElementById("error-box");
-  box.textContent = msg;
-  box.style.display = "block";
+function showError(msg){
+  var b = document.getElementById("error-box");
+  b.textContent = msg;
+  b.style.display = "block";
 }
-
-function hideError() {
+function hideError(){
   document.getElementById("error-box").style.display = "none";
 }
 
-// ── Ödeme Başlat ──
-async function startPayment() {
+function startPayment(){
   hideError();
+  var cardName   = document.getElementById("card-name").value.trim();
+  var cardNumber = document.getElementById("card-number").value.replace(/\s/g,"");
+  var cardExpiry = document.getElementById("card-expiry").value;
+  var cardCvc    = document.getElementById("card-cvc").value.trim();
 
-  const cardName = document.getElementById("card-name").value.trim();
-  const cardNumber = document.getElementById("card-number").value.replace(/\s/g, "");
-  const cardExpiry = document.getElementById("card-expiry").value;
-  const cardCvc = document.getElementById("card-cvc").value.trim();
+  if(!cardName)            return showError("Lütfen kart üzerindeki adı girin.");
+  if(cardNumber.length<16) return showError("Lütfen geçerli bir kart numarası girin.");
+  if(!cardExpiry.includes("/") || cardExpiry.length<5) return showError("Son kullanma tarihini AA/YY formatında girin.");
+  if(cardCvc.length<3)     return showError("Lütfen CVV kodunu girin.");
+  if(!currentUser)         return showError("Lütfen önce giriş yapın.");
 
-  // Validasyon
-  if(!cardName) return showError("Lütfen kart üzerindeki adı girin.");
-  if(cardNumber.length < 16) return showError("Lütfen geçerli bir kart numarası girin.");
-  if(!cardExpiry.includes("/") || cardExpiry.length < 5) return showError("Lütfen son kullanma tarihini AA/YY formatında girin.");
-  if(cardCvc.length < 3) return showError("Lütfen CVV kodunu girin.");
-  if(!currentUser) return showError("Lütfen önce giriş yapın.");
+  var parts = cardExpiry.split("/");
+  var expMonth = parts[0];
+  var expYear  = "20" + parts[1];
 
-  const [expMonth, expYear] = cardExpiry.split("/");
-
-  // Loading göster
   document.getElementById("payment-form").style.display = "none";
   document.getElementById("loading").style.display = "block";
 
-  try {
-    // iyzico'ya ödeme isteği gönder
-    // NOT: Gerçek iyzico entegrasyonu backend gerektirir
-    // Şimdilik Firebase Cloud Function veya backend endpoint çağrısı olacak
-    // Sandbox test için simülasyon
-    const paymentResult = await processPayment({
-      price: selectedPlan.priceNum.toString(),
-      paidPrice: selectedPlan.priceNum.toString(),
-      currency: "TRY",
-      cardHolderName: cardName,
-      cardNumber: cardNumber,
-      expireMonth: expMonth,
-      expireYear: "20" + expYear,
-      cvc: cardCvc,
-      buyerEmail: currentUser.email,
-      buyerName: currentUser.displayName || cardName,
-      buyerId: currentUser.uid
-    });
+  // Sandbox test simülasyonu
+  // Gerçek iyzico entegrasyonu için backend gerekir
+  setTimeout(function(){
+    var isSuccess = cardNumber !== "5400010000000004";
 
-    if(paymentResult.status === "success") {
-      // Firebase'de kullanıcı seviyesini güncelle
-      await db.collection("users").doc(currentUser.uid).set({
+    if(isSuccess){
+      db.collection("users").doc(currentUser.uid).set({
         level: plan,
         plan_activated_at: new Date(),
-        plan_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-        payment_ref: paymentResult.paymentId || "sandbox-" + Date.now()
-      }, { merge: true });
-
-      // Başarı göster
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("success-box").style.display = "block";
-      document.getElementById("success-msg").textContent =
-        `${selectedPlan.name} aktif edildi. Artık tüm ${selectedPlan.badge} özelliklerine erişebilirsiniz.`;
+        plan_expires_at: new Date(Date.now() + 365*24*60*60*1000),
+        payment_ref: "sandbox-" + Date.now()
+      }, { merge: true }).then(function(){
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("success-box").style.display = "block";
+        document.getElementById("success-msg").textContent =
+          sel.name + " aktif edildi. Tüm " + sel.badge + " özelliklerine erişebilirsiniz.";
+      });
     } else {
-      throw new Error(paymentResult.errorMessage || "Ödeme başarısız.");
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("payment-form").style.display = "block";
+      showError("Ödeme başarısız: Yetersiz bakiye (test kartı)");
     }
-
-  } catch(err) {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("payment-form").style.display = "block";
-    showError("Ödeme hatası: " + err.message);
-  }
+  }, 2000);
 }
 
-// ── iyzico Ödeme İşlemi ──
-// NOT: iyzico güvenlik gereklilikleri nedeniyle kart bilgileri
-// direkt olarak frontend'den iyzico'ya gönderilemez.
-// Bu fonksiyon bir backend endpoint'e istek göndermelidir.
-// Şimdilik sandbox test simülasyonu yapıyoruz.
-async function processPayment(paymentData) {
-  // TODO: Gerçek entegrasyonda bu kısım Firebase Cloud Function'a istek atacak
-  // Cloud Function iyzico API'sine güvenli şekilde bağlanacak
-  
-  // SANDBOX TEST — gerçek entegrasyon için bu kısmı değiştir
-  console.log("Sandbox ödeme isteği:", paymentData);
-  
-  // Sandbox test kartları:
-  // 5528790000000008 - Başarılı
-  // 4766620000000001 - Başarılı
-  // 5400010000000004 - Başarısız (yetersiz bakiye)
-  
-  const testCard = paymentData.cardNumber;
-  if(testCard === "5400010000000004") {
-    return { status: "failure", errorMessage: "Yetersiz bakiye (test)" };
-  }
-  
-  // Diğer tüm kartlar için sandbox'ta başarılı döndür
-  return {
-    status: "success",
-    paymentId: "sandbox-" + Date.now(),
-    price: paymentData.price
-  };
-}
-
-function goToPlatform() {
+function goToPlatform(){
   window.location.href = "startup_valuation_v10.html";
 }
 </script>
-
 </body>
 </html>
