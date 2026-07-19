@@ -1769,20 +1769,21 @@ renderQ();
   // Ödeme sonrası geri dönüş — raporu direkt aç
 window.addEventListener("load", function() {
   try {
-    const pendingVal  = sessionStorage.getItem("vn_pending_val");
-    const pendingSc   = sessionStorage.getItem("vn_pending_sc");
-    if(pendingVal && pendingSc) {
-      window._val = JSON.parse(pendingVal);
-      window._sc  = JSON.parse(pendingSc);
+    const savedAnswers = sessionStorage.getItem("vn_answers");
+    if(savedAnswers) {
+      // Anket cevaplarını yükle
+      const parsed = JSON.parse(savedAnswers);
+      Object.assign(A, parsed);
+      sessionStorage.removeItem("vn_answers");
       sessionStorage.removeItem("vn_pending_val");
       sessionStorage.removeItem("vn_pending_sc");
       sessionStorage.removeItem("vn_pending_plan");
-      // Raporu aç
+      // applyLocks bitince raporu aç
       setTimeout(function() {
-        if(typeof showResult === "function" && window._val && window._sc) {
-          showResult(window._val, window._sc);
+        if(typeof showResult === "function") {
+          showResult();
         }
-      }, 1200);
+      }, 1500);
     }
   } catch(e) {}
 });
@@ -2032,13 +2033,12 @@ auth.onAuthStateChanged(async user => {
 
   window.openPlusModal = function(plan) {
     const selectedPlan = plan || "plus";
-    // Rapor verisini sessionStorage'a kaydet - ödeme sonrası geri dönünce kullanılacak
+    // Anket cevapları ve rapor verisini sessionStorage'a kaydet
     try {
-      if(window._val && window._sc) {
-        sessionStorage.setItem("vn_pending_val", JSON.stringify(window._val));
-        sessionStorage.setItem("vn_pending_sc",  JSON.stringify(window._sc));
-        sessionStorage.setItem("vn_pending_plan", selectedPlan);
-      }
+      sessionStorage.setItem("vn_answers", JSON.stringify(A));
+      if(window._val) sessionStorage.setItem("vn_pending_val", JSON.stringify(window._val));
+      if(window._sc)  sessionStorage.setItem("vn_pending_sc",  JSON.stringify(window._sc));
+      sessionStorage.setItem("vn_pending_plan", selectedPlan);
     } catch(e) {}
     window.location.href = "odeme.html?plan=" + selectedPlan;
   };
