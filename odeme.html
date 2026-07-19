@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -60,11 +59,21 @@ input:focus{border-color:#534AB7;}
 
     <hr class="divider">
 
+    <!-- Giriş gerekli -->
+    <div id="login-required" style="display:none;text-align:center;padding:20px 0;">
+      <div style="font-size:36px;margin-bottom:12px;">🔐</div>
+      <h2 style="font-size:18px;color:#1C2535;margin-bottom:8px;">Ödeme için giriş yapın</h2>
+      <p style="font-size:13px;color:#666;margin-bottom:20px;">Hesabınıza bağlı kalması için Google ile giriş yapın.</p>
+      <button onclick="loginWithGoogle()" style="background:#1C2535;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;">
+        🔑 Google ile Giriş Yap
+      </button>
+    </div>
+
     <!-- Hata kutusu -->
     <div class="error-box" id="error-box"></div>
 
     <!-- Kart formu -->
-    <div id="payment-form">
+    <div id="payment-form" style="display:none;">
       <div class="form-group">
         <label>Kart Üzerindeki Ad Soyad</label>
         <input type="text" id="card-name" placeholder="Ad Soyad" autocomplete="cc-name">
@@ -150,8 +159,8 @@ const db = firebase.firestore();
 // BURAYA SANDBOX BİLGİLERİNİ KOY
 const IYZICO_CONFIG = {
   baseUrl: "https://sandbox-api.iyzipay.com",
-  apiKey: "sandbox-mZEb6oNFFrDbfQCCxyEqiu0RedGu3jcI",
-  secretKey: "sandbox-OnK4JabsEEuyUxSptshQjO5bW8drGuyx"
+  apiKey: "SANDBOX_API_KEY_BURAYA",
+  secretKey: "SANDBOX_SECRET_KEY_BURAYA"
 };
 
 // ── URL Parametreleri ──
@@ -226,10 +235,24 @@ let currentUser = null;
 auth.onAuthStateChanged(user => {
   currentUser = user;
   if(!user) {
-    showError("Ödeme yapabilmek için giriş yapmanız gerekiyor.");
-    document.getElementById("btn-pay").disabled = true;
+    // Giriş yapılmamış — Google ile giriş ekranı göster
+    document.getElementById("payment-form").style.display = "none";
+    document.getElementById("login-required").style.display = "block";
+  } else {
+    document.getElementById("payment-form").style.display = "block";
+    document.getElementById("login-required").style.display = "none";
   }
 });
+
+async function loginWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+    // Giriş başarılı — auth state değişecek, form otomatik gösterilecek
+  } catch(e) {
+    showError("Giriş başarısız: " + e.message);
+  }
+}
 
 function showError(msg) {
   const box = document.getElementById("error-box");
