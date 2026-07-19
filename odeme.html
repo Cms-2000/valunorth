@@ -64,7 +64,15 @@ input:focus{border-color:#534AB7;}
     <div class="error-box" id="error-box"></div>
 
     <!-- Kart formu -->
-    <div id="payment-form">
+   <div id="login-required" style="display:none;">
+  <div style="text-align:center;padding:24px 0;">
+    <div style="font-size:42px;margin-bottom:12px;">🔐</div>
+    <h2 style="font-size:18px;font-weight:700;color:#1C2535;margin-bottom:8px;">Ödeme için giriş yapın</h2>
+    <p style="font-size:13px;color:#666;margin-bottom:20px;">Google hesabınızla giriş yapın.</p>
+    <button onclick="loginWithGoogle()" style="width:100%;padding:14px;background:#1C2535;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">🔑 Google ile Giriş Yap</button>
+  </div>
+</div>
+    <div id="payment-form" style="display:none;">
       <div class="form-group">
         <label>Kart Üzerindeki Ad Soyad</label>
         <input type="text" id="card-name" placeholder="Ad Soyad" autocomplete="cc-name">
@@ -226,8 +234,23 @@ let currentUser = null;
 auth.onAuthStateChanged(user => {
   currentUser = user;
   if(!user) {
-    showError("Ödeme yapabilmek için giriş yapmanız gerekiyor.");
-    document.getElementById("btn-pay").disabled = true;
+    document.getElementById("login-required").style.display = "block";
+    document.getElementById("payment-form").style.display = "none";
+  } else {
+    document.getElementById("login-required").style.display = "none";
+    document.getElementById("payment-form").style.display = "block";
+  }
+});
+
+async function loginWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+  } catch(e) {
+    showError("Giriş başarısız: " + e.message);
+  }
+}
+
   }
 });
 
