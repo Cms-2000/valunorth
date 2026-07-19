@@ -606,7 +606,7 @@ body{padding-top:44px;}
           <div class="ai-sim-lock-text" style="font-weight:600;color:rgba(255,255,255,0.8);">Pro paketinde açılır</div>
           <div class="ai-sim-lock-text">₺7.500 · Yıllık erişim</div>
         </div>
-        <button class="lock-btn" style="margin-left:auto;white-space:nowrap;" onclick="openPlusModal()">Pro'ya Geç →</button>
+        <button class="lock-btn" style="margin-left:auto;white-space:nowrap;" onclick="openPlusModal('pro')">Pro'ya Geç →</button>
       </div>
       <!-- Aktif simülasyon (Plus kullanıcı) -->
       <div id="ai-sim-active" style="display:none;" class="ai-sim-active">
@@ -1934,7 +1934,7 @@ renderQ();
       <div class="lock-icon">🔒</div>
       <div class="lock-title">Plus paketine özel içerik</div>
       <div class="lock-sub">₺4.000 / yıl · Tüm senaryolar, PDF rapor ve daha fazlası</div>
-      <button class="lock-btn lock-btn-green" onclick="openPlusModal()">Plus'a Geç →</button>
+      <button class="lock-btn lock-btn-green" onclick="openPlusModal('plus')">Plus'a Geç →</button>
     </div>`;
   }
 
@@ -2009,8 +2009,10 @@ renderQ();
     }
   };
 
-  window.openPlusModal = function() {
-    alert("Plus (₺4.000/yıl) veya Pro (₺7.500/yıl) pakete geçmek için hello@valunorth.com adresine yazın. paketi aktif olacak. Bilgi: hello@valunorth.com");
+  window.openPlusModal = function(plan) {
+    // plan: "plus" veya "pro"
+    const selectedPlan = plan || "plus";
+    window.location.href = "odeme.html?plan=" + selectedPlan + "&uid=" + (currentUser ? currentUser.uid : "");
   };
 
   // ── KULLANICI PROFİLİ ──
